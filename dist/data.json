@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "updatedAt": "2026-09-21T23:23:12+08:00",
+    "status": "partial",
+    "errors": [
+      "行情更新失败：Remote end closed connection without response"
+    ],
+    "note": "自动更新公开数据；付费课程原文与附件未发布。"
+  },
+  "china": {
+    "period": "2026-08",
+    "releaseDate": "2026年9月15日",
+    "sourceUrl": "https://www.stats.gov.cn/sj/zxfb/202609/t20260915_1965307.html",
+    "industrial": 5.3,
+    "retail": 1.1,
+    "fixedAsset": -7.2,
+    "realEstate": -19.9,
+    "highTechMonthly": 16.7,
+    "industrialProfit": 17.6,
+    "profitPeriod": "2026-07",
+    "cpi": 0.8,
+    "profitSourceUrl": "https://www.stats.gov.cn/sj/zxfb/202608/t20260827_1965126.html"
+  },
+  "chinaHistory": [
+    {
+      "period": "2026-07",
+      "industrial": 5.3,
+      "retail": 1.2,
+      "fixedAsset": -6.7,
+      "realEstate": -19.2,
+      "industrialProfit": 17.6
+    },
+    {
+      "period": "2026-08",
+      "industrial": 5.3,
+      "retail": 1.1,
+      "fixedAsset": -7.2,
+      "realEstate": -19.9,
+      "industrialProfit": 17.6
+    }
+  ],
+  "series": {},
+  "temperature": {}
+}
