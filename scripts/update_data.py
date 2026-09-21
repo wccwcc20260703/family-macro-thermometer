@@ -226,7 +226,7 @@ def tencent_current_amount(symbol: str) -> tuple[str, float]:
     return day, amount
 
 
-def update_market(data: dict) -> None:
+def update_market(data: dict) -> list[str]:
     specs = {
         "us10y": ("171.US10Y", "^TNX", "美国10年期国债收益率", "%", "收益率越高，成长估值压力通常越大"),
         "dollar": ("100.UDI", "DX-Y.NYB", "美元指数", "", "美元走强通常意味着全球流动性偏紧"),
@@ -235,13 +235,21 @@ def update_market(data: dict) -> None:
         "copper": ("101.HG00Y", "HG=F", "COMEX铜", "美元/磅", "用于观察全球制造业需求与周期热度"),
     }
     series = data.setdefault("series", {})
+    warnings = []
     for key, (secid, yahoo_symbol, label, unit, meaning) in specs.items():
         source = "东方财富公开行情"
         try:
             rows = eastmoney_kline(secid)
-        except Exception:
-            rows = yahoo_kline(yahoo_symbol)
-            source = "Yahoo Finance公开行情（备用源）"
+        except Exception as primary_exc:
+            try:
+                rows = yahoo_kline(yahoo_symbol)
+                source = "Yahoo Finance公开行情（备用源）"
+            except Exception as backup_exc:
+                existing = series.get(key) or {}
+                if not existing.get("values"):
+                    raise RuntimeError(f"{label}主备数据源均不可用: {primary_exc}; {backup_exc}") from backup_exc
+                warnings.append(f"{label}暂未取得新值，保留最近成功记录")
+                continue
         series[key] = {
             "label": label,
             "unit": unit,
@@ -260,15 +268,23 @@ def update_market(data: dict) -> None:
         sz_amount = {row["date"]: row["amount"] for row in sz}
         dates = sorted(set(sh_amount) & set(sz_amount))
         values = [{"date": day, "value": round((sh_amount[day] + sz_amount[day]) / 1e12, 3)} for day in dates]
-    except Exception:
-        sh_day, sh_amount = tencent_current_amount("sh000001")
-        sz_day, sz_amount = tencent_current_amount("sz399001")
-        day = min(sh_day, sz_day)
-        previous = (series.get("turnover") or {}).get("values") or []
-        values = [item for item in previous if item.get("date") != day]
-        values.append({"date": day, "value": round((sh_amount + sz_amount) / 1e12, 3)})
-        values = sorted(values, key=lambda item: item["date"])[-260:]
-        turnover_source = "腾讯行情当日成交额；历史数据沿用最近成功记录"
+    except Exception as primary_exc:
+        try:
+            sh_day, sh_amount = tencent_current_amount("sh000001")
+            sz_day, sz_amount = tencent_current_amount("sz399001")
+            day = min(sh_day, sz_day)
+            previous = (series.get("turnover") or {}).get("values") or []
+            values = [item for item in previous if item.get("date") != day]
+            values.append({"date": day, "value": round((sh_amount + sz_amount) / 1e12, 3)})
+            values = sorted(values, key=lambda item: item["date"])[-260:]
+            turnover_source = "腾讯行情当日成交额；历史数据沿用最近成功记录"
+        except Exception as backup_exc:
+            existing = series.get("turnover") or {}
+            values = existing.get("values") or []
+            if not values:
+                raise RuntimeError(f"A股成交额主备数据源均不可用: {primary_exc}; {backup_exc}") from backup_exc
+            turnover_source = existing.get("source") or "最近成功记录"
+            warnings.append("A股成交额暂未取得新值，保留最近成功记录")
     series["turnover"] = {
         "label": "A股成交额",
         "unit": "万亿元",
@@ -276,6 +292,7 @@ def update_market(data: dict) -> None:
         "source": turnover_source,
         "values": values,
     }
+    return warnings
 
 
 def latest(series: dict, key: str, default: float) -> float:
@@ -419,12 +436,13 @@ def main() -> None:
         data = seed
 
     errors = []
+    warnings = []
     try:
         update_nbs(data)
     except Exception as exc:
         errors.append(f"国家统计局更新失败：{exc}")
     try:
-        update_market(data)
+        warnings.extend(update_market(data))
     except Exception as exc:
         errors.append(f"行情更新失败：{exc}")
 
@@ -435,11 +453,12 @@ def main() -> None:
         "updatedAt": now.isoformat(),
         "status": "ok" if not errors else "partial",
         "errors": errors,
+        "warnings": warnings,
         "note": "自动更新公开数据；付费课程原文与附件未发布。",
     }
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     DATA_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"updatedAt": data["meta"]["updatedAt"], "status": data["meta"]["status"], "errors": errors}, ensure_ascii=False))
+    print(json.dumps({"updatedAt": data["meta"]["updatedAt"], "status": data["meta"]["status"], "errors": errors, "warnings": warnings}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
