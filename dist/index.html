@@ -78,11 +78,23 @@
     <section class="panel">
       <div class="section-head">
         <div>
-          <span class="kicker">五个温度来源</span>
+          <span class="kicker">七个温度来源</span>
           <h2>为什么现在是这个温度？</h2>
         </div>
       </div>
       <div class="components" id="components"></div>
+    </section>
+
+    <section class="panel liquidity-panel">
+      <div class="section-head liquidity-heading">
+        <div>
+          <span class="kicker">美元流动性四项核心指标</span>
+          <h2>钱贵不贵、市场缺不缺钱？</h2>
+        </div>
+        <div class="liquidity-score" id="liquidity-score">—</div>
+      </div>
+      <p class="liquidity-summary" id="liquidity-summary">正在读取最新流动性状态…</p>
+      <div class="liquidity-grid" id="liquidity-grid"></div>
     </section>
 
     <section class="panel">
@@ -108,15 +120,14 @@
 
     <section class="method-card">
       <h2>温度计怎么计算</h2>
-      <p>综合分数由利率压力、美元流动性、国内增长、市场资金和通胀压力构成。50分附近代表多空力量大致均衡；分数越高，风险偏好越友好，但超过80分会进入“过热”区，不等于越高越值得追。</p>
+      <p>综合分数由短端利率、10年实际利率、广义美元、NFCI、国内增长、市场资金和通胀压力构成。四个美元流动性指标合计占40%，国内增长与A股资金各占25%，通胀压力占10%。50分附近代表多空力量大致均衡；超过80分进入“过热”区，不等于越高越值得追。</p>
       <p>数据每天自动检查。月度指标尚未公布时，会保留上一期并明确标注，不会用估算值冒充官方数据。</p>
     </section>
   </main>
 
   <footer>
-    <p>仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局；行情曲线来自东方财富公开行情接口。</p>
+    <p>仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
   </footer>
   <script src="app.js" defer></script>
 </body>
 </html>
-

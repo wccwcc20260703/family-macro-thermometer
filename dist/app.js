@@ -100,6 +100,42 @@ function renderComponents(components) {
     </article>`).join('');
 }
 
+function renderLiquidity(liquidity, series) {
+  if (!liquidity?.indicators?.length) return;
+  $('#liquidity-score').innerHTML = `<strong>${fmt(liquidity.score, 0)}</strong><span>/ 100 · ${liquidity.label}</span>`;
+  $('#liquidity-summary').textContent = liquidity.summary;
+  $('#liquidity-grid').innerHTML = liquidity.indicators.map((item) => `
+    <article class="liquidity-card">
+      <div class="liquidity-card-head">
+        <div>
+          <span class="liquidity-state ${item.tone}">${item.status}</span>
+          <h3>${item.name}</h3>
+          <p>${item.meaning}</p>
+        </div>
+        <div class="liquidity-value">
+          <strong>${fmt(item.value, item.key === 'nfci' ? 3 : 2)}</strong><small>${item.unit}</small>
+          <span>${item.date}</span>
+        </div>
+      </div>
+      <p class="liquidity-reading">${item.interpretation}</p>
+      <div class="liquidity-signal opportunity"><span>机会</span><p>${item.opportunity}</p></div>
+      <div class="liquidity-signal risk"><span>风险</span><p>${item.risk}</p></div>
+      <div class="liquidity-chart" id="liquidity-chart-${item.key}"></div>
+      <div class="liquidity-foot"><span>友好度 ${fmt(item.score, 0)}分</span><a href="${series[item.key]?.sourceUrl || '#'}" target="_blank" rel="noopener">FRED 原始数据</a></div>
+    </article>`).join('');
+  const colors = { effr: '#fbbf24', real10y: '#fb7185', broadDollar: '#60a5fa', nfci: '#4ade80' };
+  liquidity.indicators.forEach((item) => {
+    const values = series[item.key]?.values || [];
+    const range = item.key === 'nfci' ? 104 : 180;
+    drawLineChart($(`#liquidity-chart-${item.key}`), values.slice(-range), {
+      height: 150,
+      label: `${item.name}历史曲线`,
+      color: colors[item.key],
+      digits: item.key === 'nfci' ? 2 : 2,
+    });
+  });
+}
+
 function renderMiniCharts(series) {
   const configs = [
     ['turnover', 80, '#5eead4'],
@@ -151,6 +187,7 @@ async function start() {
     renderGauge(data.temperature);
     renderTemperatureChart(data.temperature);
     renderComponents(data.temperature.components);
+    renderLiquidity(data.liquidity, data.series);
     renderMiniCharts(data.series);
     renderChina(data.china);
   } catch (error) {
@@ -161,4 +198,3 @@ async function start() {
 }
 
 start();
-

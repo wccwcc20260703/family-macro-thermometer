@@ -13,9 +13,11 @@ from __future__ import annotations
 
 import base64
 import bisect
+import csv
 import datetime as dt
 import gzip
 import html
+import io
 import json
 import math
 import re
@@ -43,7 +45,7 @@ def fetch_text(url: str, timeout: int = 25, headers: dict | None = None) -> str:
                 return resp.read().decode("utf-8", errors="replace")
         except Exception as exc:
             last_error = exc
-    command = ["curl", "-L", "-sS", "--max-time", str(timeout), "-A", UA]
+    command = ["curl", "--http1.1", "-L", "-sS", "--max-time", str(timeout), "-A", UA]
     for key, value in (headers or {}).items():
         command.extend(["-H", f"{key}: {value}"])
     command.append(url)
@@ -226,6 +228,57 @@ def tencent_current_amount(symbol: str) -> tuple[str, float]:
     return day, amount
 
 
+def fred_series(series_id: str, limit: int = 520) -> list[dict]:
+    url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
+    raw = subprocess.check_output(
+        ["curl", "--http1.1", "-L", "-sS", "--connect-timeout", "5", "--max-time", "20", url],
+        text=True,
+        timeout=25,
+    )
+    rows = []
+    for row in csv.DictReader(io.StringIO(raw)):
+        value = row.get(series_id)
+        if not value or value == ".":
+            continue
+        day = row.get("observation_date") or row.get("DATE")
+        if not day:
+            continue
+        rows.append({"date": day, "value": float(value)})
+    if not rows:
+        raise RuntimeError(f"FRED序列为空: {series_id}")
+    return rows[-limit:]
+
+
+def update_fred_liquidity(data: dict) -> list[str]:
+    specs = {
+        "effr": ("EFFR", "EFFR 有效联邦基金利率", "%", "美元短端资金价格", "每日"),
+        "real10y": ("DFII10", "美国10年实际利率", "%", "长期真实资金成本与成长股折现率", "每日"),
+        "broadDollar": ("DTWEXBGS", "广义美元指数", "2006=100", "美元相对全球主要贸易伙伴货币的强弱", "每日"),
+        "nfci": ("NFCI", "NFCI 金融状况指数", "指数", "美国货币、债券、股票和银行体系的综合松紧", "每周"),
+    }
+    series = data.setdefault("series", {})
+    warnings = []
+    for key, (series_id, label, unit, meaning, frequency) in specs.items():
+        try:
+            rows = fred_series(series_id)
+        except Exception as exc:
+            if not (series.get(key) or {}).get("values"):
+                raise RuntimeError(f"{label}更新失败: {exc}") from exc
+            warnings.append(f"{label}暂未取得新值，保留最近成功记录")
+            continue
+        series[key] = {
+            "label": label,
+            "unit": unit,
+            "meaning": meaning,
+            "frequency": frequency,
+            "source": "FRED（圣路易斯联储）",
+            "sourceUrl": f"https://fred.stlouisfed.org/series/{series_id}",
+            "values": rows,
+        }
+        time.sleep(0.35)
+    return warnings
+
+
 def update_market(data: dict) -> list[str]:
     specs = {
         "us10y": ("171.US10Y", "^TNX", "美国10年期国债收益率", "%", "收益率越高，成长估值压力通常越大"),
@@ -347,25 +400,153 @@ def temperature_label(score: float) -> tuple[str, str, str]:
     return "过热", "锁定收益", "市场很热不代表更安全，应降低追涨并准备分批兑现。"
 
 
+def series_until(series: dict, key: str, day=None) -> list[dict]:
+    values = (series.get(key) or {}).get("values") or []
+    return values if day is None else [item for item in values if item["date"] <= day]
+
+
+def dollar_score(values: list[dict]) -> float:
+    if not values:
+        return 50.0
+    window = values[-260:]
+    current = float(window[-1]["value"])
+    low = min(float(item["value"]) for item in window)
+    high = max(float(item["value"]) for item in window)
+    position = 50.0 if high == low else (current - low) / (high - low) * 100
+    trend = clamp(50 - pct_change(window, 20) * 5)
+    return clamp((100 - position) * 0.7 + trend * 0.3)
+
+
+def liquidity_scores(series: dict, day=None) -> dict:
+    effr_values = series_until(series, "effr", day)
+    real_values = series_until(series, "real10y", day)
+    dollar_values = series_until(series, "broadDollar", day)
+    nfci_values = series_until(series, "nfci", day)
+    effr = float(effr_values[-1]["value"]) if effr_values else 4.0
+    real10y = float(real_values[-1]["value"]) if real_values else 2.0
+    nfci = float(nfci_values[-1]["value"]) if nfci_values else 0.0
+    return {
+        "effr": clamp((6.0 - effr) / 4.5 * 100),
+        "real10y": clamp((3.0 - real10y) / 3.0 * 100),
+        "broadDollar": dollar_score(dollar_values),
+        "nfci": clamp(50 - nfci * 65),
+    }
+
+
+def build_liquidity(data: dict) -> None:
+    series = data["series"]
+    scores = liquidity_scores(series)
+    composite = sum(scores.values()) / len(scores)
+
+    def point(key: str, fallback: float = 0.0) -> tuple[float, str]:
+        values = series_until(series, key)
+        if not values:
+            return fallback, "—"
+        return float(values[-1]["value"]), values[-1]["date"]
+
+    effr, effr_date = point("effr", 4.0)
+    real10y, real_date = point("real10y", 2.0)
+    broad, broad_date = point("broadDollar", 120.0)
+    nfci, nfci_date = point("nfci", 0.0)
+    broad_values = series_until(series, "broadDollar")
+    broad_change = pct_change(broad_values, 20)
+
+    if effr <= 2.5:
+        effr_state = ("偏松", "green", "短端美元资金成本已进入较宽松区间。")
+    elif effr <= 4.0:
+        effr_state = ("中性偏紧", "amber", "较高点有所回落，但还不能视为全面宽松。")
+    else:
+        effr_state = ("偏紧", "red", "短端资金成本仍高，融资与估值都承压。")
+
+    if real10y <= 1.2:
+        real_state = ("友好", "green", "长期真实资金成本较低，对成长估值更友好。")
+    elif real10y <= 2.0:
+        real_state = ("中性偏高", "amber", "折现率仍有压力，需要盈利兑现来消化估值。")
+    else:
+        real_state = ("高位约束", "red", "长期真实利率偏高，高估值和长久期资产更敏感。")
+
+    if broad_change > 2.0:
+        dollar_state = ("明显走强", "red", "美元加速走强，可能收紧全球流动性。")
+    elif broad_change > 0.5:
+        dollar_state = ("温和走强", "amber", "美元有一定上行压力，但尚未形成失控抽水。")
+    else:
+        dollar_state = ("未明显抽水", "green", "美元没有快速走强，全球风险资产少一层压力。")
+
+    if nfci < -0.25:
+        nfci_state = ("金融条件宽松", "green", "金融市场整体仍比长期平均水平宽松。")
+    elif nfci <= 0.25:
+        nfci_state = ("接近中性", "amber", "金融条件没有明显放松，也未显著收紧。")
+    else:
+        nfci_state = ("金融条件收紧", "red", "金融体系整体压力上升，需要优先控制风险。")
+
+    if composite < 35:
+        label = "偏紧"
+        summary = "美元流动性对风险资产形成明显约束，宜提高安全边际。"
+    elif composite < 55:
+        label = "紧中有松"
+        summary = "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。"
+    elif composite < 75:
+        label = "中性偏松"
+        summary = "流动性环境总体友好，但仍需观察利率是否继续回落。"
+    else:
+        label = "宽松"
+        summary = "美元资金与金融条件共同转松，风险偏好通常更容易扩散。"
+
+    data["liquidity"] = {
+        "score": round1(composite),
+        "label": label,
+        "summary": summary,
+        "indicators": [
+            {
+                "key": "effr", "name": "EFFR 有效联邦基金利率", "value": effr, "unit": "%", "date": effr_date,
+                "score": round1(scores["effr"]), "status": effr_state[0], "tone": effr_state[1], "meaning": "美元短端资金价格", "interpretation": effr_state[2],
+                "opportunity": "继续下行意味着现金与融资成本缓解，风险资产估值可获得支撑。",
+                "risk": "若维持高位或重新上行，说明政策利率层面的宽松仍不充分。",
+            },
+            {
+                "key": "real10y", "name": "美国10年实际利率", "value": real10y, "unit": "%", "date": real_date,
+                "score": round1(scores["real10y"]), "status": real_state[0], "tone": real_state[1], "meaning": "长期真实资金成本 / 成长股折现率", "interpretation": real_state[2],
+                "opportunity": "持续回落通常利好黄金、成长股及其他长久期资产。",
+                "risk": "高位或再创新高会压缩高估值资产的容错空间。",
+            },
+            {
+                "key": "broadDollar", "name": "广义美元指数", "value": broad, "unit": "", "date": broad_date,
+                "score": round1(scores["broadDollar"]), "status": dollar_state[0], "tone": dollar_state[1], "meaning": "美元相对全球货币的强弱 / 全球美元压力", "interpretation": dollar_state[2],
+                "opportunity": "美元走弱或平稳时，新兴市场、大宗商品与非美风险资产压力减轻。",
+                "risk": "20日快速升值超过约2%时，需要警惕全球流动性收缩。",
+            },
+            {
+                "key": "nfci", "name": "NFCI 金融状况指数", "value": nfci, "unit": "", "date": nfci_date,
+                "score": round1(scores["nfci"]), "status": nfci_state[0], "tone": nfci_state[1], "meaning": "美国金融体系综合松紧", "interpretation": nfci_state[2],
+                "opportunity": "负值延续意味着市场融资与风险承受力仍有缓冲。",
+                "risk": "一旦快速向0或正值上行，往往比单看政策利率更早暴露压力。",
+            },
+        ],
+    }
+
+
 def build_temperature(data: dict) -> None:
     series = data["series"]
     china = data["china"]
-    us10y = latest(series, "us10y", 5.0)
-    dollar_values = series.get("dollar", {}).get("values", [])
+    liquidity = liquidity_scores(series)
     oil_values = series.get("oil", {}).get("values", [])
     turnover_values = series.get("turnover", {}).get("values", [])
 
-    rate = clamp((6.0 - us10y) * 25)
-    dollar = clamp(50 - pct_change(dollar_values, 20) * 4)
     growth = growth_score(china)
     market = market_score(latest(series, "turnover", 1.8))
     inflation = clamp(55 - pct_change(oil_values, 20) * 2)
-    score = rate * 0.25 + dollar * 0.15 + growth * 0.25 + market * 0.25 + inflation * 0.10
+    score = (
+        liquidity["effr"] * 0.10 + liquidity["real10y"] * 0.10 +
+        liquidity["broadDollar"] * 0.10 + liquidity["nfci"] * 0.10 +
+        growth * 0.25 + market * 0.25 + inflation * 0.10
+    )
 
     label, action, explanation = temperature_label(score)
     components = [
-        {"name": "利率压力", "score": round1(rate), "weight": 25, "reading": f"美国10年期 {us10y:.2f}%"},
-        {"name": "美元流动性", "score": round1(dollar), "weight": 15, "reading": f"20日变化 {pct_change(dollar_values, 20):+.1f}%"},
+        {"name": "短端利率", "score": round1(liquidity["effr"]), "weight": 10, "reading": f"EFFR {latest(series, 'effr', 4.0):.2f}%"},
+        {"name": "真实利率", "score": round1(liquidity["real10y"]), "weight": 10, "reading": f"10年实际利率 {latest(series, 'real10y', 2.0):.2f}%"},
+        {"name": "美元强弱", "score": round1(liquidity["broadDollar"]), "weight": 10, "reading": f"广义美元 {latest(series, 'broadDollar', 120):.2f}"},
+        {"name": "金融松紧", "score": round1(liquidity["nfci"]), "weight": 10, "reading": f"NFCI {latest(series, 'nfci', 0):+.3f}"},
         {"name": "国内增长", "score": round1(growth), "weight": 25, "reading": f"工业 {china['industrial']:+.1f}% / 消费 {china['retail']:+.1f}%"},
         {"name": "市场资金", "score": round1(market), "weight": 25, "reading": f"成交 {latest(series, 'turnover', 0):.2f}万亿元"},
         {"name": "通胀压力", "score": round1(inflation), "weight": 10, "reading": f"油价20日 {pct_change(oil_values, 20):+.1f}%"},
@@ -374,14 +555,15 @@ def build_temperature(data: dict) -> None:
     history = []
     dates = [item["date"] for item in turnover_values]
     for day in dates[-180:]:
-        y = value_on_or_before(series["us10y"]["values"], day, us10y)
-        d_values = [item for item in dollar_values if item["date"] <= day]
+        day_liquidity = liquidity_scores(series, day)
         o_values = [item for item in oil_values if item["date"] <= day]
         t = value_on_or_before(turnover_values, day, latest(series, "turnover", 1.8))
-        r_score = clamp((6.0 - y) * 25)
-        d_score = clamp(50 - pct_change(d_values, 20) * 4)
         i_score = clamp(55 - pct_change(o_values, 20) * 2)
-        day_score = r_score * 0.25 + d_score * 0.15 + growth * 0.25 + market_score(t) * 0.25 + i_score * 0.10
+        day_score = (
+            day_liquidity["effr"] * 0.10 + day_liquidity["real10y"] * 0.10 +
+            day_liquidity["broadDollar"] * 0.10 + day_liquidity["nfci"] * 0.10 +
+            growth * 0.25 + market_score(t) * 0.25 + i_score * 0.10
+        )
         history.append({"date": day, "value": round1(day_score)})
 
     values = [item["value"] for item in history]
@@ -442,11 +624,16 @@ def main() -> None:
     except Exception as exc:
         errors.append(f"国家统计局更新失败：{exc}")
     try:
+        warnings.extend(update_fred_liquidity(data))
+    except Exception as exc:
+        errors.append(f"FRED流动性更新失败：{exc}")
+    try:
         warnings.extend(update_market(data))
     except Exception as exc:
         errors.append(f"行情更新失败：{exc}")
 
     if data.get("series"):
+        build_liquidity(data)
         build_temperature(data)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
