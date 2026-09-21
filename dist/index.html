@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="用公开数据自动更新的家庭宏观温度计，提供曲线、参照物与通俗的机会风险提示。">
+  <meta name="theme-color" content="#0b1220">
+  <title>家庭宏观温度计</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b1220'/%3E%3Cpath d='M8 23a8 8 0 1 1 16 0' fill='none' stroke='%235eead4' stroke-width='3'/%3E%3Cpath d='M16 23l5-7' stroke='%23f8fafc' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='23' r='2.4' fill='%23f8fafc'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">家庭投资参考</p>
+      <h1>宏观温度计</h1>
+    </div>
+    <div class="freshness" id="freshness">正在读取最新数据…</div>
+  </header>
+
+  <main>
+    <section class="hero-grid" aria-label="当前宏观温度">
+      <article class="gauge-card">
+        <div class="section-head">
+          <div>
+            <span class="kicker">综合环境温度</span>
+            <h2 id="temperature-title">—</h2>
+          </div>
+          <span class="status-pill" id="temperature-action">—</span>
+        </div>
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 260 150" role="img" aria-labelledby="gauge-label">
+            <title id="gauge-label">宏观温度分数</title>
+            <path class="gauge-track" d="M30 130 A100 100 0 0 1 230 130" pathLength="100"></path>
+            <path class="gauge-fill" id="gauge-fill" d="M30 130 A100 100 0 0 1 230 130" pathLength="100"></path>
+            <line class="needle" id="gauge-needle" x1="130" y1="130" x2="130" y2="48"></line>
+            <circle class="needle-cap" cx="130" cy="130" r="8"></circle>
+            <text class="score" id="temperature-score" x="130" y="111" text-anchor="middle">—</text>
+            <text class="score-unit" x="130" y="132" text-anchor="middle">/ 100</text>
+          </svg>
+          <div class="gauge-scale"><span>冷</span><span>均衡</span><span>热</span></div>
+        </div>
+        <p class="plain-answer" id="plain-answer">—</p>
+        <div class="reference-row" id="reference-row"></div>
+      </article>
+
+      <article class="decision-card">
+        <span class="kicker">如果只看一分钟</span>
+        <h2 id="decision-title">—</h2>
+        <p id="decision-copy">—</p>
+        <div class="driver-grid">
+          <div class="driver positive"><span>主要支撑</span><strong id="strongest-driver">—</strong></div>
+          <div class="driver negative"><span>主要拖累</span><strong id="weakest-driver">—</strong></div>
+        </div>
+        <div class="action-ladder">
+          <h3>怎么用这个温度</h3>
+          <div class="ladder" id="action-ladder"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <span class="kicker">参照物</span>
+          <h2>温度正在升高还是降低？</h2>
+        </div>
+        <div class="range-buttons" data-chart="temperature-chart">
+          <button class="active" data-range="60">3个月</button>
+          <button data-range="120">6个月</button>
+          <button data-range="260">1年</button>
+        </div>
+      </div>
+      <div class="chart" id="temperature-chart" aria-label="宏观温度历史曲线"></div>
+      <p class="chart-note">分数不是涨跌预测。它回答的是：当前环境更适合防守、精选，还是提高风险预算。</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <span class="kicker">五个温度来源</span>
+          <h2>为什么现在是这个温度？</h2>
+        </div>
+      </div>
+      <div class="components" id="components"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <span class="kicker">关键曲线</span>
+          <h2>看方向，不被单日波动牵着走</h2>
+        </div>
+      </div>
+      <div class="chart-grid" id="chart-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <span class="kicker">中国月度数据</span>
+          <h2>哪些已经更新，哪些仍在等待？</h2>
+        </div>
+      </div>
+      <div class="macro-grid" id="macro-grid"></div>
+      <div class="release-note" id="release-note"></div>
+    </section>
+
+    <section class="method-card">
+      <h2>温度计怎么计算</h2>
+      <p>综合分数由利率压力、美元流动性、国内增长、市场资金和通胀压力构成。50分附近代表多空力量大致均衡；分数越高，风险偏好越友好，但超过80分会进入“过热”区，不等于越高越值得追。</p>
+      <p>数据每天自动检查。月度指标尚未公布时，会保留上一期并明确标注，不会用估算值冒充官方数据。</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局；行情曲线来自东方财富公开行情接口。</p>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
+
