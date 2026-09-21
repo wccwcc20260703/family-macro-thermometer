@@ -1,10 +1,9 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T00:49:20+08:00",
+    "updatedAt": "2026-09-22T01:15:40+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [
-      "美国10年实际利率暂未取得新值，保留最近成功记录",
       "美国10年期国债收益率暂未取得新值，保留最近成功记录",
       "美元指数暂未取得新值，保留最近成功记录",
       "NYMEX原油暂未取得新值，保留最近成功记录",
@@ -14718,45 +14717,94 @@
     "components": [
       {
         "name": "短端利率",
-        "score": 47.1,
-        "weight": 10,
-        "reading": "EFFR 3.88%"
+        "key": "effr",
+        "reading": "EFFR 3.88%",
+        "position": 44.3,
+        "zone": "观察",
+        "tone": "observe",
+        "cautiousLabel": "谨慎 ≥ 4.5%",
+        "boldLabel": "大胆 ≤ 2.5%",
+        "percentile": "近520期原始值第41百分位 · 越低越友好",
+        "interpretation": "短端资金越便宜，现金和融资成本压力越小。",
+        "weight": 10
       },
       {
         "name": "真实利率",
-        "score": 13.0,
-        "weight": 10,
-        "reading": "10年实际利率 2.61%"
+        "key": "real10y",
+        "reading": "10年实际利率 2.61%",
+        "position": 12.1,
+        "zone": "谨慎",
+        "tone": "cautious",
+        "cautiousLabel": "谨慎 ≥ 2.0%",
+        "boldLabel": "大胆 ≤ 1.2%",
+        "percentile": "近520期原始值第100百分位 · 越低越友好",
+        "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
+        "weight": 10
       },
       {
         "name": "美元强弱",
-        "score": 74.1,
-        "weight": 10,
-        "reading": "广义美元 118.21"
+        "key": "broadDollar",
+        "reading": "广义美元 118.21",
+        "position": 64.1,
+        "zone": "观察",
+        "tone": "observe",
+        "cautiousLabel": "谨慎 ≥ 125",
+        "boldLabel": "大胆 ≤ 118",
+        "percentile": "近520期原始值第6百分位 · 越低越友好",
+        "interpretation": "美元越强，全球非美资产通常越容易承受资金压力。",
+        "weight": 10
       },
       {
         "name": "金融松紧",
-        "score": 86.4,
-        "weight": 10,
-        "reading": "NFCI -0.560"
+        "key": "nfci",
+        "reading": "NFCI -0.560",
+        "position": 68.6,
+        "zone": "大胆",
+        "tone": "bold",
+        "cautiousLabel": "谨慎 ≥ 0",
+        "boldLabel": "大胆 ≤ -0.5",
+        "percentile": "近520期原始值第27百分位 · 越低越友好",
+        "interpretation": "NFCI为负代表金融条件比长期平均更宽松。",
+        "weight": 10
       },
       {
         "name": "国内增长",
-        "score": 50.1,
-        "weight": 25,
-        "reading": "工业 +5.3% / 消费 +1.1%"
+        "key": "growth",
+        "reading": "工业 +5.3% / 消费 +1.1%",
+        "position": 40.2,
+        "zone": "观察",
+        "tone": "observe",
+        "cautiousLabel": "谨慎：工业≤4%或消费≤2%",
+        "boldLabel": "大胆：工业≥6%且消费≥5%",
+        "percentile": "月度历史样本仍在积累 · 当前按工业与消费双确认",
+        "interpretation": "增长要看工业和消费是否同时改善，单项走强不算全面复苏。",
+        "weight": 25
       },
       {
         "name": "市场资金",
-        "score": 61.3,
-        "weight": 25,
-        "reading": "成交 2.03万亿元"
+        "key": "turnover",
+        "reading": "A股成交 2.03万亿元",
+        "position": 55.6,
+        "zone": "观察",
+        "tone": "observe",
+        "cautiousLabel": "谨慎 ≤ 1.0万亿",
+        "boldLabel": "大胆 ≥ 2.5万亿",
+        "percentile": "近260期原始值第27百分位 · 越高越友好",
+        "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
+        "weight": 25
       },
       {
         "name": "通胀压力",
-        "score": 37.9,
-        "weight": 10,
-        "reading": "油价20日 +8.6%"
+        "key": "inflation",
+        "reading": "油价20日 +8.6%",
+        "position": 54.3,
+        "zone": "观察",
+        "tone": "observe",
+        "cautiousLabel": "谨慎 ≥ +15%",
+        "boldLabel": "大胆 ≤ +5%",
+        "percentile": "近240期涨幅第72百分位 · 涨得越慢越友好",
+        "interpretation": "油价短期急涨会抬高通胀预期，压缩降息和估值空间。",
+        "weight": 10
       }
     ],
     "history": [

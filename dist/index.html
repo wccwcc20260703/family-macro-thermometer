@@ -86,10 +86,14 @@
     <section class="panel">
       <div class="section-head">
         <div>
-          <span class="kicker">七个温度来源</span>
-          <h2>为什么现在是这个温度？</h2>
+          <span class="kicker">七项决策温度尺</span>
+          <h2>每个指标到哪里，该谨慎还是大胆？</h2>
         </div>
       </div>
+      <div class="component-legend" aria-label="决策温度尺图例">
+        <span class="cautious">谨慎区</span><span class="observe">观察区</span><span class="bold">大胆区</span>
+      </div>
+      <p class="component-intro">所有温度尺统一为“左边谨慎、右边大胆”。圆点是当前原始指标所处位置；下方直接给出风险参考线、机会参考线和历史分位，不再要求你理解内部换算分。</p>
       <div class="components" id="components"></div>
     </section>
 
@@ -127,12 +131,6 @@
       <div class="release-note" id="release-note"></div>
     </section>
 
-    <section class="method-card">
-      <h2>温度计怎么计算</h2>
-      <p>综合分数由短端利率、10年实际利率、广义美元、NFCI、国内增长、市场资金和通胀压力构成。四个美元流动性指标合计占40%，国内增长与A股资金各占25%，通胀压力占10%。50分附近代表多空力量大致均衡；超过80分进入“过热”区，不等于越高越值得追。</p>
-      <p>数据与每日报告计划在北京时间每天08:30自动更新。月度指标尚未公布时，会保留上一期并明确标注，不会用估算值冒充官方数据；重要阈值突破与趋势区间切换会记录为可点击的时间线事件。</p>
-    </section>
-
     <dialog class="event-dialog" id="event-dialog">
       <button class="dialog-close" id="event-dialog-close" type="button" aria-label="关闭">×</button>
       <span class="event-dialog-type" id="event-dialog-type">重要变化</span>
@@ -145,7 +143,7 @@
   </main>
 
   <footer>
-    <p>仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
+    <p>每天08:30自动更新；尚未公布的月度数据会保留上一期并明确标注。仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
   </footer>
   <script src="app.js" defer></script>
 </body>

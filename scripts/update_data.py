@@ -563,14 +563,105 @@ def build_temperature(data: dict) -> None:
     )
 
     label, action, explanation = temperature_label(score)
+    def decision_position(value: float, cautious_line: float, bold_line: float, higher_is_better: bool) -> float:
+        """Map raw values to one shared action scale: cautious 0–35, observe 35–65, bold 65–100."""
+        distance = abs(bold_line - cautious_line) or 1.0
+        if higher_is_better:
+            position = 35 + (value - cautious_line) / distance * 30
+        else:
+            position = 35 + (cautious_line - value) / distance * 30
+        return round1(clamp(position))
+
+    def decision_zone(position: float) -> tuple[str, str]:
+        if position < 35:
+            return "谨慎", "cautious"
+        if position < 65:
+            return "观察", "observe"
+        return "大胆", "bold"
+
+    def history_note(key: str, current: float, higher_is_better: bool, window: int = 520) -> str:
+        values = (series.get(key) or {}).get("values") or []
+        selected = values[-window:]
+        percentile = percentile_rank(selected, current)
+        direction = "越高越友好" if higher_is_better else "越低越友好"
+        return f"近{len(selected)}期原始值第{percentile:.0f}百分位 · {direction}"
+
+    def component(
+        name: str,
+        key: str,
+        reading: str,
+        current: float,
+        cautious_line: float,
+        bold_line: float,
+        higher_is_better: bool,
+        cautious_label: str,
+        bold_label: str,
+        percentile: str,
+        interpretation: str,
+        weight: int,
+    ) -> dict:
+        position = decision_position(current, cautious_line, bold_line, higher_is_better)
+        zone, tone = decision_zone(position)
+        return {
+            "name": name,
+            "key": key,
+            "reading": reading,
+            "position": position,
+            "zone": zone,
+            "tone": tone,
+            "cautiousLabel": cautious_label,
+            "boldLabel": bold_label,
+            "percentile": percentile,
+            "interpretation": interpretation,
+            "weight": weight,
+        }
+
+    effr = latest(series, "effr", 4.0)
+    real10y = latest(series, "real10y", 2.0)
+    broad_dollar = latest(series, "broadDollar", 120.0)
+    nfci = latest(series, "nfci", 0.0)
+    turnover = latest(series, "turnover", 0.0)
+    oil_change20 = pct_change(oil_values, 20)
+
+    oil_change_history = []
+    for idx in range(20, len(oil_values)):
+        start = float(oil_values[idx - 20]["value"])
+        end = float(oil_values[idx]["value"])
+        if start:
+            oil_change_history.append({"date": oil_values[idx]["date"], "value": (end / start - 1) * 100})
+    oil_percentile = percentile_rank(oil_change_history[-260:], oil_change20)
+
+    industrial_position = decision_position(float(china.get("industrial", 0)), 4.0, 6.0, True)
+    retail_position = decision_position(float(china.get("retail", 0)), 2.0, 5.0, True)
+    growth_position = round1((industrial_position + retail_position) / 2)
+    growth_zone, growth_tone = decision_zone(growth_position)
+
     components = [
-        {"name": "短端利率", "score": round1(liquidity["effr"]), "weight": 10, "reading": f"EFFR {latest(series, 'effr', 4.0):.2f}%"},
-        {"name": "真实利率", "score": round1(liquidity["real10y"]), "weight": 10, "reading": f"10年实际利率 {latest(series, 'real10y', 2.0):.2f}%"},
-        {"name": "美元强弱", "score": round1(liquidity["broadDollar"]), "weight": 10, "reading": f"广义美元 {latest(series, 'broadDollar', 120):.2f}"},
-        {"name": "金融松紧", "score": round1(liquidity["nfci"]), "weight": 10, "reading": f"NFCI {latest(series, 'nfci', 0):+.3f}"},
-        {"name": "国内增长", "score": round1(growth), "weight": 25, "reading": f"工业 {china['industrial']:+.1f}% / 消费 {china['retail']:+.1f}%"},
-        {"name": "市场资金", "score": round1(market), "weight": 25, "reading": f"成交 {latest(series, 'turnover', 0):.2f}万亿元"},
-        {"name": "通胀压力", "score": round1(inflation), "weight": 10, "reading": f"油价20日 {pct_change(oil_values, 20):+.1f}%"},
+        component("短端利率", "effr", f"EFFR {effr:.2f}%", effr, 4.5, 2.5, False,
+                  "谨慎 ≥ 4.5%", "大胆 ≤ 2.5%", history_note("effr", effr, False),
+                  "短端资金越便宜，现金和融资成本压力越小。", 10),
+        component("真实利率", "real10y", f"10年实际利率 {real10y:.2f}%", real10y, 2.0, 1.2, False,
+                  "谨慎 ≥ 2.0%", "大胆 ≤ 1.2%", history_note("real10y", real10y, False),
+                  "真实利率越高，成长股和长久期资产的估值压力越大。", 10),
+        component("美元强弱", "broadDollar", f"广义美元 {broad_dollar:.2f}", broad_dollar, 125.0, 118.0, False,
+                  "谨慎 ≥ 125", "大胆 ≤ 118", history_note("broadDollar", broad_dollar, False),
+                  "美元越强，全球非美资产通常越容易承受资金压力。", 10),
+        component("金融松紧", "nfci", f"NFCI {nfci:+.3f}", nfci, 0.0, -0.5, False,
+                  "谨慎 ≥ 0", "大胆 ≤ -0.5", history_note("nfci", nfci, False),
+                  "NFCI为负代表金融条件比长期平均更宽松。", 10),
+        {
+            "name": "国内增长", "key": "growth", "reading": f"工业 {china['industrial']:+.1f}% / 消费 {china['retail']:+.1f}%",
+            "position": growth_position, "zone": growth_zone, "tone": growth_tone,
+            "cautiousLabel": "谨慎：工业≤4%或消费≤2%", "boldLabel": "大胆：工业≥6%且消费≥5%",
+            "percentile": "月度历史样本仍在积累 · 当前按工业与消费双确认",
+            "interpretation": "增长要看工业和消费是否同时改善，单项走强不算全面复苏。", "weight": 25,
+        },
+        component("市场资金", "turnover", f"A股成交 {turnover:.2f}万亿元", turnover, 1.0, 2.5, True,
+                  "谨慎 ≤ 1.0万亿", "大胆 ≥ 2.5万亿", history_note("turnover", turnover, True, 260),
+                  "成交越活跃，风险偏好和市场承接力通常越强。", 25),
+        component("通胀压力", "inflation", f"油价20日 {oil_change20:+.1f}%", oil_change20, 15.0, 5.0, False,
+                  "谨慎 ≥ +15%", "大胆 ≤ +5%", f"近{len(oil_change_history[-260:])}期涨幅第{oil_percentile:.0f}百分位 · 涨得越慢越友好",
+                  "油价短期急涨会抬高通胀预期，压缩降息和估值空间。", 10),
     ]
 
     history = []
@@ -627,8 +718,8 @@ def build_temperature(data: dict) -> None:
         trend_label, trend_tone = "向右但已过热", "cooling"
         trend_message = "趋势仍向右，但已进入过热区；这时向右代表拥挤和追高风险，而不是新增机会。"
 
-    strongest = max(components, key=lambda item: item["score"])
-    weakest = min(components, key=lambda item: item["score"])
+    strongest = max(components, key=lambda item: item["position"])
+    weakest = min(components, key=lambda item: item["position"])
     data["temperature"] = {
         "score": round1(score),
         "label": label,

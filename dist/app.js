@@ -214,11 +214,24 @@ function renderDailyReport(report) {
 
 function renderComponents(components) {
   $('#components').innerHTML = components.map((item) => `
-    <article class="component">
-      <div class="component-head"><span>${item.name}</span><strong>${fmt(item.score, 0)}</strong></div>
-      <div class="bar"><span style="width:${clamp(item.score, 0, 100)}%;background:${temperatureColor(item.score)}"></span></div>
-      <p>${item.reading}</p>
-      <small>权重 ${item.weight}%</small>
+    <article class="component decision-thermometer ${item.tone || 'observe'}">
+      <div class="component-head">
+        <div><span>${item.name}</span><strong>${item.reading}</strong></div>
+        <b class="component-zone">${item.zone || '观察'}</b>
+      </div>
+      <div class="decision-scale" role="img" aria-label="${item.name}：当前处于${item.zone || '观察'}区">
+        <div class="decision-zones"><i></i><i></i><i></i></div>
+        <span class="decision-threshold cautious-threshold" aria-hidden="true"></span>
+        <span class="decision-threshold bold-threshold" aria-hidden="true"></span>
+        <span class="decision-marker" style="left:${clamp(item.position ?? item.score ?? 50, 2, 98)}%"><b>当前</b></span>
+      </div>
+      <div class="decision-labels"><span>谨慎</span><span>观察</span><span>大胆</span></div>
+      <div class="threshold-values">
+        <span class="cautious">${item.cautiousLabel || '谨慎线 ≤ 35'}</span>
+        <span class="bold">${item.boldLabel || '大胆线 ≥ 65'}</span>
+      </div>
+      <p class="component-interpretation">${item.interpretation || ''}</p>
+      <small>${item.percentile || '等待历史分位数据'}</small>
     </article>`).join('');
 }
 
