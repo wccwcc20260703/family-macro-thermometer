@@ -236,6 +236,42 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .mini-chart svg { width: 100%; height: 150px; }
 .mini-chart .line-path { stroke: var(--blue); stroke-width: 2.4; }
 
+.china-report { margin-bottom: 24px; padding: clamp(18px, 3vw, 26px); border: 1px solid rgba(94,234,212,.24); border-radius: 19px; background: linear-gradient(145deg, rgba(94,234,212,.055), rgba(96,165,250,.025)); }
+.china-report-head { display: flex; align-items: start; justify-content: space-between; gap: 18px; }
+.china-report-head h3 { margin: 7px 0 0; font-size: clamp(1.25rem, 2.4vw, 1.8rem); }
+.china-stance { display: inline-flex; padding: 4px 9px; border-radius: 999px; color: var(--amber); background: rgba(251,191,36,.12); font-size: .72rem; font-weight: 780; }
+.china-report.positive .china-stance { color: var(--green); background: rgba(74,222,128,.11); }
+.china-report.negative .china-stance { color: var(--red); background: rgba(251,113,133,.11); }
+.china-period { color: var(--muted); font-size: .72rem; white-space: nowrap; }
+.china-summary { max-width: 980px; margin: 17px 0 14px; color: #dbe5ef; font-size: .94rem; }
+.china-contradiction { padding: 13px 15px; border-left: 3px solid var(--amber); background: rgba(251,191,36,.055); }
+.china-contradiction > span, .china-contradiction > small { display: block; color: var(--muted); font-size: .7rem; }
+.china-contradiction > strong { display: block; margin: 3px 0 5px; font-size: .86rem; }
+.china-signal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 14px; }
+.china-signal { padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.02); }
+.china-signal > div { display: flex; justify-content: space-between; gap: 10px; }
+.china-signal > div span { color: var(--muted); font-size: .72rem; }
+.china-signal > div b { font-size: .7rem; }
+.china-signal.positive > div b { color: var(--green); }
+.china-signal.negative > div b { color: var(--red); }
+.china-signal.mixed > div b { color: var(--amber); }
+.china-signal > strong { display: block; margin: 5px 0 4px; font-size: .84rem; }
+.china-signal > p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.55; }
+.china-report > h4 { margin: 21px 0 9px; color: #dce6f0; font-size: .86rem; }
+.china-asset-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.china-asset { padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.018); }
+.china-asset > span { color: var(--mint); font-size: .68rem; }
+.china-asset > strong { display: block; margin: 3px 0 5px; font-size: .8rem; }
+.china-asset > p { margin: 0; color: var(--muted); font-size: .7rem; line-height: 1.5; }
+.china-watch { margin-top: 15px; padding: 13px 15px; border-radius: 13px; background: rgba(96,165,250,.055); }
+.china-watch > strong { display: block; margin-bottom: 7px; font-size: .8rem; }
+.china-watch > div { display: grid; grid-template-columns: 20px 80px 1fr; gap: 5px; align-items: start; color: var(--muted); font-size: .72rem; }
+.china-watch > div + div { margin-top: 5px; }
+.china-watch i { color: var(--muted); font-style: normal; }
+.china-watch .met i { color: var(--green); }
+.china-watch span { color: #d7e2ed; font-weight: 700; }
+.china-watch p { margin: 0; }
+.macro-data-title { margin: 0 0 10px; color: var(--muted); font-size: .82rem; }
 .macro-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .macro-card { padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.022); }
 .macro-card .label { color: var(--muted); font-size: .82rem; }
@@ -262,6 +298,7 @@ footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; }
   .components { grid-template-columns: 1fr; }
+  .china-asset-grid { grid-template-columns: 1fr; }
   .macro-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -275,6 +312,9 @@ footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
   .liquidity-card-head { flex-direction: column; }
   .liquidity-mini-table { width: 100%; }
   .report-evidence { grid-template-columns: 1fr; }
+  .china-report-head { flex-direction: column; gap: 8px; }
+  .china-signal-grid { grid-template-columns: 1fr; }
+  .china-watch > div { grid-template-columns: 20px 65px 1fr; }
   .timeline-controls { align-items: flex-start; flex-direction: column; }
   .components { grid-template-columns: 1fr; }
   .threshold-values { flex-direction: column; gap: 2px; }

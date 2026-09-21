@@ -1,9 +1,10 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T01:15:40+08:00",
+    "updatedAt": "2026-09-22T01:30:12+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [
+      "EFFR 有效联邦基金利率暂未取得新值，保留最近成功记录",
       "美国10年期国债收益率暂未取得新值，保留最近成功记录",
       "美元指数暂未取得新值，保留最近成功记录",
       "NYMEX原油暂未取得新值，保留最近成功记录",
@@ -24,7 +25,17 @@
     "industrialProfit": 17.6,
     "profitPeriod": "2026-07",
     "cpi": 0.8,
-    "profitSourceUrl": "https://www.stats.gov.cn/sj/zxfb/202608/t20260827_1965126.html"
+    "profitSourceUrl": "https://www.stats.gov.cn/sj/zxfb/202608/t20260827_1965126.html",
+    "industrialMonthly": 5.2,
+    "industrialMonthlyChange": 0.7,
+    "retailMonthly": 0.4,
+    "fixedAssetExRealEstate": -4.2,
+    "realEstateSales": -13.0,
+    "coreCpi": 1.0,
+    "ppi": 3.8,
+    "exportsMonthly": 18.6,
+    "manufacturingPmi": 49.8,
+    "unemployment": 5.3
   },
   "chinaHistory": [
     {
@@ -15948,5 +15959,98 @@
         "tone": "positive"
       }
     ]
+  },
+  "chinaReport": {
+    "period": "2026-08",
+    "releaseDate": "2026年9月15日",
+    "stance": "结构性复苏",
+    "tone": "mixed",
+    "title": "生产强、需求弱：更像结构行情，不是全面复苏",
+    "summary": "供给端明显强于需求端：当月工业增加值 +5.2%，高技术制造业 +16.7%，但当月社零只有 +0.4%，固定资产投资累计 -7.2%，房地产开发投资 -19.9%。这组数据说明增长主要由先进制造和外需支撑，居民与企业的广泛需求尚未形成共振。",
+    "contradiction": "强项是高技术制造业 +16.7% 和出口 +18.6%；弱项是消费累计 +1.1%、剔除地产后的投资 -4.2% 以及地产销售额 -13.0%。",
+    "trendSummary": "较上期：工业持平；消费走弱0.1个百分点；固投走弱0.5个百分点；地产投资走弱0.7个百分点。",
+    "signals": [
+      {
+        "label": "生产与产业升级",
+        "status": "有韧性",
+        "tone": "positive",
+        "data": "工业当月 +5.2% · 高技术制造 +16.7%",
+        "analysis": "工业仍在扩张，高技术制造明显快于整体，说明产业升级是当前最清晰的增长支点。"
+      },
+      {
+        "label": "居民消费",
+        "status": "偏弱",
+        "tone": "negative",
+        "data": "社零当月 +0.4% · 累计 +1.1%",
+        "analysis": "消费扩张速度偏低，家庭部门的信心与收入预期仍不足，暂不能把生产强势等同于内需全面修复。"
+      },
+      {
+        "label": "固定资产投资",
+        "status": "收缩",
+        "tone": "negative",
+        "data": "整体 -7.2% · 剔除地产 -4.2%",
+        "analysis": "剔除房地产后仍为负，说明投资偏弱并不只是地产问题，企业扩产和地方项目仍需政策与订单确认。"
+      },
+      {
+        "label": "房地产",
+        "status": "主要拖累",
+        "tone": "negative",
+        "data": "开发投资 -19.9% · 销售额 -13.0%",
+        "analysis": "开发投资和销售仍深度收缩，地产通过财富效应、信用和地方财政继续压制总需求。"
+      },
+      {
+        "label": "企业景气与利润",
+        "status": "利润修复、景气分化",
+        "tone": "mixed",
+        "data": "制造业PMI 49.8 · 工业利润 +17.6%（至2026-07）",
+        "analysis": "利润数据改善，但PMI仍低于50，说明盈利修复尚未扩散到足够多的企业；同时利润数据比月度运行数据滞后一期。"
+      },
+      {
+        "label": "价格与就业",
+        "status": "通胀温和",
+        "tone": "neutral",
+        "data": "CPI +0.8% · 核心CPI +1.0% · PPI +3.8% · 失业率 5.3%",
+        "analysis": "居民端通胀仍温和，政策重心仍可偏向稳增长；但PPI回升意味着上游成本正在抬头，需要留意利润是否被成本侵蚀。"
+      }
+    ],
+    "assetImplications": [
+      {
+        "label": "权益市场",
+        "tone": "mixed",
+        "title": "结构机会大于全面机会",
+        "text": "高技术制造、出口和利润修复提供支撑；消费、投资和地产仍弱，暂不足以确认所有行业盈利同步上行。"
+      },
+      {
+        "label": "利率与债券",
+        "tone": "neutral",
+        "title": "内需弱提供支撑，价格回升形成制约",
+        "text": "消费和投资偏弱通常有利于宽松预期，但PPI回升后，不宜只依据弱需求做单方向判断。"
+      },
+      {
+        "label": "家庭决策",
+        "tone": "neutral",
+        "title": "分批、分结构，不把生产强等同全面复苏",
+        "text": "在消费与地产出现连续改善前，风险预算更适合逐步增加，并优先验证盈利、现金流与订单。"
+      }
+    ],
+    "watchPoints": [
+      {
+        "label": "内需确认",
+        "condition": "社零当月与累计增速同时回到3%以上",
+        "met": false
+      },
+      {
+        "label": "投资止跌",
+        "condition": "剔除地产投资转正，地产投资降幅连续收窄",
+        "met": false
+      },
+      {
+        "label": "景气扩散",
+        "condition": "制造业PMI回到50以上，工业与消费同时改善",
+        "met": false
+      }
+    ],
+    "sourceUrl": "https://www.stats.gov.cn/sj/zxfb/202609/t20260915_1965307.html",
+    "profitSourceUrl": "https://www.stats.gov.cn/sj/zxfb/202608/t20260827_1965126.html"
   }
 }

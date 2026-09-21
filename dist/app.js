@@ -300,7 +300,35 @@ function renderMiniCharts(series) {
   });
 }
 
-function renderChina(china) {
+function renderChina(china, report) {
+  if (report) {
+    $('#china-analysis').innerHTML = `
+      <article class="china-report ${report.tone || 'neutral'}">
+        <div class="china-report-head">
+          <div><span class="china-stance">${report.stance}</span><h3>${report.title}</h3></div>
+          <span class="china-period">${report.period} · ${report.releaseDate || '官方数据'}</span>
+        </div>
+        <p class="china-summary">${report.summary}</p>
+        <div class="china-contradiction"><span>核心矛盾</span><strong>${report.contradiction}</strong><small>${report.trendSummary}</small></div>
+        <div class="china-signal-grid">
+          ${report.signals.map((item) => `
+            <section class="china-signal ${item.tone}">
+              <div><span>${item.label}</span><b>${item.status}</b></div>
+              <strong>${item.data}</strong>
+              <p>${item.analysis}</p>
+            </section>`).join('')}
+        </div>
+        <h4>对家庭资产判断意味着什么</h4>
+        <div class="china-asset-grid">
+          ${report.assetImplications.map((item) => `
+            <section class="china-asset ${item.tone}"><span>${item.label}</span><strong>${item.title}</strong><p>${item.text}</p></section>`).join('')}
+        </div>
+        <div class="china-watch">
+          <strong>下一步只看三个确认点</strong>
+          ${report.watchPoints.map((item) => `<div class="${item.met ? 'met' : ''}"><i>${item.met ? '✓' : '○'}</i><span>${item.label}</span><p>${item.condition}</p></div>`).join('')}
+        </div>
+      </article>`;
+  }
   const cards = [
     ['工业增加值', china.industrial, '1月至当前月份累计同比', '生产韧性'],
     ['社会消费品零售', china.retail, '1月至当前月份累计同比', '内需温度'],
@@ -333,7 +361,7 @@ async function start() {
     renderComponents(data.temperature.components);
     renderLiquidity(data.liquidity, data.series);
     renderMiniCharts(data.series);
-    renderChina(data.china);
+    renderChina(data.china, data.chinaReport);
   } catch (error) {
     $('#freshness').textContent = '数据读取失败，请稍后刷新';
     $('#plain-answer').textContent = '页面框架正常，但本次没有读到数据文件。';

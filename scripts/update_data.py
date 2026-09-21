@@ -76,13 +76,23 @@ def fallback_data() -> dict:
             "releaseDate": "2026-09-15",
             "sourceUrl": "https://www.stats.gov.cn/sj/zxfb/202609/t20260915_1965307.html",
             "industrial": 5.3,
+            "industrialMonthly": 5.2,
+            "industrialMonthlyChange": 0.7,
             "retail": 1.1,
+            "retailMonthly": 0.4,
             "fixedAsset": -7.2,
+            "fixedAssetExRealEstate": -4.2,
             "realEstate": -19.9,
+            "realEstateSales": -13.0,
             "highTechMonthly": 16.7,
             "industrialProfit": 17.6,
             "profitPeriod": "2026-07",
             "cpi": 0.8,
+            "coreCpi": 1.0,
+            "ppi": 3.8,
+            "manufacturingPmi": 49.8,
+            "unemployment": 5.3,
+            "exportsMonthly": 18.6,
         },
         "chinaHistory": [
             {"period": "2026-07", "industrial": 5.3, "retail": 1.2, "fixedAsset": -6.7, "realEstate": -19.2, "industrialProfit": 17.6},
@@ -133,10 +143,27 @@ def update_nbs(data: dict) -> None:
     current["releaseDate"] = release_match.group(0) if release_match else current.get("releaseDate")
     current["sourceUrl"] = summary_url
     current["industrial"] = signed_value(text, rf"1[—－-]{month}月份，?规模以上工业增加值同比(增长|下降)([\d.]+)%", current["industrial"])
+    current["industrialMonthly"] = signed_value(text, rf"(?:^|。){month}月份，?全国规模以上工业增加值同比(增长|下降)([\d.]+)%", current.get("industrialMonthly", current["industrial"]))
+    acceleration = re.search(rf"(?:^|。){month}月份，?全国规模以上工业增加值同比[^。；]*?比上月(加快|回落)([\d.]+)个百分点", text)
+    if acceleration:
+        current["industrialMonthlyChange"] = float(acceleration.group(2)) * (1 if acceleration.group(1) == "加快" else -1)
     current["retail"] = signed_value(text, rf"1[—－-]{month}月份，?社会消费品零售总额[^。；]*?同比(增长|下降)([\d.]+)%", current["retail"])
+    current["retailMonthly"] = signed_value(text, rf"(?:^|。){month}月份，?社会消费品零售总额\d+亿元，?同比(增长|下降)([\d.]+)%", current.get("retailMonthly", current["retail"]))
     current["fixedAsset"] = signed_value(text, rf"1[—－-]{month}月份，?全国固定资产投资（不含农户）[^。；]*?同比(增长|下降)([\d.]+)%", current["fixedAsset"])
+    current["fixedAssetExRealEstate"] = signed_value(text, r"扣除房地产开发的固定资产投资(增长|下降)([\d.]+)%", current.get("fixedAssetExRealEstate", current["fixedAsset"]))
     current["realEstate"] = signed_value(text, rf"1[—－-]{month}月份，?全国房地产开发投资[^。；]*?同比(增长|下降)([\d.]+)%", current["realEstate"])
+    current["realEstateSales"] = signed_value(text, r"新建商品房销售额\d+亿元，?(增长|下降)([\d.]+)%", current.get("realEstateSales", current["realEstate"]))
     current["highTechMonthly"] = signed_value(text, r"高技术制造业增加值(增长|下降)([\d.]+)%", current["highTechMonthly"])
+    current["coreCpi"] = signed_value(text, r"核心CPI同比(上涨|下降)([\d.]+)%", current.get("coreCpi", current.get("cpi", 0.0)))
+    current["ppi"] = signed_value(text, rf"{month}月份，?全国工业生产者出厂价格同比(上涨|下降)([\d.]+)%", current.get("ppi", 0.0))
+    current["exportsMonthly"] = signed_value(text, r"其中，?出口\d+亿元，?(增长|下降)([\d.]+)%", current.get("exportsMonthly", 0.0))
+
+    pmi_match = re.search(rf"{month}月份，?制造业采购经理指数为([\d.]+)%", text)
+    if pmi_match:
+        current["manufacturingPmi"] = float(pmi_match.group(1))
+    unemployment_match = re.search(rf"{month}月份，?全国城镇调查失业率为([\d.]+)%", text)
+    if unemployment_match:
+        current["unemployment"] = float(unemployment_match.group(1))
 
     profit_release = next(((href, title) for href, title in releases if "规模以上工业企业利润" in title), None)
     if profit_release:
@@ -860,6 +887,131 @@ def build_timeline_events(data: dict) -> None:
     data["timelineEvents"] = events
 
 
+def build_china_report(data: dict) -> None:
+    china = data["china"]
+    history = sorted(data.get("chinaHistory") or [], key=lambda item: item.get("period", ""))
+    previous = next((item for item in reversed(history) if item.get("period", "") < china.get("period", "")), None)
+
+    industrial = float(china.get("industrial", 0))
+    industrial_monthly = float(china.get("industrialMonthly", industrial))
+    retail = float(china.get("retail", 0))
+    retail_monthly = float(china.get("retailMonthly", retail))
+    fixed_asset = float(china.get("fixedAsset", 0))
+    fixed_asset_ex_property = float(china.get("fixedAssetExRealEstate", fixed_asset))
+    real_estate = float(china.get("realEstate", 0))
+    property_sales = float(china.get("realEstateSales", real_estate))
+    high_tech = float(china.get("highTechMonthly", 0))
+    profit = float(china.get("industrialProfit", 0))
+    cpi = float(china.get("cpi", 0))
+    core_cpi = float(china.get("coreCpi", cpi))
+    ppi = float(china.get("ppi", 0))
+    pmi = float(china.get("manufacturingPmi", 50))
+    unemployment = float(china.get("unemployment", 0))
+    exports = float(china.get("exportsMonthly", 0))
+
+    production_strong = industrial_monthly >= 5 and high_tech >= 8
+    demand_weak = retail < 3 or retail_monthly < 2
+    investment_weak = fixed_asset < 0
+    property_drag = real_estate <= -10
+    if production_strong and demand_weak and investment_weak:
+        stance = "结构性复苏"
+        tone = "mixed"
+        title = "生产强、需求弱：更像结构行情，不是全面复苏"
+    elif retail >= 4 and fixed_asset >= 2 and industrial >= 5:
+        stance = "广泛复苏"
+        tone = "positive"
+        title = "生产、消费和投资形成共振，复苏正在扩散"
+    elif industrial < 4 and retail < 2 and fixed_asset < 0:
+        stance = "需求降温"
+        tone = "negative"
+        title = "生产与内需同时偏弱，防守仍比扩张重要"
+    else:
+        stance = "分化运行"
+        tone = "neutral"
+        title = "不同部门方向不一，需要等待更广泛的数据确认"
+
+    def change_text(key: str, label: str) -> str | None:
+        if not previous or key not in previous:
+            return None
+        delta = float(china.get(key, 0)) - float(previous.get(key, 0))
+        if abs(delta) < 0.05:
+            return f"{label}持平"
+        return f"{label}{'改善' if delta > 0 else '走弱'}{abs(delta):.1f}个百分点"
+
+    changes = [item for item in [
+        change_text("industrial", "工业"),
+        change_text("retail", "消费"),
+        change_text("fixedAsset", "固投"),
+        change_text("realEstate", "地产投资"),
+    ] if item]
+    trend_summary = "较上期：" + "；".join(changes) + "。" if changes else "历史月度样本仍在积累，暂不对单月方向做过度外推。"
+
+    summary = (
+        f"供给端明显强于需求端：当月工业增加值 {industrial_monthly:+.1f}%，高技术制造业 {high_tech:+.1f}%，"
+        f"但当月社零只有 {retail_monthly:+.1f}%，固定资产投资累计 {fixed_asset:+.1f}%，房地产开发投资 {real_estate:+.1f}%。"
+        "这组数据说明增长主要由先进制造和外需支撑，居民与企业的广泛需求尚未形成共振。"
+    )
+    contradiction = (
+        f"强项是高技术制造业 {high_tech:+.1f}% 和出口 {exports:+.1f}%；"
+        f"弱项是消费累计 {retail:+.1f}%、剔除地产后的投资 {fixed_asset_ex_property:+.1f}% 以及地产销售额 {property_sales:+.1f}%。"
+    )
+
+    data["chinaReport"] = {
+        "period": china.get("period"),
+        "releaseDate": china.get("releaseDate"),
+        "stance": stance,
+        "tone": tone,
+        "title": title,
+        "summary": summary,
+        "contradiction": contradiction,
+        "trendSummary": trend_summary,
+        "signals": [
+            {
+                "label": "生产与产业升级", "status": "有韧性" if production_strong else "待确认", "tone": "positive" if production_strong else "neutral",
+                "data": f"工业当月 {industrial_monthly:+.1f}% · 高技术制造 {high_tech:+.1f}%",
+                "analysis": "工业仍在扩张，高技术制造明显快于整体，说明产业升级是当前最清晰的增长支点。" if production_strong else "生产端尚未形成稳定扩张，需要继续观察工业和高技术制造能否同步改善。",
+            },
+            {
+                "label": "居民消费", "status": "偏弱" if demand_weak else "改善", "tone": "negative" if demand_weak else "positive",
+                "data": f"社零当月 {retail_monthly:+.1f}% · 累计 {retail:+.1f}%",
+                "analysis": "消费扩张速度偏低，家庭部门的信心与收入预期仍不足，暂不能把生产强势等同于内需全面修复。" if demand_weak else "消费增速已回到较健康区间，生产改善正向居民需求扩散。",
+            },
+            {
+                "label": "固定资产投资", "status": "收缩" if investment_weak else "扩张", "tone": "negative" if investment_weak else "positive",
+                "data": f"整体 {fixed_asset:+.1f}% · 剔除地产 {fixed_asset_ex_property:+.1f}%",
+                "analysis": "剔除房地产后仍为负，说明投资偏弱并不只是地产问题，企业扩产和地方项目仍需政策与订单确认。" if fixed_asset_ex_property < 0 else "非地产投资保持扩张，说明实体资本开支已有一定支撑。",
+            },
+            {
+                "label": "房地产", "status": "主要拖累" if property_drag else "拖累缓和", "tone": "negative" if property_drag else "neutral",
+                "data": f"开发投资 {real_estate:+.1f}% · 销售额 {property_sales:+.1f}%",
+                "analysis": "开发投资和销售仍深度收缩，地产通过财富效应、信用和地方财政继续压制总需求。" if property_drag else "地产拖累正在减轻，但仍需销售、价格和投资连续改善才能确认筑底。",
+            },
+            {
+                "label": "企业景气与利润", "status": "利润修复、景气分化", "tone": "mixed",
+                "data": f"制造业PMI {pmi:.1f} · 工业利润 {profit:+.1f}%（至{china.get('profitPeriod', '—')}）",
+                "analysis": "利润数据改善，但PMI仍低于50，说明盈利修复尚未扩散到足够多的企业；同时利润数据比月度运行数据滞后一期。" if pmi < 50 else "PMI回到扩张区间并伴随利润改善，企业景气的广度正在增强。",
+            },
+            {
+                "label": "价格与就业", "status": "通胀温和", "tone": "neutral",
+                "data": f"CPI {cpi:+.1f}% · 核心CPI {core_cpi:+.1f}% · PPI {ppi:+.1f}% · 失业率 {unemployment:.1f}%",
+                "analysis": "居民端通胀仍温和，政策重心仍可偏向稳增长；但PPI回升意味着上游成本正在抬头，需要留意利润是否被成本侵蚀。",
+            },
+        ],
+        "assetImplications": [
+            {"label": "权益市场", "tone": "mixed", "title": "结构机会大于全面机会", "text": "高技术制造、出口和利润修复提供支撑；消费、投资和地产仍弱，暂不足以确认所有行业盈利同步上行。"},
+            {"label": "利率与债券", "tone": "neutral", "title": "内需弱提供支撑，价格回升形成制约", "text": "消费和投资偏弱通常有利于宽松预期，但PPI回升后，不宜只依据弱需求做单方向判断。"},
+            {"label": "家庭决策", "tone": "neutral", "title": "分批、分结构，不把生产强等同全面复苏", "text": "在消费与地产出现连续改善前，风险预算更适合逐步增加，并优先验证盈利、现金流与订单。"},
+        ],
+        "watchPoints": [
+            {"label": "内需确认", "condition": "社零当月与累计增速同时回到3%以上", "met": retail_monthly >= 3 and retail >= 3},
+            {"label": "投资止跌", "condition": "剔除地产投资转正，地产投资降幅连续收窄", "met": fixed_asset_ex_property > 0 and real_estate > -10},
+            {"label": "景气扩散", "condition": "制造业PMI回到50以上，工业与消费同时改善", "met": pmi >= 50 and industrial >= 5 and retail >= 3},
+        ],
+        "sourceUrl": china.get("sourceUrl"),
+        "profitSourceUrl": china.get("profitSourceUrl"),
+    }
+
+
 def build_daily_report(data: dict) -> None:
     series = data["series"]
     temperature = data["temperature"]
@@ -956,6 +1108,7 @@ def main() -> None:
         build_liquidity(data)
         build_temperature(data)
         build_timeline_events(data)
+        build_china_report(data)
         build_daily_report(data)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
