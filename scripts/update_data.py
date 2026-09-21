@@ -11,8 +11,10 @@ dashboard records which source failed during this run.
 
 from __future__ import annotations
 
+import base64
 import bisect
 import datetime as dt
+import gzip
 import html
 import json
 import math
@@ -26,6 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "dist" / "data.json"
+SEED_PATH = ROOT / "scripts" / "seed_data.json.gz.b64"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 
 
@@ -188,38 +191,89 @@ def eastmoney_kline(secid: str, limit: int = 260) -> list[dict]:
     return result
 
 
+def yahoo_kline(symbol: str, limit: int = 260) -> list[dict]:
+    encoded = urllib.parse.quote(symbol, safe="")
+    raw = fetch_text(
+        f"https://query1.finance.yahoo.com/v8/finance/chart/{encoded}?range=1y&interval=1d",
+        headers={"Referer": "https://finance.yahoo.com/"},
+    )
+    payload = json.loads(raw)
+    result = payload["chart"]["result"][0]
+    timestamps = result.get("timestamp") or []
+    closes = ((result.get("indicators") or {}).get("quote") or [{}])[0].get("close") or []
+    rows = []
+    for stamp, close in zip(timestamps, closes):
+        if close is None:
+            continue
+        day = dt.datetime.fromtimestamp(stamp, tz=dt.timezone.utc).date().isoformat()
+        rows.append({"date": day, "value": float(close), "amount": 0.0})
+    if not rows:
+        raise RuntimeError(f"Yahoo行情序列为空: {symbol}")
+    return rows[-limit:]
+
+
+def tencent_current_amount(symbol: str) -> tuple[str, float]:
+    params = urllib.parse.urlencode({"param": f"{symbol},day,,,5,qfq"})
+    raw = fetch_text(
+        f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?{params}",
+        headers={"Referer": "https://gu.qq.com/"},
+    )
+    payload = json.loads(raw)
+    quote = payload["data"][symbol]["qt"][symbol]
+    day = quote[30][:8]
+    day = f"{day[:4]}-{day[4:6]}-{day[6:8]}"
+    amount = float(quote[35].split("/")[2])
+    return day, amount
+
+
 def update_market(data: dict) -> None:
     specs = {
-        "us10y": ("171.US10Y", "美国10年期国债收益率", "%", "收益率越高，成长估值压力通常越大"),
-        "dollar": ("100.UDI", "美元指数", "", "美元走强通常意味着全球流动性偏紧"),
-        "oil": ("102.CL00Y", "NYMEX原油", "美元/桶", "油价快速上涨会增加通胀与利率压力"),
-        "gold": ("101.GC00Y", "COMEX黄金", "美元/盎司", "用于观察避险需求与实际利率预期"),
-        "copper": ("101.HG00Y", "COMEX铜", "美元/磅", "用于观察全球制造业需求与周期热度"),
+        "us10y": ("171.US10Y", "^TNX", "美国10年期国债收益率", "%", "收益率越高，成长估值压力通常越大"),
+        "dollar": ("100.UDI", "DX-Y.NYB", "美元指数", "", "美元走强通常意味着全球流动性偏紧"),
+        "oil": ("102.CL00Y", "CL=F", "NYMEX原油", "美元/桶", "油价快速上涨会增加通胀与利率压力"),
+        "gold": ("101.GC00Y", "GC=F", "COMEX黄金", "美元/盎司", "用于观察避险需求与实际利率预期"),
+        "copper": ("101.HG00Y", "HG=F", "COMEX铜", "美元/磅", "用于观察全球制造业需求与周期热度"),
     }
     series = data.setdefault("series", {})
-    for key, (secid, label, unit, meaning) in specs.items():
-        rows = eastmoney_kline(secid)
+    for key, (secid, yahoo_symbol, label, unit, meaning) in specs.items():
+        source = "东方财富公开行情"
+        try:
+            rows = eastmoney_kline(secid)
+        except Exception:
+            rows = yahoo_kline(yahoo_symbol)
+            source = "Yahoo Finance公开行情（备用源）"
         series[key] = {
             "label": label,
             "unit": unit,
             "meaning": meaning,
-            "source": "东方财富公开行情",
+            "source": source,
             "values": [{"date": row["date"], "value": row["value"]} for row in rows],
         }
         time.sleep(0.7)
 
-    sh = eastmoney_kline("1.000001")
-    time.sleep(0.7)
-    sz = eastmoney_kline("0.399001")
-    sh_amount = {row["date"]: row["amount"] for row in sh}
-    sz_amount = {row["date"]: row["amount"] for row in sz}
-    dates = sorted(set(sh_amount) & set(sz_amount))
-    values = [{"date": day, "value": round((sh_amount[day] + sz_amount[day]) / 1e12, 3)} for day in dates]
+    turnover_source = "上证指数与深证成指成交额合计（东方财富公开行情）"
+    try:
+        sh = eastmoney_kline("1.000001")
+        time.sleep(0.7)
+        sz = eastmoney_kline("0.399001")
+        sh_amount = {row["date"]: row["amount"] for row in sh}
+        sz_amount = {row["date"]: row["amount"] for row in sz}
+        dates = sorted(set(sh_amount) & set(sz_amount))
+        values = [{"date": day, "value": round((sh_amount[day] + sz_amount[day]) / 1e12, 3)} for day in dates]
+    except Exception:
+        sh_day, sh_amount = tencent_current_amount("sh000001")
+        sz_day, sz_amount = tencent_current_amount("sz399001")
+        day = min(sh_day, sz_day)
+        previous = (series.get("turnover") or {}).get("values") or []
+        values = [item for item in previous if item.get("date") != day]
+        values.append({"date": day, "value": round((sh_amount + sz_amount) / 1e12, 3)})
+        values = sorted(values, key=lambda item: item["date"])[-260:]
+        turnover_source = "腾讯行情当日成交额；历史数据沿用最近成功记录"
     series["turnover"] = {
         "label": "A股成交额",
         "unit": "万亿元",
         "meaning": "2万亿元是活跃分界，2.2–2.3万亿元以上更利于行情扩散",
-        "source": "上证指数与深证成指成交额合计（东方财富公开行情）",
+        "source": turnover_source,
         "values": values,
     }
 
@@ -343,12 +397,26 @@ def build_temperature(data: dict) -> None:
 
 def main() -> None:
     data = fallback_data()
+    seed = None
+    if SEED_PATH.exists():
+        try:
+            packed = base64.b64decode(SEED_PATH.read_text(encoding="ascii"))
+            seed = json.loads(gzip.decompress(packed).decode("utf-8"))
+        except Exception:
+            seed = None
     if DATA_PATH.exists():
         try:
             existing = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-            data.update(existing)
+            if existing.get("series"):
+                data.update(existing)
+            elif seed:
+                data = seed
+                data["china"].update(existing.get("china") or {})
+                data["chinaHistory"] = existing.get("chinaHistory") or data.get("chinaHistory", [])
         except Exception:
             pass
+    elif seed:
+        data = seed
 
     errors = []
     try:
