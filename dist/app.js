@@ -21,8 +21,10 @@ function drawLineChart(target, rawValues, options = {}) {
   const height = options.height || 250;
   const pad = { left: 46, right: 16, top: 14, bottom: 28 };
   const ys = values.map((d) => Number(d.value));
-  let min = Math.min(...ys);
-  let max = Math.max(...ys);
+  const thresholds = (options.thresholds || []).filter((d) => Number.isFinite(Number(d.value)));
+  const rangeValues = ys.concat(thresholds.map((d) => Number(d.value)));
+  let min = Math.min(...rangeValues);
+  let max = Math.max(...rangeValues);
   const span = max - min || Math.max(Math.abs(max) * .1, 1);
   min -= span * .13;
   max += span * .13;
@@ -39,6 +41,7 @@ function drawLineChart(target, rawValues, options = {}) {
       ${ticks.map((t) => `<line class="grid-line" x1="${pad.left}" x2="${width-pad.right}" y1="${t.y}" y2="${t.y}"/><text class="axis-label" x="${pad.left-7}" y="${t.y+4}" text-anchor="end">${fmt(t.value, options.digits ?? 1)}</text>`).join('')}
       <path class="area-path" d="${area}" style="fill:url(#areaGradient)"/>
       <path class="line-path" d="${path}" style="stroke:${color}"/>
+      ${thresholds.map((t) => `<line class="threshold-line" x1="${pad.left}" x2="${width-pad.right}" y1="${y(Number(t.value))}" y2="${y(Number(t.value))}" style="stroke:${t.color}"/><text class="threshold-label" x="${width-pad.right-4}" y="${y(Number(t.value))-5}" text-anchor="end" style="fill:${t.color}">${t.label}</text>`).join('')}
       <circle class="last-dot" cx="${x(values.length-1)}" cy="${y(ys.at(-1))}" r="5" style="stroke:${color}"/>
       ${dateIndexes.map((i) => `<text class="axis-label" x="${x(i)}" y="${height-7}" text-anchor="${i===0?'start':i===values.length-1?'end':'middle'}">${values[i].date.slice(5)}</text>`).join('')}
     </svg>`;
@@ -102,6 +105,7 @@ function renderComponents(components) {
 
 function renderLiquidity(liquidity, series) {
   if (!liquidity?.indicators?.length) return;
+  const signed = (value, digits = 2) => `${Number(value) >= 0 ? '+' : ''}${fmt(value, digits)}`;
   $('#liquidity-score').innerHTML = `<strong>${fmt(liquidity.score, 0)}</strong><span>/ 100 · ${liquidity.label}</span>`;
   $('#liquidity-summary').textContent = liquidity.summary;
   $('#liquidity-grid').innerHTML = liquidity.indicators.map((item) => `
@@ -112,12 +116,15 @@ function renderLiquidity(liquidity, series) {
           <h3>${item.name}</h3>
           <p>${item.meaning}</p>
         </div>
-        <div class="liquidity-value">
-          <strong>${fmt(item.value, item.key === 'nfci' ? 3 : 2)}</strong><small>${item.unit}</small>
-          <span>${item.date}</span>
-        </div>
+        <table class="liquidity-mini-table" aria-label="${item.name}关键数据">
+          <tr><th>最新</th><td>${fmt(item.value, item.key === 'nfci' ? 3 : 2)}${item.unit}</td></tr>
+          <tr><th>20期变化</th><td>${signed(item.change20, item.key === 'nfci' ? 3 : 2)}${item.unit}</td></tr>
+          <tr class="risk-row"><th>风险线</th><td>≥ ${fmt(item.riskLine, item.key === 'nfci' ? 2 : 1)}</td></tr>
+          <tr class="opportunity-row"><th>机会线</th><td>≤ ${fmt(item.opportunityLine, item.key === 'nfci' ? 2 : 1)}</td></tr>
+        </table>
       </div>
       <p class="liquidity-reading">${item.interpretation}</p>
+      <div class="threshold-signal ${item.value >= item.riskLine ? 'risk' : item.value <= item.opportunityLine ? 'opportunity' : 'neutral'}">${item.thresholdSignal}</div>
       <div class="liquidity-signal opportunity"><span>机会</span><p>${item.opportunity}</p></div>
       <div class="liquidity-signal risk"><span>风险</span><p>${item.risk}</p></div>
       <div class="liquidity-chart" id="liquidity-chart-${item.key}"></div>
@@ -132,6 +139,10 @@ function renderLiquidity(liquidity, series) {
       label: `${item.name}历史曲线`,
       color: colors[item.key],
       digits: item.key === 'nfci' ? 2 : 2,
+      thresholds: [
+        { value: item.riskLine, label: `风险线 ${fmt(item.riskLine, item.key === 'nfci' ? 2 : 1)}`, color: '#fb7185' },
+        { value: item.opportunityLine, label: `机会线 ${fmt(item.opportunityLine, item.key === 'nfci' ? 2 : 1)}`, color: '#4ade80' },
+      ],
     });
   });
 }

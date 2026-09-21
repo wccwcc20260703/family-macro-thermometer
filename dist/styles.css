@@ -136,17 +136,25 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .liquidity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .liquidity-card { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.022); }
 .liquidity-card-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.liquidity-card-head > div { min-width: 0; }
 .liquidity-card h3 { margin: 7px 0 1px; font-size: 1.08rem; }
 .liquidity-card-head p { margin: 0; color: var(--muted); font-size: .76rem; }
 .liquidity-state { display: inline-flex; padding: 3px 8px; border-radius: 999px; font-size: .72rem; font-weight: 760; }
 .liquidity-state.green { background: rgba(74,222,128,.12); color: var(--green); }
 .liquidity-state.amber { background: rgba(251,191,36,.12); color: var(--amber); }
 .liquidity-state.red { background: rgba(251,113,133,.12); color: var(--red); }
-.liquidity-value { min-width: 108px; text-align: right; }
-.liquidity-value strong { font-size: 1.7rem; line-height: 1; }
-.liquidity-value small { margin-left: 3px; color: var(--muted); }
-.liquidity-value span { display: block; margin-top: 4px; color: var(--muted); font-size: .72rem; }
+.liquidity-mini-table { min-width: 170px; border-collapse: collapse; border: 1px solid var(--line); border-radius: 11px; overflow: hidden; background: rgba(5,13,23,.26); font-size: .72rem; }
+.liquidity-mini-table th, .liquidity-mini-table td { padding: 4px 7px; border-bottom: 1px solid rgba(148,163,184,.1); white-space: nowrap; }
+.liquidity-mini-table tr:last-child th, .liquidity-mini-table tr:last-child td { border-bottom: 0; }
+.liquidity-mini-table th { color: var(--muted); text-align: left; font-weight: 560; }
+.liquidity-mini-table td { color: var(--text); text-align: right; font-weight: 720; font-variant-numeric: tabular-nums; }
+.liquidity-mini-table .risk-row th, .liquidity-mini-table .risk-row td { color: var(--red); }
+.liquidity-mini-table .opportunity-row th, .liquidity-mini-table .opportunity-row td { color: var(--green); }
 .liquidity-reading { margin: 13px 0 12px; color: #d7e0eb; font-weight: 620; }
+.threshold-signal { display: inline-flex; margin-bottom: 4px; padding: 4px 9px; border-radius: 8px; font-size: .72rem; font-weight: 760; }
+.threshold-signal.risk { color: var(--red); background: rgba(251,113,133,.1); }
+.threshold-signal.opportunity { color: var(--green); background: rgba(74,222,128,.1); }
+.threshold-signal.neutral { color: var(--amber); background: rgba(251,191,36,.1); }
 .liquidity-signal { display: grid; grid-template-columns: 42px 1fr; gap: 8px; align-items: start; margin-top: 7px; }
 .liquidity-signal > span { padding: 2px 6px; border-radius: 7px; text-align: center; font-size: .7rem; font-weight: 760; }
 .liquidity-signal p { margin: 0; color: var(--muted); font-size: .77rem; }
@@ -155,9 +163,12 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .liquidity-chart { margin-top: 8px; }
 .liquidity-chart svg { width: 100%; height: 150px; }
 .liquidity-chart .line-path { stroke-width: 2.3; }
+.threshold-line { stroke-width: 1.6; stroke-dasharray: 8 6; opacity: .92; }
+.threshold-label { font-size: 11px; font-weight: 760; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
 .liquidity-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 2px; color: var(--muted); font-size: .72rem; }
 .liquidity-foot a { color: var(--blue); text-decoration: none; }
 .liquidity-foot a:hover { text-decoration: underline; }
+.threshold-note { margin-top: 13px; }
 
 .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .mini-chart { padding: 17px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.022); }
@@ -194,6 +205,8 @@ footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
   .reference-row { grid-template-columns: repeat(2, 1fr); }
   .chart-grid, .macro-grid { grid-template-columns: 1fr; }
   .liquidity-grid { grid-template-columns: 1fr; }
+  .liquidity-card-head { flex-direction: column; }
+  .liquidity-mini-table { width: 100%; }
   .components { grid-template-columns: 1fr; }
   .component:last-child { grid-column: auto; }
   .section-head { align-items: start; flex-direction: column; }

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T00:01:14+08:00",
+    "updatedAt": "2026-09-22T00:14:27+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [
@@ -15515,6 +15515,10 @@
         "tone": "amber",
         "meaning": "美元短端资金价格",
         "interpretation": "较高点有所回落，但还不能视为全面宽松。",
+        "change20": 0.25,
+        "riskLine": 4.5,
+        "opportunityLine": 2.5,
+        "thresholdSignal": "处于观察区间",
         "opportunity": "继续下行意味着现金与融资成本缓解，风险资产估值可获得支撑。",
         "risk": "若维持高位或重新上行，说明政策利率层面的宽松仍不充分。"
       },
@@ -15529,6 +15533,10 @@
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
+        "change20": 0.26,
+        "riskLine": 2.0,
+        "opportunityLine": 1.2,
+        "thresholdSignal": "已触及风险线",
         "opportunity": "持续回落通常利好黄金、成长股及其他长久期资产。",
         "risk": "高位或再创新高会压缩高估值资产的容错空间。"
       },
@@ -15543,6 +15551,10 @@
         "tone": "green",
         "meaning": "美元相对全球货币的强弱 / 全球美元压力",
         "interpretation": "美元没有快速走强，全球风险资产少一层压力。",
+        "change20": -0.972,
+        "riskLine": 125.0,
+        "opportunityLine": 118.0,
+        "thresholdSignal": "处于观察区间",
         "opportunity": "美元走弱或平稳时，新兴市场、大宗商品与非美风险资产压力减轻。",
         "risk": "20日快速升值超过约2%时，需要警惕全球流动性收缩。"
       },
@@ -15557,6 +15569,10 @@
         "tone": "green",
         "meaning": "美国金融体系综合松紧",
         "interpretation": "金融市场整体仍比长期平均水平宽松。",
+        "change20": -0.065,
+        "riskLine": 0.0,
+        "opportunityLine": -0.5,
+        "thresholdSignal": "已触及机会线",
         "opportunity": "负值延续意味着市场融资与风险承受力仍有缓冲。",
         "risk": "一旦快速向0或正值上行，往往比单看政策利率更早暴露压力。"
       }

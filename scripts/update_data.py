@@ -451,6 +451,19 @@ def build_liquidity(data: dict) -> None:
     broad_values = series_until(series, "broadDollar")
     broad_change = pct_change(broad_values, 20)
 
+    def absolute_change(key: str, sessions: int = 20) -> float:
+        values = series_until(series, key)
+        if len(values) <= sessions:
+            return 0.0
+        return float(values[-1]["value"]) - float(values[-sessions - 1]["value"])
+
+    def threshold_signal(value: float, risk_line: float, opportunity_line: float) -> str:
+        if value >= risk_line:
+            return "已触及风险线"
+        if value <= opportunity_line:
+            return "已触及机会线"
+        return "处于观察区间"
+
     if effr <= 2.5:
         effr_state = ("偏松", "green", "短端美元资金成本已进入较宽松区间。")
     elif effr <= 4.0:
@@ -500,24 +513,32 @@ def build_liquidity(data: dict) -> None:
             {
                 "key": "effr", "name": "EFFR 有效联邦基金利率", "value": effr, "unit": "%", "date": effr_date,
                 "score": round1(scores["effr"]), "status": effr_state[0], "tone": effr_state[1], "meaning": "美元短端资金价格", "interpretation": effr_state[2],
+                "change20": round(absolute_change("effr"), 3), "riskLine": 4.5, "opportunityLine": 2.5,
+                "thresholdSignal": threshold_signal(effr, 4.5, 2.5),
                 "opportunity": "继续下行意味着现金与融资成本缓解，风险资产估值可获得支撑。",
                 "risk": "若维持高位或重新上行，说明政策利率层面的宽松仍不充分。",
             },
             {
                 "key": "real10y", "name": "美国10年实际利率", "value": real10y, "unit": "%", "date": real_date,
                 "score": round1(scores["real10y"]), "status": real_state[0], "tone": real_state[1], "meaning": "长期真实资金成本 / 成长股折现率", "interpretation": real_state[2],
+                "change20": round(absolute_change("real10y"), 3), "riskLine": 2.0, "opportunityLine": 1.2,
+                "thresholdSignal": threshold_signal(real10y, 2.0, 1.2),
                 "opportunity": "持续回落通常利好黄金、成长股及其他长久期资产。",
                 "risk": "高位或再创新高会压缩高估值资产的容错空间。",
             },
             {
                 "key": "broadDollar", "name": "广义美元指数", "value": broad, "unit": "", "date": broad_date,
                 "score": round1(scores["broadDollar"]), "status": dollar_state[0], "tone": dollar_state[1], "meaning": "美元相对全球货币的强弱 / 全球美元压力", "interpretation": dollar_state[2],
+                "change20": round(absolute_change("broadDollar"), 3), "riskLine": 125.0, "opportunityLine": 118.0,
+                "thresholdSignal": threshold_signal(broad, 125.0, 118.0),
                 "opportunity": "美元走弱或平稳时，新兴市场、大宗商品与非美风险资产压力减轻。",
                 "risk": "20日快速升值超过约2%时，需要警惕全球流动性收缩。",
             },
             {
                 "key": "nfci", "name": "NFCI 金融状况指数", "value": nfci, "unit": "", "date": nfci_date,
                 "score": round1(scores["nfci"]), "status": nfci_state[0], "tone": nfci_state[1], "meaning": "美国金融体系综合松紧", "interpretation": nfci_state[2],
+                "change20": round(absolute_change("nfci"), 3), "riskLine": 0.0, "opportunityLine": -0.5,
+                "thresholdSignal": threshold_signal(nfci, 0.0, -0.5),
                 "opportunity": "负值延续意味着市场融资与风险承受力仍有缓冲。",
                 "risk": "一旦快速向0或正值上行，往往比单看政策利率更早暴露压力。",
             },
