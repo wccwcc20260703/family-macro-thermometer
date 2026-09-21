@@ -15,7 +15,7 @@
       <p class="eyebrow">家庭投资参考</p>
       <h1>宏观温度计</h1>
     </div>
-    <div class="freshness" id="freshness">正在读取最新数据…</div>
+    <div class="freshness" id="freshness" aria-live="polite">正在读取最新数据…</div>
   </header>
 
   <main>
@@ -69,9 +69,9 @@
           <h2>温度正在升高还是降低？</h2>
         </div>
         <div class="range-buttons" data-chart="temperature-chart">
-          <button class="active" data-range="60">3个月</button>
-          <button data-range="120">6个月</button>
-          <button data-range="260">1年</button>
+          <button class="active" type="button" data-range="60">3个月</button>
+          <button type="button" data-range="120">6个月</button>
+          <button type="button" data-range="260">1年</button>
         </div>
       </div>
       <div class="chart" id="temperature-chart" aria-label="宏观温度历史曲线"></div>
@@ -133,7 +133,7 @@
       <div class="release-note" id="release-note"></div>
     </section>
 
-    <dialog class="event-dialog" id="event-dialog">
+    <dialog class="event-dialog" id="event-dialog" aria-labelledby="event-dialog-title" aria-describedby="event-dialog-detail">
       <button class="dialog-close" id="event-dialog-close" type="button" aria-label="关闭">×</button>
       <span class="event-dialog-type" id="event-dialog-type">重要变化</span>
       <h2 id="event-dialog-title">—</h2>

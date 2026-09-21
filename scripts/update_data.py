@@ -1135,7 +1135,7 @@ def main() -> None:
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
         "updatedAt": now.isoformat(),
-        "status": "ok" if not errors else "partial",
+        "status": "ok" if not errors and not warnings else "partial",
         "errors": errors,
         "warnings": warnings,
         "note": "自动更新公开数据；付费课程原文与附件未发布。",

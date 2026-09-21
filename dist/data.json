@@ -1,7 +1,7 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T01:40:00+08:00",
-    "status": "ok",
+    "updatedAt": "2026-09-22T01:59:01+08:00",
+    "status": "partial",
     "errors": [],
     "warnings": [
       "美国10年期国债收益率暂未取得新值，保留最近成功记录",

@@ -252,6 +252,7 @@ function renderLiquidity(liquidity, series) {
         </div>
         <table class="liquidity-mini-table" aria-label="${item.name}关键数据">
           <tr><th>最新</th><td>${fmt(item.value, item.key === 'nfci' ? 3 : 2)}${item.unit}</td></tr>
+          <tr><th>数据日</th><td>${series[item.key]?.values?.at(-1)?.date || '—'}</td></tr>
           <tr><th>20期变化</th><td>${signed(item.change20, item.key === 'nfci' ? 3 : 2)}${item.unit}</td></tr>
           <tr class="risk-row"><th>风险线</th><td>≥ ${fmt(item.riskLine, item.key === 'nfci' ? 2 : 1)}</td></tr>
           <tr class="opportunity-row"><th>机会线</th><td>≤ ${fmt(item.opportunityLine, item.key === 'nfci' ? 2 : 1)}</td></tr>
@@ -324,7 +325,7 @@ function renderMiniCharts(series) {
     const values = item.values.slice(-range);
     const last = Number(values.at(-1).value);
     const delta = change(values, 20);
-    $(`#value-${key}`).innerHTML = `${fmt(last, key === 'turnover' ? 2 : 2)} <small>${item.unit}</small><span class="mini-change">20日 ${delta >= 0 ? '+' : ''}${fmt(delta, 1)}%</span>`;
+    $(`#value-${key}`).innerHTML = `${fmt(last, key === 'turnover' ? 2 : 2)} <small>${item.unit}</small><span class="mini-change">20日 ${delta >= 0 ? '+' : ''}${fmt(delta, 1)}%</span><span class="mini-date">数据 ${values.at(-1).date}</span>`;
     drawLineChart($(`#chart-${key}`), values, { height: 150, label: `${item.label}历史曲线`, color, digits: key === 'turnover' ? 1 : 2 });
   });
 }
@@ -382,8 +383,13 @@ async function start() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     const updated = new Date(data.meta.updatedAt);
-    $('#freshness').textContent = `自动更新 · ${updated.toLocaleString('zh-CN', { hour12: false })}`;
-    if (data.meta.status !== 'ok') $('#freshness').textContent += ' · 部分来源暂未刷新';
+    const updatedLabel = updated.toLocaleString('zh-CN', {
+      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
+    });
+    $('#freshness').textContent = `数据更新 ${updatedLabel}`;
+    const warnings = data.meta.warnings || [];
+    if (data.meta.status !== 'ok' || warnings.length) $('#freshness').textContent += ' · 部分行情沿用前值';
+    $('#freshness').title = [...(data.meta.errors || []), ...warnings].join('\n');
     renderGauge(data.temperature);
     renderDailyReport(data.dailyReport);
     renderTemperatureChart(data.temperature, data.timelineEvents || []);
