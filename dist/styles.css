@@ -15,10 +15,12 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { width: 100%; max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  min-width: 320px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 85% 0%, rgba(37, 99, 235, .16), transparent 30rem),
     radial-gradient(circle at 10% 18%, rgba(20, 184, 166, .09), transparent 25rem),
@@ -302,7 +304,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding-
 footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
 
 @media (max-width: 900px) {
-  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-grid { display: flex; flex-direction: column; }
+  .hero-grid > *, .gauge-wrap, .gauge { width: 100%; max-width: 100%; }
   .components { grid-template-columns: 1fr; }
   .liquidity-grid { grid-template-columns: 1fr; }
   .china-asset-grid { grid-template-columns: 1fr; }
