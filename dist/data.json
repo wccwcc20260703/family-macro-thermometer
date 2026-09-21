@@ -1,9 +1,10 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T00:29:46+08:00",
+    "updatedAt": "2026-09-22T00:49:20+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [
+      "美国10年实际利率暂未取得新值，保留最近成功记录",
       "美国10年期国债收益率暂未取得新值，保留最近成功记录",
       "美元指数暂未取得新值，保留最近成功记录",
       "NYMEX原油暂未取得新值，保留最近成功记录",
@@ -15584,6 +15585,319 @@
         "thresholdSignal": "已触及机会线",
         "opportunity": "负值延续意味着市场融资与风险承受力仍有缓冲。",
         "risk": "一旦快速向0或正值上行，往往比单看政策利率更早暴露压力。"
+      }
+    ]
+  },
+  "timelineEvents": [
+    {
+      "id": "2026-03-20-10年实际利率-22",
+      "date": "2026-03-20",
+      "score": 53.0,
+      "type": "risk",
+      "indicator": "10年实际利率",
+      "title": "10年实际利率升破风险线",
+      "detail": "1.880 → 2.010，越过风险线 2。",
+      "impact": "长期真实资金成本转紧，风险资产的容错空间下降。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/DFII10"
+    },
+    {
+      "id": "2026-03-26-宏观温度-5",
+      "date": "2026-03-26",
+      "score": 49.3,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开均衡区",
+      "detail": "综合温度由 52.0 降至 49.3，跌破 50 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-04-01-宏观温度-6",
+      "date": "2026-04-01",
+      "score": 50.5,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入均衡区",
+      "detail": "综合温度由 49.6 升至 50.5，越过 50 分界线。",
+      "impact": "风险预算可由防守转向精选",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-04-02-10年实际利率-23",
+      "date": "2026-04-02",
+      "score": 48.9,
+      "type": "opportunity",
+      "indicator": "10年实际利率",
+      "title": "10年实际利率跌回风险线下",
+      "detail": "2.020 → 1.970，重新回到风险线 2 以下。",
+      "impact": "长期真实资金成本边际缓和，但还需观察是否持续。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/DFII10"
+    },
+    {
+      "id": "2026-04-20-宏观温度-7",
+      "date": "2026-04-20",
+      "score": 66.1,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入偏热区",
+      "detail": "综合温度由 64.9 升至 66.1，越过 65 分界线。",
+      "impact": "风险偏好增强但不宜追高",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-04-21-宏观温度-8",
+      "date": "2026-04-21",
+      "score": 61.8,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开偏热区",
+      "detail": "综合温度由 66.1 降至 61.8，跌破 65 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-05-01-NFCI-38",
+      "date": "2026-05-01",
+      "score": 62.3,
+      "type": "opportunity",
+      "indicator": "NFCI",
+      "title": "NFCI触及机会线",
+      "detail": "-0.495 → -0.502，下穿机会线 -0.5。",
+      "impact": "美国综合金融条件进入较友好区间，可提高关注度。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/NFCI"
+    },
+    {
+      "id": "2026-05-06-宏观温度-9",
+      "date": "2026-05-06",
+      "score": 68.0,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入偏热区",
+      "detail": "综合温度由 62.3 升至 68.0，越过 65 分界线。",
+      "impact": "风险偏好增强但不宜追高",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-05-14-10年实际利率-24",
+      "date": "2026-05-14",
+      "score": 64.2,
+      "type": "risk",
+      "indicator": "10年实际利率",
+      "title": "10年实际利率升破风险线",
+      "detail": "1.990 → 2.000，越过风险线 2。",
+      "impact": "长期真实资金成本转紧，风险资产的容错空间下降。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/DFII10"
+    },
+    {
+      "id": "2026-05-14-宏观温度-10",
+      "date": "2026-05-14",
+      "score": 64.2,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开偏热区",
+      "detail": "综合温度由 65.1 降至 64.2，跌破 65 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-05-21-宏观温度-11",
+      "date": "2026-05-21",
+      "score": 65.3,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入偏热区",
+      "detail": "综合温度由 62.0 升至 65.3，越过 65 分界线。",
+      "impact": "风险偏好增强但不宜追高",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-06-02-宏观温度-12",
+      "date": "2026-06-02",
+      "score": 64.3,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开偏热区",
+      "detail": "综合温度由 65.4 降至 64.3，跌破 65 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-06-12-宏观温度-13",
+      "date": "2026-06-12",
+      "score": 68.6,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入偏热区",
+      "detail": "综合温度由 61.8 升至 68.6，越过 65 分界线。",
+      "impact": "风险偏好增强但不宜追高",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-07-06-宏观温度-14",
+      "date": "2026-07-06",
+      "score": 64.8,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开偏热区",
+      "detail": "综合温度由 65.5 降至 64.8，跌破 65 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-07-10-宏观温度-15",
+      "date": "2026-07-10",
+      "score": 65.6,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入偏热区",
+      "detail": "综合温度由 62.8 升至 65.6，越过 65 分界线。",
+      "impact": "风险偏好增强但不宜追高",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-07-23-宏观温度-16",
+      "date": "2026-07-23",
+      "score": 48.2,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开均衡区",
+      "detail": "综合温度由 53.5 降至 48.2，跌破 50 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-07-29-宏观温度-17",
+      "date": "2026-07-29",
+      "score": 50.1,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入均衡区",
+      "detail": "综合温度由 49.9 升至 50.1，越过 50 分界线。",
+      "impact": "风险预算可由防守转向精选",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-09-02-宏观温度-18",
+      "date": "2026-09-02",
+      "score": 49.6,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开均衡区",
+      "detail": "综合温度由 51.7 降至 49.6，跌破 50 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-09-03-宏观温度-19",
+      "date": "2026-09-03",
+      "score": 50.8,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入均衡区",
+      "detail": "综合温度由 49.6 升至 50.8，越过 50 分界线。",
+      "impact": "风险预算可由防守转向精选",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-09-08-广义美元-31",
+      "date": "2026-09-08",
+      "score": 53.7,
+      "type": "opportunity",
+      "indicator": "广义美元",
+      "title": "广义美元触及机会线",
+      "detail": "118.073 → 117.913，下穿机会线 118。",
+      "impact": "全球美元压力进入较友好区间，可提高关注度。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/DTWEXBGS"
+    },
+    {
+      "id": "2026-09-10-广义美元-32",
+      "date": "2026-09-10",
+      "score": 47.4,
+      "type": "info",
+      "indicator": "广义美元",
+      "title": "广义美元离开机会线",
+      "detail": "117.883 → 118.079，重新回到机会线 118 以上。",
+      "impact": "全球美元压力的宽松程度减弱，需要等待新的确认。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/DTWEXBGS"
+    },
+    {
+      "id": "2026-09-14-宏观温度-20",
+      "date": "2026-09-14",
+      "score": 48.3,
+      "type": "risk",
+      "indicator": "宏观温度",
+      "title": "温度向下离开均衡区",
+      "detail": "综合温度由 51.1 降至 48.3，跌破 50 分界线。",
+      "impact": "环境降温，仓位与节奏需要更谨慎",
+      "sourceUrl": ""
+    },
+    {
+      "id": "2026-09-17-EFFR-42",
+      "date": "2026-09-17",
+      "score": 50.0,
+      "type": "risk",
+      "indicator": "EFFR",
+      "title": "EFFR单次上升 25bp",
+      "detail": "有效联邦基金利率由 3.63% 变为 3.88%。",
+      "impact": "短端资金成本上升，流动性边际收紧。",
+      "sourceUrl": "https://fred.stlouisfed.org/series/EFFR"
+    },
+    {
+      "id": "2026-09-17-宏观温度-21",
+      "date": "2026-09-17",
+      "score": 50.0,
+      "type": "opportunity",
+      "indicator": "宏观温度",
+      "title": "温度向上进入均衡区",
+      "detail": "综合温度由 49.8 升至 50.0，越过 50 分界线。",
+      "impact": "风险预算可由防守转向精选",
+      "sourceUrl": ""
+    }
+  ],
+  "dailyReport": {
+    "date": "2026-09-22",
+    "publishTime": "每天 08:30（北京时间）",
+    "title": "短期修复已经启动，中期趋势还没完全转向",
+    "summary": "今天的综合温度是 53.7 分，处在过去记录的第 21 百分位。5日变化 +5.4 分，20日变化 -2.0 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
+    "bottomLine": "短期已经向右，但20日趋势仍向左：更像修复，机会出现但需要继续确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
+    "support": "金融松紧",
+    "drag": "真实利率",
+    "evidence": [
+      {
+        "label": "综合温度",
+        "value": "53.7分",
+        "context": "过去记录第 21 百分位；5日 +5.4 / 20日 -2.0",
+        "tone": "neutral"
+      },
+      {
+        "label": "A股成交额",
+        "value": "2.03万亿元",
+        "context": "过去260个交易日第 27 百分位，越高代表市场参与度越强",
+        "tone": "neutral"
+      },
+      {
+        "label": "10年实际利率",
+        "value": "2.61%",
+        "context": "过去520期第 100 百分位，越高越压制高估值资产",
+        "tone": "negative"
+      },
+      {
+        "label": "NFCI",
+        "value": "-0.560",
+        "context": "过去520期第 27 百分位；负值代表金融条件比长期平均更宽松",
+        "tone": "positive"
+      },
+      {
+        "label": "国内增长",
+        "value": "工业 +5.3%",
+        "context": "2026-08 数据；消费 +1.1% / 固投 -7.2%",
+        "tone": "neutral"
+      },
+      {
+        "label": "美元流动性",
+        "value": "55.2分",
+        "context": "流动性环境总体友好，但仍需观察利率是否继续回落。",
+        "tone": "positive"
       }
     ]
   }

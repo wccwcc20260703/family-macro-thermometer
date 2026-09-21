@@ -46,13 +46,15 @@
       </article>
 
       <article class="decision-card">
-        <span class="kicker">如果只看一分钟</span>
+        <span class="kicker">每日宏观解读 · <span id="report-date">—</span></span>
         <h2 id="decision-title">—</h2>
         <p id="decision-copy">—</p>
+        <p class="report-bottom-line" id="report-bottom-line">—</p>
         <div class="driver-grid">
           <div class="driver positive"><span>主要支撑</span><strong id="strongest-driver">—</strong></div>
           <div class="driver negative"><span>主要拖累</span><strong id="weakest-driver">—</strong></div>
         </div>
+        <div class="report-evidence" id="report-evidence"></div>
         <div class="action-ladder">
           <h3>怎么用这个温度</h3>
           <div class="ladder" id="action-ladder"></div>
@@ -73,6 +75,11 @@
         </div>
       </div>
       <div class="chart" id="temperature-chart" aria-label="宏观温度历史曲线"></div>
+      <div class="timeline-controls">
+        <span id="timeline-window">按住曲线左右拖动查看历史</span>
+        <div><button id="timeline-earlier" type="button">← 较早</button><button id="timeline-later" type="button">较新 →</button></div>
+      </div>
+      <div class="event-timeline" id="event-timeline" aria-label="重要事件时间线"></div>
       <p class="chart-note">向右代表环境升温，向左代表环境降温；但进入80分以上后，继续向右表示过热和拥挤，不应理解为继续追涨。</p>
     </section>
 
@@ -123,8 +130,18 @@
     <section class="method-card">
       <h2>温度计怎么计算</h2>
       <p>综合分数由短端利率、10年实际利率、广义美元、NFCI、国内增长、市场资金和通胀压力构成。四个美元流动性指标合计占40%，国内增长与A股资金各占25%，通胀压力占10%。50分附近代表多空力量大致均衡；超过80分进入“过热”区，不等于越高越值得追。</p>
-      <p>数据每天自动检查。月度指标尚未公布时，会保留上一期并明确标注，不会用估算值冒充官方数据。</p>
+      <p>数据与每日报告计划在北京时间每天08:30自动更新。月度指标尚未公布时，会保留上一期并明确标注，不会用估算值冒充官方数据；重要阈值突破与趋势区间切换会记录为可点击的时间线事件。</p>
     </section>
+
+    <dialog class="event-dialog" id="event-dialog">
+      <button class="dialog-close" id="event-dialog-close" type="button" aria-label="关闭">×</button>
+      <span class="event-dialog-type" id="event-dialog-type">重要变化</span>
+      <h2 id="event-dialog-title">—</h2>
+      <p class="event-dialog-date" id="event-dialog-date">—</p>
+      <p id="event-dialog-detail">—</p>
+      <div class="event-dialog-impact"><span>意味着什么</span><strong id="event-dialog-impact">—</strong></div>
+      <a id="event-dialog-source" target="_blank" rel="noopener">查看原始数据</a>
+    </dialog>
   </main>
 
   <footer>

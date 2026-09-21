@@ -661,6 +661,168 @@ def build_temperature(data: dict) -> None:
     }
 
 
+def percentile_rank(values: list[dict], current: float) -> float:
+    numbers = [float(item["value"]) for item in values if item.get("value") is not None]
+    if not numbers:
+        return 50.0
+    return round1(sum(value <= current for value in numbers) / len(numbers) * 100)
+
+
+def build_timeline_events(data: dict) -> None:
+    temperature = data["temperature"]
+    history = temperature.get("history") or []
+    series = data["series"]
+    events = []
+
+    def score_on(day: str) -> float:
+        return value_on_or_before(history, day, temperature["score"])
+
+    def add_event(day: str, event_type: str, indicator: str, title: str, detail: str, impact: str, source_url: str = "") -> None:
+        try:
+            event_day = dt.date.fromisoformat(day)
+        except Exception:
+            return
+        for existing in reversed(events):
+            if existing["indicator"] != indicator or existing["title"] != title:
+                continue
+            prior_day = dt.date.fromisoformat(existing["date"])
+            if abs((event_day - prior_day).days) < 10:
+                return
+            break
+        events.append({
+            "id": f"{day}-{indicator}-{len(events)}",
+            "date": day,
+            "score": round1(score_on(day)),
+            "type": event_type,
+            "indicator": indicator,
+            "title": title,
+            "detail": detail,
+            "impact": impact,
+            "sourceUrl": source_url,
+        })
+
+    band_specs = [
+        (35, "偏冷区", "防守优先"),
+        (50, "均衡区", "风险预算可由防守转向精选"),
+        (65, "偏热区", "风险偏好增强但不宜追高"),
+        (80, "过热区", "拥挤与追高风险上升"),
+    ]
+    for previous, current in zip(history, history[1:]):
+        before = float(previous["value"])
+        after = float(current["value"])
+        for threshold, zone, meaning in band_specs:
+            if before < threshold <= after:
+                event_type = "risk" if threshold == 80 else "opportunity"
+                add_event(
+                    current["date"], event_type, "宏观温度", f"温度向上进入{zone}",
+                    f"综合温度由 {before:.1f} 升至 {after:.1f}，越过 {threshold} 分界线。",
+                    meaning,
+                )
+            elif before >= threshold > after:
+                event_type = "opportunity" if threshold == 80 else "risk"
+                add_event(
+                    current["date"], event_type, "宏观温度", f"温度向下离开{zone}",
+                    f"综合温度由 {before:.1f} 降至 {after:.1f}，跌破 {threshold} 分界线。",
+                    "离开过热区、拥挤度缓解" if threshold == 80 else "环境降温，仓位与节奏需要更谨慎",
+                )
+
+    threshold_specs = [
+        ("effr", "EFFR", 4.5, 2.5, "短端美元资金成本"),
+        ("real10y", "10年实际利率", 2.0, 1.2, "长期真实资金成本"),
+        ("broadDollar", "广义美元", 125.0, 118.0, "全球美元压力"),
+        ("nfci", "NFCI", 0.0, -0.5, "美国综合金融条件"),
+    ]
+    for key, label, risk_line, opportunity_line, meaning in threshold_specs:
+        item = series.get(key) or {}
+        values = (item.get("values") or [])[-260:]
+        source_url = item.get("sourceUrl") or ""
+        for previous, current in zip(values, values[1:]):
+            before = float(previous["value"])
+            after = float(current["value"])
+            day = current["date"]
+            if before < risk_line <= after:
+                add_event(day, "risk", label, f"{label}升破风险线", f"{before:.3f} → {after:.3f}，越过风险线 {risk_line:g}。", f"{meaning}转紧，风险资产的容错空间下降。", source_url)
+            elif before >= risk_line > after:
+                add_event(day, "opportunity", label, f"{label}跌回风险线下", f"{before:.3f} → {after:.3f}，重新回到风险线 {risk_line:g} 以下。", f"{meaning}边际缓和，但还需观察是否持续。", source_url)
+            if before > opportunity_line >= after:
+                add_event(day, "opportunity", label, f"{label}触及机会线", f"{before:.3f} → {after:.3f}，下穿机会线 {opportunity_line:g}。", f"{meaning}进入较友好区间，可提高关注度。", source_url)
+            elif before <= opportunity_line < after:
+                add_event(day, "info", label, f"{label}离开机会线", f"{before:.3f} → {after:.3f}，重新回到机会线 {opportunity_line:g} 以上。", f"{meaning}的宽松程度减弱，需要等待新的确认。", source_url)
+
+    effr = (series.get("effr") or {}).get("values") or []
+    for previous, current in zip(effr[-260:], effr[-259:]):
+        before = float(previous["value"])
+        after = float(current["value"])
+        delta = after - before
+        if abs(delta) < 0.24:
+            continue
+        direction = "上升" if delta > 0 else "下降"
+        event_type = "risk" if delta > 0 else "opportunity"
+        add_event(
+            current["date"], event_type, "EFFR", f"EFFR单次{direction} {abs(delta) * 100:.0f}bp",
+            f"有效联邦基金利率由 {before:.2f}% 变为 {after:.2f}%。",
+            "短端资金成本上升，流动性边际收紧。" if delta > 0 else "短端资金成本下降，流动性边际改善。",
+            (series.get("effr") or {}).get("sourceUrl") or "",
+        )
+
+    events = sorted(events, key=lambda item: (item["date"], item["id"]))[-24:]
+    data["timelineEvents"] = events
+
+
+def build_daily_report(data: dict) -> None:
+    series = data["series"]
+    temperature = data["temperature"]
+    trend = temperature["trend"]
+    liquidity = data["liquidity"]
+    china = data["china"]
+
+    turnover_values = (series.get("turnover") or {}).get("values") or []
+    real_values = (series.get("real10y") or {}).get("values") or []
+    nfci_values = (series.get("nfci") or {}).get("values") or []
+    temp_values = temperature.get("history") or []
+    turnover = latest(series, "turnover", 0)
+    real10y = latest(series, "real10y", 0)
+    nfci = latest(series, "nfci", 0)
+    temp_pct = percentile_rank(temp_values, temperature["score"])
+    turnover_pct = percentile_rank(turnover_values[-260:], turnover)
+    real_pct = percentile_rank(real_values[-520:], real10y)
+    nfci_pct = percentile_rank(nfci_values[-520:], nfci)
+
+    if trend["shortDirection"] == "right" and trend["mediumDirection"] == "left":
+        title = "短期修复已经启动，中期趋势还没完全转向"
+    elif trend["shortDirection"] == "right" and trend["mediumDirection"] == "right":
+        title = "短中期同时升温，机会正在扩散"
+    elif trend["shortDirection"] == "left" and trend["mediumDirection"] == "left":
+        title = "环境持续降温，先保护本金和节奏"
+    else:
+        title = "方向仍有分歧，等待数据形成共振"
+
+    summary = (
+        f"今天的综合温度是 {temperature['score']:.1f} 分，处在过去记录的第 {temp_pct:.0f} 百分位。"
+        f"5日变化 {trend['shortDelta']:+.1f} 分，20日变化 {trend['mediumDelta']:+.1f} 分。"
+        f"资金面主要由{temperature['strongest']}支撑，{temperature['weakest']}仍是最明显的约束。"
+    )
+    bottom_line = trend["message"] + " 这不是涨跌预测，而是今天应该承担多少风险的依据。"
+    today = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
+    data["dailyReport"] = {
+        "date": today,
+        "publishTime": "每天 08:30（北京时间）",
+        "title": title,
+        "summary": summary,
+        "bottomLine": bottom_line,
+        "support": temperature["strongest"],
+        "drag": temperature["weakest"],
+        "evidence": [
+            {"label": "综合温度", "value": f"{temperature['score']:.1f}分", "context": f"过去记录第 {temp_pct:.0f} 百分位；5日 {trend['shortDelta']:+.1f} / 20日 {trend['mediumDelta']:+.1f}", "tone": "neutral"},
+            {"label": "A股成交额", "value": f"{turnover:.2f}万亿元", "context": f"过去260个交易日第 {turnover_pct:.0f} 百分位，越高代表市场参与度越强", "tone": "positive" if turnover_pct >= 60 else "neutral"},
+            {"label": "10年实际利率", "value": f"{real10y:.2f}%", "context": f"过去520期第 {real_pct:.0f} 百分位，越高越压制高估值资产", "tone": "negative" if real_pct >= 70 else "neutral"},
+            {"label": "NFCI", "value": f"{nfci:+.3f}", "context": f"过去520期第 {nfci_pct:.0f} 百分位；负值代表金融条件比长期平均更宽松", "tone": "positive" if nfci < -0.25 else "neutral"},
+            {"label": "国内增长", "value": f"工业 {china['industrial']:+.1f}%", "context": f"{china['period']} 数据；消费 {china['retail']:+.1f}% / 固投 {china['fixedAsset']:+.1f}%", "tone": "neutral"},
+            {"label": "美元流动性", "value": f"{liquidity['score']:.1f}分", "context": liquidity["summary"], "tone": "positive" if liquidity["score"] >= 55 else "neutral"},
+        ],
+    }
+
+
 def main() -> None:
     data = fallback_data()
     seed = None
@@ -702,6 +864,8 @@ def main() -> None:
     if data.get("series"):
         build_liquidity(data)
         build_temperature(data)
+        build_timeline_events(data)
+        build_daily_report(data)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
         "updatedAt": now.isoformat(),

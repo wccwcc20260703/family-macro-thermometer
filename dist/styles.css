@@ -102,12 +102,20 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .decision-card { display: flex; flex-direction: column; }
 .decision-card > h2 { margin: 7px 0 10px; font-size: clamp(1.6rem, 3vw, 2.25rem); }
 .decision-card > p { color: #c5d1df; }
+.report-bottom-line { padding: 11px 13px; border-left: 3px solid var(--mint); background: rgba(94,234,212,.06); color: #dce7f2 !important; font-size: .84rem; }
 .driver-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 20px; }
 .driver { padding: 14px; border-radius: 14px; border: 1px solid var(--line); }
 .driver span { display: block; color: var(--muted); font-size: .75rem; }
 .driver strong { display: block; margin-top: 3px; }
 .driver.positive { background: rgba(74, 222, 128, .07); }
 .driver.negative { background: rgba(251, 113, 133, .07); }
+.report-evidence { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 18px; }
+.evidence-item { padding: 11px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.018); }
+.evidence-item > span { display: block; color: var(--muted); font-size: .7rem; }
+.evidence-item > strong { display: block; margin: 1px 0 3px; font-size: .98rem; }
+.evidence-item > p { margin: 0; color: var(--muted); font-size: .7rem; line-height: 1.45; }
+.evidence-item.positive { background: rgba(74,222,128,.05); }
+.evidence-item.negative { background: rgba(251,113,133,.05); }
 .action-ladder { margin-top: auto; }
 .action-ladder h3 { margin-bottom: 10px; color: var(--muted); }
 .ladder { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
@@ -119,12 +127,29 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .range-buttons button.active { background: rgba(94, 234, 212, .14); color: var(--mint); }
 .chart { min-height: 250px; }
 .chart svg { width: 100%; height: 250px; overflow: visible; }
+.chart#temperature-chart { cursor: grab; touch-action: pan-y; user-select: none; }
+.chart#temperature-chart.dragging { cursor: grabbing; }
 .chart-note { margin: 4px 0 0; color: var(--muted); font-size: .82rem; }
 .axis-label { fill: var(--muted); font-size: 11px; }
 .grid-line { stroke: rgba(148,163,184,.13); stroke-width: 1; }
 .line-path { fill: none; stroke: var(--mint); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .area-path { fill: url(#areaGradient); opacity: .26; }
 .last-dot { fill: var(--text); stroke: var(--mint); stroke-width: 3; }
+.event-marker { cursor: pointer; outline: none; }
+.event-marker line { stroke-width: 1.3; stroke-dasharray: 3 3; }
+.event-marker-core { fill: var(--surface); pointer-events: none; }
+.event-marker:focus circle:first-of-type, .event-marker:hover circle:first-of-type { stroke: var(--text); stroke-width: 3; }
+.timeline-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 7px 0 12px; color: var(--muted); font-size: .76rem; }
+.timeline-controls > div { display: flex; gap: 5px; }
+.timeline-controls button { padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.025); color: var(--muted); cursor: pointer; }
+.timeline-controls button:hover { color: var(--mint); border-color: rgba(94,234,212,.35); }
+.event-timeline { display: flex; gap: 8px; overflow-x: auto; padding: 2px 1px 10px; scrollbar-width: thin; }
+.event-chip { flex: 0 0 min(230px, 72vw); padding: 10px 11px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.022); color: var(--text); text-align: left; cursor: pointer; }
+.event-chip span, .event-chip small { display: block; color: var(--muted); font-size: .68rem; }
+.event-chip strong { display: block; margin: 2px 0; font-size: .78rem; line-height: 1.35; }
+.event-chip.risk { border-top: 2px solid var(--red); }
+.event-chip.opportunity { border-top: 2px solid var(--green); }
+.event-chip.info { border-top: 2px solid var(--blue); }
 
 .components { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
 .component { padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.022); }
@@ -197,6 +222,18 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 .method-card { padding: 20px 26px; }
 .method-card h2 { margin-bottom: 8px; }
 .method-card p { margin-bottom: 7px; color: var(--muted); }
+.event-dialog { width: min(560px, calc(100% - 28px)); padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--text); box-shadow: 0 24px 80px rgba(0,0,0,.5); }
+.event-dialog::backdrop { background: rgba(2,7,14,.76); backdrop-filter: blur(4px); }
+.dialog-close { position: absolute; top: 12px; right: 14px; border: 0; background: transparent; color: var(--muted); font-size: 1.6rem; cursor: pointer; }
+.event-dialog-type { display: inline-flex; padding: 4px 8px; border-radius: 8px; color: var(--blue); background: rgba(96,165,250,.1); font-size: .72rem; font-weight: 760; }
+.event-dialog-type.risk { color: var(--red); background: rgba(251,113,133,.1); }
+.event-dialog-type.opportunity { color: var(--green); background: rgba(74,222,128,.1); }
+.event-dialog h2 { margin: 12px 28px 4px 0; }
+.event-dialog-date { color: var(--muted); font-size: .76rem; }
+.event-dialog-impact { margin: 17px 0 14px; padding: 12px 14px; border-left: 3px solid var(--mint); background: rgba(94,234,212,.06); }
+.event-dialog-impact span { display: block; color: var(--muted); font-size: .7rem; }
+.event-dialog-impact strong { display: block; margin-top: 3px; }
+.event-dialog a { color: var(--blue); font-size: .8rem; }
 footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
 
 @media (max-width: 900px) {
@@ -215,6 +252,8 @@ footer { padding: 0 0 38px; color: var(--muted); font-size: .76rem; }
   .liquidity-grid { grid-template-columns: 1fr; }
   .liquidity-card-head { flex-direction: column; }
   .liquidity-mini-table { width: 100%; }
+  .report-evidence { grid-template-columns: 1fr; }
+  .timeline-controls { align-items: flex-start; flex-direction: column; }
   .components { grid-template-columns: 1fr; }
   .component:last-child { grid-column: auto; }
   .section-head { align-items: start; flex-direction: column; }

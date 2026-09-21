@@ -35,6 +35,19 @@ function drawLineChart(target, rawValues, options = {}) {
   const ticks = [0, .25, .5, .75, 1].map((p) => ({ value: max - (max - min) * p, y: pad.top + (height - pad.top - pad.bottom) * p }));
   const dateIndexes = [0, Math.floor((values.length - 1) / 2), values.length - 1];
   const color = options.color || '#5eead4';
+  const eventColors = { risk: '#fb7185', opportunity: '#4ade80', info: '#60a5fa' };
+  const eventMarkers = (options.events || []).map((event, eventIndex) => {
+    if (event.date < values[0].date || event.date > values.at(-1).date) return '';
+    let pointIndex = values.findIndex((item) => item.date >= event.date);
+    if (pointIndex < 0) pointIndex = values.length - 1;
+    const pointValue = Number(values[pointIndex].value);
+    const markerColor = eventColors[event.type] || eventColors.info;
+    return `<g class="event-marker" data-event-index="${eventIndex}" role="button" tabindex="0" aria-label="${event.date} ${event.title}">
+      <line x1="${x(pointIndex)}" x2="${x(pointIndex)}" y1="${y(pointValue)-18}" y2="${y(pointValue)-5}" style="stroke:${markerColor}"/>
+      <circle cx="${x(pointIndex)}" cy="${y(pointValue)}" r="7" style="fill:${markerColor}"/>
+      <circle cx="${x(pointIndex)}" cy="${y(pointValue)}" r="3" class="event-marker-core"/>
+    </g>`;
+  }).join('');
   target.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.label || '历史曲线'}">
       <defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
@@ -42,9 +55,22 @@ function drawLineChart(target, rawValues, options = {}) {
       <path class="area-path" d="${area}" style="fill:url(#areaGradient)"/>
       <path class="line-path" d="${path}" style="stroke:${color}"/>
       ${thresholds.map((t) => `<line class="threshold-line" x1="${pad.left}" x2="${width-pad.right}" y1="${y(Number(t.value))}" y2="${y(Number(t.value))}" style="stroke:${t.color}"/><text class="threshold-label" x="${width-pad.right-4}" y="${y(Number(t.value))-5}" text-anchor="end" style="fill:${t.color}">${t.label}</text>`).join('')}
+      ${eventMarkers}
       <circle class="last-dot" cx="${x(values.length-1)}" cy="${y(ys.at(-1))}" r="5" style="stroke:${color}"/>
       ${dateIndexes.map((i) => `<text class="axis-label" x="${x(i)}" y="${height-7}" text-anchor="${i===0?'start':i===values.length-1?'end':'middle'}">${values[i].date.slice(5)}</text>`).join('')}
     </svg>`;
+  if (options.onEventClick) {
+    target.querySelectorAll('.event-marker').forEach((marker) => {
+      const open = (event) => {
+        event.stopPropagation();
+        options.onEventClick((options.events || [])[Number(marker.dataset.eventIndex)]);
+      };
+      marker.addEventListener('click', open);
+      marker.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') open(event);
+      });
+    });
+  }
 }
 
 function change(values, sessions = 20) {
@@ -85,17 +111,105 @@ function renderGauge(t) {
   $('#action-ladder').innerHTML = t.bands.map((band) => `<div class="ladder-step ${score >= band.from && score < band.to ? 'active' : ''}">${band.label}</div>`).join('');
 }
 
-function renderTemperatureChart(t) {
+function openEventDialog(item) {
+  if (!item) return;
+  const dialog = $('#event-dialog');
+  $('#event-dialog-type').textContent = item.type === 'risk' ? '风险变化' : item.type === 'opportunity' ? '机会变化' : '重要变化';
+  $('#event-dialog-type').className = `event-dialog-type ${item.type}`;
+  $('#event-dialog-title').textContent = item.title;
+  $('#event-dialog-date').textContent = `${item.date} · ${item.indicator} · 当日温度 ${fmt(item.score, 1)}分`;
+  $('#event-dialog-detail').textContent = item.detail;
+  $('#event-dialog-impact').textContent = item.impact;
+  const source = $('#event-dialog-source');
+  source.hidden = !item.sourceUrl;
+  if (item.sourceUrl) source.href = item.sourceUrl;
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', '');
+}
+
+function renderEventTimeline(events) {
+  const target = $('#event-timeline');
+  if (!events?.length) {
+    target.innerHTML = '<p class="chart-note">当前窗口没有需要特别标记的事件。</p>';
+    return;
+  }
+  target.innerHTML = events.slice().reverse().map((item) => `
+    <button class="event-chip ${item.type}" type="button" data-event-id="${item.id}">
+      <span>${item.date.slice(5)}</span><strong>${item.title}</strong><small>${item.indicator}</small>
+    </button>`).join('');
+  target.querySelectorAll('.event-chip').forEach((button) => {
+    button.addEventListener('click', () => openEventDialog(events.find((item) => item.id === button.dataset.eventId)));
+  });
+}
+
+function renderTemperatureChart(t, events = []) {
   const target = $('#temperature-chart');
-  const redraw = (range) => drawLineChart(target, t.history.slice(-range), { label: '综合宏观温度历史曲线', color: temperatureColor(t.score), digits: 0 });
-  redraw(60);
+  const history = t.history || [];
+  let range = Math.min(60, history.length);
+  let end = history.length;
+  const redraw = () => {
+    const start = Math.max(0, end - range);
+    const visible = history.slice(start, end);
+    drawLineChart(target, visible, {
+      label: '综合宏观温度历史曲线',
+      color: temperatureColor(t.score),
+      digits: 0,
+      events,
+      onEventClick: openEventDialog,
+    });
+    if (visible.length) $('#timeline-window').textContent = `${visible[0].date} 至 ${visible.at(-1).date} · 按住曲线左右拖动`;
+  };
+  redraw();
+  renderEventTimeline(events);
   document.querySelectorAll('[data-chart="temperature-chart"] button').forEach((button) => {
     button.addEventListener('click', () => {
       button.parentElement.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
       button.classList.add('active');
-      redraw(Number(button.dataset.range));
+      range = Math.min(Number(button.dataset.range), history.length);
+      end = history.length;
+      redraw();
     });
   });
+  const moveWindow = (steps) => {
+    end = clamp(end + steps, range, history.length);
+    redraw();
+  };
+  $('#timeline-earlier').addEventListener('click', () => moveWindow(-Math.max(5, Math.round(range / 4))));
+  $('#timeline-later').addEventListener('click', () => moveWindow(Math.max(5, Math.round(range / 4))));
+  let dragging = false;
+  let startX = 0;
+  let startEnd = end;
+  target.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('.event-marker')) return;
+    dragging = true;
+    startX = event.clientX;
+    startEnd = end;
+    target.classList.add('dragging');
+    target.setPointerCapture?.(event.pointerId);
+  });
+  target.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    const shift = Math.round((startX - event.clientX) / Math.max(target.clientWidth, 1) * range);
+    end = clamp(startEnd + shift, range, history.length);
+    redraw();
+  });
+  const stopDrag = () => { dragging = false; target.classList.remove('dragging'); };
+  target.addEventListener('pointerup', stopDrag);
+  target.addEventListener('pointercancel', stopDrag);
+}
+
+function renderDailyReport(report) {
+  if (!report) return;
+  $('#report-date').textContent = `${report.date} · ${report.publishTime}`;
+  $('#decision-title').textContent = report.title;
+  $('#decision-copy').textContent = report.summary;
+  $('#report-bottom-line').textContent = report.bottomLine;
+  $('#strongest-driver').textContent = report.support;
+  $('#weakest-driver').textContent = report.drag;
+  $('#report-evidence').innerHTML = report.evidence.map((item) => `
+    <article class="evidence-item ${item.tone}">
+      <span>${item.label}</span><strong>${item.value}</strong><p>${item.context}</p>
+    </article>`).join('');
 }
 
 function renderComponents(components) {
@@ -201,7 +315,8 @@ async function start() {
     $('#freshness').textContent = `自动更新 · ${updated.toLocaleString('zh-CN', { hour12: false })}`;
     if (data.meta.status !== 'ok') $('#freshness').textContent += ' · 部分来源暂未刷新';
     renderGauge(data.temperature);
-    renderTemperatureChart(data.temperature);
+    renderDailyReport(data.dailyReport);
+    renderTemperatureChart(data.temperature, data.timelineEvents || []);
     renderComponents(data.temperature.components);
     renderLiquidity(data.liquidity, data.series);
     renderMiniCharts(data.series);
@@ -212,5 +327,10 @@ async function start() {
     console.error(error);
   }
 }
+
+$('#event-dialog-close').addEventListener('click', () => $('#event-dialog').close());
+$('#event-dialog').addEventListener('click', (event) => {
+  if (event.target === $('#event-dialog')) $('#event-dialog').close();
+});
 
 start();
