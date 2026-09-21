@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T00:14:27+08:00",
+    "updatedAt": "2026-09-22T00:29:46+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [
@@ -14701,6 +14701,15 @@
     "explanation": "环境不差但不是全面进攻，重点选择盈利与资金同时改善的方向。",
     "avg30": 54.2,
     "avg90": 58.9,
+    "trend": {
+      "label": "短期右转",
+      "tone": "mixed",
+      "message": "短期已经向右，但20日趋势仍向左：更像修复，机会出现但需要继续确认。",
+      "shortDelta": 5.4,
+      "mediumDelta": -2.0,
+      "shortDirection": "right",
+      "mediumDirection": "left"
+    },
     "rangeLow": 46.0,
     "rangeHigh": 69.4,
     "strongest": "金融松紧",

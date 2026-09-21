@@ -590,6 +590,43 @@ def build_temperature(data: dict) -> None:
     values = [item["value"] for item in history]
     avg30 = sum(values[-30:]) / max(1, len(values[-30:]))
     avg90 = sum(values[-90:]) / max(1, len(values[-90:]))
+
+    def trend_delta(sessions: int) -> float:
+        if not values:
+            return 0.0
+        start = values[-sessions - 1] if len(values) > sessions else values[0]
+        return round1(score - start)
+
+    def trend_direction(delta: float) -> str:
+        if delta >= 1.0:
+            return "right"
+        if delta <= -1.0:
+            return "left"
+        return "flat"
+
+    short_delta = trend_delta(5)
+    medium_delta = trend_delta(20)
+    short_direction = trend_direction(short_delta)
+    medium_direction = trend_direction(medium_delta)
+    if short_direction == "right" and medium_direction == "right":
+        trend_label, trend_tone = "向右共振", "warming"
+        trend_message = "短期和20日趋势同时向右，机会正在增加，但仍要结合所处温度区间。"
+    elif short_direction == "right" and medium_direction == "left":
+        trend_label, trend_tone = "短期右转", "mixed"
+        trend_message = "短期已经向右，但20日趋势仍向左：更像修复，机会出现但需要继续确认。"
+    elif short_direction == "left" and medium_direction == "right":
+        trend_label, trend_tone = "短期左转", "mixed"
+        trend_message = "短期正在向左，但20日趋势仍向右：更像升温过程中的回撤，先观察是否企稳。"
+    elif short_direction == "left" and medium_direction == "left":
+        trend_label, trend_tone = "向左共振", "cooling"
+        trend_message = "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。"
+    else:
+        trend_label, trend_tone = "方向未确认", "flat"
+        trend_message = "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。"
+    if score >= 80 and short_direction == "right":
+        trend_label, trend_tone = "向右但已过热", "cooling"
+        trend_message = "趋势仍向右，但已进入过热区；这时向右代表拥挤和追高风险，而不是新增机会。"
+
     strongest = max(components, key=lambda item: item["score"])
     weakest = min(components, key=lambda item: item["score"])
     data["temperature"] = {
@@ -599,6 +636,15 @@ def build_temperature(data: dict) -> None:
         "explanation": explanation,
         "avg30": round1(avg30),
         "avg90": round1(avg90),
+        "trend": {
+            "label": trend_label,
+            "tone": trend_tone,
+            "message": trend_message,
+            "shortDelta": short_delta,
+            "mediumDelta": medium_delta,
+            "shortDirection": short_direction,
+            "mediumDirection": medium_direction,
+        },
         "rangeLow": round1(min(values) if values else score),
         "rangeHigh": round1(max(values) if values else score),
         "strongest": strongest["name"],

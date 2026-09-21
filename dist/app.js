@@ -57,22 +57,27 @@ function change(values, sessions = 20) {
 function renderGauge(t) {
   const score = Number(t.score);
   const color = temperatureColor(score);
+  const trend = t.trend || { label: '方向未确认', tone: 'flat', message: t.explanation, shortDelta: 0, mediumDelta: 0, shortDirection: 'flat', mediumDirection: 'flat' };
+  const arrows = { right: '→', left: '←', flat: '↔' };
+  const deltaText = (value) => `${Number(value) >= 0 ? '+' : ''}${fmt(value, 1)}`;
   $('#temperature-score').textContent = fmt(score, 0);
   $('#temperature-title').textContent = `${t.label} · ${fmt(score, 0)}分`;
+  $('#temperature-trend').className = `temperature-trend ${trend.tone}`;
+  $('#temperature-trend').textContent = `${arrows[trend.shortDirection]} ${trend.label}`;
   $('#temperature-action').textContent = t.action;
   $('#temperature-action').style.color = color;
   $('#temperature-action').style.borderColor = `${color}66`;
   $('#temperature-action').style.background = `${color}16`;
-  $('#plain-answer').textContent = t.explanation;
+  $('#plain-answer').textContent = trend.message;
   $('#gauge-fill').style.stroke = color;
   $('#gauge-fill').style.strokeDasharray = `${score} 100`;
   $('#gauge-needle').style.transform = `rotate(${score * 1.8 - 90}deg)`;
   $('#reference-row').innerHTML = [
-    ['当前', fmt(score, 0)],
-    ['近30日均值', fmt(t.avg30, 0)],
-    ['近90日均值', fmt(t.avg90, 0)],
-    ['记录区间', `${fmt(t.rangeLow,0)}–${fmt(t.rangeHigh,0)}`],
-  ].map(([label, value]) => `<div class="reference"><span>${label}</span><strong>${value}</strong></div>`).join('');
+    ['当前', fmt(score, 0), ''],
+    ['5日趋势', `${arrows[trend.shortDirection]} ${deltaText(trend.shortDelta)}`, trend.shortDirection],
+    ['20日趋势', `${arrows[trend.mediumDirection]} ${deltaText(trend.mediumDelta)}`, trend.mediumDirection],
+    ['记录区间', `${fmt(t.rangeLow,0)}–${fmt(t.rangeHigh,0)}`, ''],
+  ].map(([label, value, direction]) => `<div class="reference ${direction}"><span>${label}</span><strong>${value}</strong></div>`).join('');
   $('#decision-title').textContent = `现在更适合：${t.action}`;
   $('#decision-copy').textContent = t.explanation;
   $('#strongest-driver').textContent = t.strongest;

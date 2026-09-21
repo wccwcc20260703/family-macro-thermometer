@@ -69,6 +69,11 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
   font-weight: 720;
   white-space: nowrap;
 }
+.temperature-trend { display: inline-flex; align-items: center; margin-top: 9px; padding: 5px 10px; border-radius: 9px; font-size: .78rem; font-weight: 780; }
+.temperature-trend.warming { color: var(--green); background: rgba(74,222,128,.1); }
+.temperature-trend.cooling { color: var(--red); background: rgba(251,113,133,.1); }
+.temperature-trend.mixed { color: var(--amber); background: rgba(251,191,36,.1); }
+.temperature-trend.flat { color: var(--muted); background: rgba(148,163,184,.09); }
 .gauge-wrap { max-width: 520px; margin: -10px auto 0; }
 .gauge { display: block; width: 100%; overflow: visible; }
 .gauge-track, .gauge-fill { fill: none; stroke-width: 22; stroke-linecap: round; }
@@ -90,6 +95,9 @@ main { display: grid; gap: 18px; padding-bottom: 34px; }
 }
 .reference span { display: block; color: var(--muted); font-size: .75rem; }
 .reference strong { display: block; margin-top: 2px; font-size: 1.05rem; }
+.reference.right strong { color: var(--green); }
+.reference.left strong { color: var(--red); }
+.reference.flat strong { color: var(--muted); }
 
 .decision-card { display: flex; flex-direction: column; }
 .decision-card > h2 { margin: 7px 0 10px; font-size: clamp(1.6rem, 3vw, 2.25rem); }
