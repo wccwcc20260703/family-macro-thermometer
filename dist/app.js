@@ -34,6 +34,8 @@ function drawLineChart(target, rawValues, options = {}) {
   const area = `${path} L ${x(values.length - 1)} ${height - pad.bottom} L ${x(0)} ${height - pad.bottom} Z`;
   const ticks = [0, .25, .5, .75, 1].map((p) => ({ value: max - (max - min) * p, y: pad.top + (height - pad.top - pad.bottom) * p }));
   const dateIndexes = [0, Math.floor((values.length - 1) / 2), values.length - 1];
+  const timeSpanDays = (new Date(values.at(-1).date) - new Date(values[0].date)) / 86400000;
+  const dateLabel = (day) => timeSpanDays > 370 ? day.slice(0, 7) : day.slice(5);
   const color = options.color || '#5eead4';
   const eventColors = { risk: '#fb7185', opportunity: '#4ade80', info: '#60a5fa' };
   const eventMarkers = (options.events || []).map((event, eventIndex) => {
@@ -57,7 +59,7 @@ function drawLineChart(target, rawValues, options = {}) {
       ${thresholds.map((t) => `<line class="threshold-line" x1="${pad.left}" x2="${width-pad.right}" y1="${y(Number(t.value))}" y2="${y(Number(t.value))}" style="stroke:${t.color}"/><text class="threshold-label" x="${width-pad.right-4}" y="${y(Number(t.value))-5}" text-anchor="end" style="fill:${t.color}">${t.label}</text>`).join('')}
       ${eventMarkers}
       <circle class="last-dot" cx="${x(values.length-1)}" cy="${y(ys.at(-1))}" r="5" style="stroke:${color}"/>
-      ${dateIndexes.map((i) => `<text class="axis-label" x="${x(i)}" y="${height-7}" text-anchor="${i===0?'start':i===values.length-1?'end':'middle'}">${values[i].date.slice(5)}</text>`).join('')}
+      ${dateIndexes.map((i) => `<text class="axis-label" x="${x(i)}" y="${height-7}" text-anchor="${i===0?'start':i===values.length-1?'end':'middle'}">${dateLabel(values[i].date)}</text>`).join('')}
     </svg>`;
   if (options.onEventClick) {
     target.querySelectorAll('.event-marker').forEach((marker) => {
@@ -259,14 +261,31 @@ function renderLiquidity(liquidity, series) {
       <div class="threshold-signal ${item.value >= item.riskLine ? 'risk' : item.value <= item.opportunityLine ? 'opportunity' : 'neutral'}">${item.thresholdSignal}</div>
       <div class="liquidity-signal opportunity"><span>机会</span><p>${item.opportunity}</p></div>
       <div class="liquidity-signal risk"><span>风险</span><p>${item.risk}</p></div>
+      <div class="liquidity-chart-head">
+        <span id="liquidity-range-label-${item.key}">历史区间</span>
+        <div class="liquidity-range-buttons" data-key="${item.key}">
+          ${item.key === 'nfci'
+            ? '<button type="button" data-span="5y">5年</button><button class="active" type="button" data-span="max">全部</button>'
+            : '<button type="button" data-span="1y">1年</button><button class="active" type="button" data-span="5y">5年</button>'}
+        </div>
+      </div>
       <div class="liquidity-chart" id="liquidity-chart-${item.key}"></div>
-      <div class="liquidity-foot"><span>友好度 ${fmt(item.score, 0)}分</span><a href="${series[item.key]?.sourceUrl || '#'}" target="_blank" rel="noopener">FRED 原始数据</a></div>
+      <div class="liquidity-foot"><span>当前判断：${item.status}</span><a href="${series[item.key]?.sourceUrl || '#'}" target="_blank" rel="noopener">FRED 原始数据</a></div>
     </article>`).join('');
   const colors = { effr: '#fbbf24', real10y: '#fb7185', broadDollar: '#60a5fa', nfci: '#4ade80' };
-  liquidity.indicators.forEach((item) => {
-    const values = series[item.key]?.values || [];
-    const range = item.key === 'nfci' ? 104 : 180;
-    drawLineChart($(`#liquidity-chart-${item.key}`), values.slice(-range), {
+  const drawLiquidityChart = (item, span) => {
+    const source = series[item.key] || {};
+    const recent = source.values || [];
+    const long = source.longValues?.length ? source.longValues : recent;
+    let values;
+    if (span === '1y') values = recent.slice(-(item.key === 'nfci' ? 52 : 260));
+    else if (span === '5y') values = item.key === 'nfci' ? recent.slice(-260) : long;
+    else values = long;
+    const first = values[0]?.date || '—';
+    const last = values.at(-1)?.date || '—';
+    const label = span === 'max' ? `全部历史 · ${first} 至 ${last}` : `${span === '5y' ? '近5年' : '近1年'} · ${first} 至 ${last}`;
+    $(`#liquidity-range-label-${item.key}`).textContent = label;
+    drawLineChart($(`#liquidity-chart-${item.key}`), values, {
       height: 150,
       label: `${item.name}历史曲线`,
       color: colors[item.key],
@@ -275,6 +294,16 @@ function renderLiquidity(liquidity, series) {
         { value: item.riskLine, label: `风险线 ${fmt(item.riskLine, item.key === 'nfci' ? 2 : 1)}`, color: '#fb7185' },
         { value: item.opportunityLine, label: `机会线 ${fmt(item.opportunityLine, item.key === 'nfci' ? 2 : 1)}`, color: '#4ade80' },
       ],
+    });
+  };
+  liquidity.indicators.forEach((item) => {
+    const defaultSpan = item.key === 'nfci' ? 'max' : '5y';
+    drawLiquidityChart(item, defaultSpan);
+    document.querySelectorAll(`.liquidity-range-buttons[data-key="${item.key}"] button`).forEach((button) => {
+      button.addEventListener('click', () => {
+        button.parentElement.querySelectorAll('button').forEach((candidate) => candidate.classList.toggle('active', candidate === button));
+        drawLiquidityChart(item, button.dataset.span);
+      });
     });
   });
 }

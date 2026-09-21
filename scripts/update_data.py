@@ -255,7 +255,7 @@ def tencent_current_amount(symbol: str) -> tuple[str, float]:
     return day, amount
 
 
-def fred_series(series_id: str, limit: int = 520) -> list[dict]:
+def fred_series(series_id: str, limit: int | None = None) -> list[dict]:
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
     raw = subprocess.check_output(
         ["curl", "--http1.1", "-L", "-sS", "--connect-timeout", "5", "--max-time", "20", url],
@@ -273,7 +273,28 @@ def fred_series(series_id: str, limit: int = 520) -> list[dict]:
         rows.append({"date": day, "value": float(value)})
     if not rows:
         raise RuntimeError(f"FRED序列为空: {series_id}")
-    return rows[-limit:]
+    return rows[-limit:] if limit else rows
+
+
+def fred_chart_history(rows: list[dict], key: str) -> list[dict]:
+    """Keep a readable long-run chart without bloating the daily calculation series."""
+    if not rows:
+        return []
+    if key == "nfci":
+        selected = rows
+        bucket = lambda day: day[:7]  # one observation per month across the full history
+    else:
+        last_day = dt.date.fromisoformat(rows[-1]["date"])
+        cutoff = (last_day - dt.timedelta(days=366 * 5)).isoformat()
+        selected = [item for item in rows if item["date"] >= cutoff]
+        bucket = lambda day: dt.date.fromisoformat(day).isocalendar()[:2]  # one observation per week
+    sampled = {}
+    for item in selected:
+        sampled[bucket(item["date"])] = item
+    result = list(sampled.values())
+    if result and result[-1]["date"] != rows[-1]["date"]:
+        result.append(rows[-1])
+    return result
 
 
 def update_fred_liquidity(data: dict) -> list[str]:
@@ -300,7 +321,8 @@ def update_fred_liquidity(data: dict) -> list[str]:
             "frequency": frequency,
             "source": "FRED（圣路易斯联储）",
             "sourceUrl": f"https://fred.stlouisfed.org/series/{series_id}",
-            "values": rows,
+            "values": rows[-520:],
+            "longValues": fred_chart_history(rows, key),
         }
         time.sleep(0.35)
     return warnings
