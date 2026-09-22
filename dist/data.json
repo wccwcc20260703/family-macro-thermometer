@@ -1,11 +1,10 @@
 {
   "meta": {
-    "updatedAt": "2026-09-22T08:40:15+08:00",
+    "updatedAt": "2026-09-22T10:29:49+08:00",
     "status": "partial",
     "errors": [],
     "warnings": [
-      "COMEX黄金暂未取得新值，保留最近成功记录",
-      "COMEX铜暂未取得新值，保留最近成功记录"
+      "NFCI 金融状况指数暂未取得新值，保留最近成功记录"
     ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
   },
@@ -3192,7 +3191,7 @@
         },
         {
           "date": "2026-09-22",
-          "value": 92.51
+          "value": 92.86
         }
       ]
     },
@@ -3202,10 +3201,6 @@
       "meaning": "用于观察避险需求与实际利率预期",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-09-18",
-          "value": 3678.2
-        },
         {
           "date": "2025-09-19",
           "value": 3719.4
@@ -4240,7 +4235,11 @@
         },
         {
           "date": "2026-09-21",
-          "value": 4387.0
+          "value": 4381.0
+        },
+        {
+          "date": "2026-09-22",
+          "value": 4381.2
         }
       ]
     },
@@ -4250,10 +4249,6 @@
       "meaning": "用于观察全球制造业需求与周期热度",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-09-18",
-          "value": 4.6
-        },
         {
           "date": "2025-09-19",
           "value": 4.6305
@@ -5288,7 +5283,11 @@
         },
         {
           "date": "2026-09-21",
-          "value": 6.7745
+          "value": 6.792
+        },
+        {
+          "date": "2026-09-22",
+          "value": 6.8065
         }
       ]
     },
@@ -5296,12 +5295,8 @@
       "label": "A股成交额",
       "unit": "万亿元",
       "meaning": "2万亿元是活跃分界，2.2–2.3万亿元以上更利于行情扩散",
-      "source": "腾讯行情当日成交额；历史数据沿用最近成功记录",
+      "source": "上证指数与深证成指成交额合计（东方财富公开行情）",
       "values": [
-        {
-          "date": "2025-08-27",
-          "value": 3.166
-        },
         {
           "date": "2025-08-28",
           "value": 2.971
@@ -20527,6 +20522,56 @@
           "value": -0.56
         }
       ]
+    },
+    "marginBalance": {
+      "label": "沪深融资余额",
+      "unit": "万亿元",
+      "meaning": "杠杆资金存量；连续上升代表风险偏好增强，也要警惕过快堆积",
+      "source": "上海证券交易所、深圳证券交易所",
+      "sourceUrl": "https://www.sse.com.cn/market/othersdata/margin/detail/",
+      "secondarySourceUrl": "https://www.szse.cn/disclosure/margin/object/index.html",
+      "values": [
+        {
+          "date": "2026-09-10",
+          "value": 2.5898,
+          "buy": 135.79
+        },
+        {
+          "date": "2026-09-11",
+          "value": 2.5754,
+          "buy": 159.39
+        },
+        {
+          "date": "2026-09-14",
+          "value": 2.5705,
+          "buy": 129.77
+        },
+        {
+          "date": "2026-09-15",
+          "value": 2.5712,
+          "buy": 134.51
+        },
+        {
+          "date": "2026-09-16",
+          "value": 2.5804,
+          "buy": 168.89
+        },
+        {
+          "date": "2026-09-17",
+          "value": 2.5828,
+          "buy": 161.56
+        },
+        {
+          "date": "2026-09-18",
+          "value": 2.5816,
+          "buy": 187.45
+        },
+        {
+          "date": "2026-09-21",
+          "value": 2.5958,
+          "buy": 185.9
+        }
+      ]
     }
   },
   "temperature": {
@@ -20624,20 +20669,20 @@
         "tone": "observe",
         "cautiousLabel": "谨慎 ≤ 1.0万亿",
         "boldLabel": "大胆 ≥ 2.5万亿",
-        "percentile": "近260期原始值第27百分位 · 越高越友好",
+        "percentile": "近259期原始值第27百分位 · 越高越友好",
         "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
         "weight": 25
       },
       {
         "name": "通胀压力",
         "key": "inflation",
-        "reading": "油价20日 +14.1%",
-        "position": 37.8,
+        "reading": "油价20日 +14.5%",
+        "position": 36.5,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≥ +15%",
         "boldLabel": "大胆 ≤ +5%",
-        "percentile": "近240期涨幅第79百分位 · 涨得越慢越友好",
+        "percentile": "近240期涨幅第80百分位 · 涨得越慢越友好",
         "interpretation": "油价短期急涨会抬高通胀预期，压缩降息和估值空间。",
         "weight": 10
       }
@@ -21876,5 +21921,169 @@
     ],
     "sourceUrl": "https://www.stats.gov.cn/sj/zxfb/202609/t20260915_1965307.html",
     "profitSourceUrl": "https://www.stats.gov.cn/sj/zxfb/202608/t20260827_1965126.html"
+  },
+  "credit": {
+    "period": "2026-08",
+    "sourceUrl": "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/2026091417020862747/index.html",
+    "source": "中国人民银行",
+    "socialFinanceStock": 464.8,
+    "socialFinanceYoy": 7.2,
+    "socialFinanceYtd": 23.91,
+    "m2": 356.81,
+    "m2Yoy": 7.5,
+    "m1": 115.77,
+    "m1Yoy": 4.1,
+    "rmbLoansYtd": 10.44,
+    "householdLoansYtd": -1.03,
+    "corporateLoansYtd": 11.26,
+    "interbankRate": 1.38,
+    "repoRate": 1.4
+  },
+  "courseSectors": [
+    {
+      "key": "aiHardware",
+      "name": "AI硬件",
+      "proxy": "科创半导体ETF代理",
+      "role": "主攻",
+      "value": 1.016,
+      "date": "2026-09-22",
+      "change5": 10.2,
+      "change20": 4.1,
+      "state": "风险",
+      "tone": "risk",
+      "reading": "涨幅拥挤或短线明显转弱，先等估值和基本面消化。",
+      "thesis": "设备材料、存储/HBM、PCB/CCL、先进封装；光模块不追高",
+      "validation": "看订单、利润、估值和资金是否同时确认",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "innovativeDrug",
+      "name": "创新药",
+      "proxy": "创新药ETF代理",
+      "role": "主攻",
+      "value": 0.876,
+      "date": "2026-09-22",
+      "change5": 6.6,
+      "change20": 0.9,
+      "state": "机会",
+      "tone": "opportunity",
+      "reading": "短期修复但尚未明显过热，可进入验证清单。",
+      "thesis": "从估值修复进入产业验证，关注BD、出海与商业化",
+      "validation": "看授权交易、临床进度和现金流",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "aiApplication",
+      "name": "AI应用",
+      "proxy": "恒生互联网ETF代理",
+      "role": "主攻",
+      "value": 0.36,
+      "date": "2026-09-22",
+      "change5": 3.4,
+      "change20": -3.0,
+      "state": "观察",
+      "tone": "observe",
+      "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
+      "thesis": "关注AI赋能传统业务、原生AI与Agent",
+      "validation": "平台股价格只能近似反映应用风险偏好",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "nonferrous",
+      "name": "有色金属",
+      "proxy": "有色金属ETF代理",
+      "role": "周期",
+      "value": 1.739,
+      "date": "2026-09-22",
+      "change5": 0.8,
+      "change20": -4.2,
+      "state": "观察",
+      "tone": "observe",
+      "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
+      "thesis": "供需与价格驱动的进攻方向",
+      "validation": "看铜铝等价格、库存与企业利润",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "gold",
+      "name": "黄金",
+      "proxy": "黄金ETF代理",
+      "role": "底仓",
+      "value": 8.916,
+      "date": "2026-09-22",
+      "change5": 1.0,
+      "change20": -6.5,
+      "state": "观察",
+      "tone": "observe",
+      "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
+      "thesis": "宏观对冲与防守资产",
+      "validation": "看实际利率、美元和央行需求",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "robot",
+      "name": "人形机器人",
+      "proxy": "机器人ETF代理",
+      "role": "卫星",
+      "value": 0.944,
+      "date": "2026-09-22",
+      "change5": 4.2,
+      "change20": -0.5,
+      "state": "观察",
+      "tone": "observe",
+      "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
+      "thesis": "长期方向较好，但确定性低于成熟硬件链",
+      "validation": "小仓位观察订单与量产，不让卫星仓变主仓",
+      "source": "东方财富公开行情（市场代理）"
+    },
+    {
+      "key": "space",
+      "name": "商业航天",
+      "proxy": "军工ETF宽口径代理",
+      "role": "卫星",
+      "value": 1.172,
+      "date": "2026-09-22",
+      "change5": 2.9,
+      "change20": 7.0,
+      "state": "机会",
+      "tone": "opportunity",
+      "reading": "短期修复但尚未明显过热，可进入验证清单。",
+      "thesis": "产业方向值得跟踪，但ETF映射并不纯",
+      "validation": "重点验证发射、订单和产业资本开支",
+      "source": "东方财富公开行情（市场代理）"
+    }
+  ],
+  "marketPulse": {
+    "summary": "成交额看参与度，两融看杠杆意愿，ETF申赎看资金正在投票的方向；三者需要一起看。",
+    "margin": {
+      "date": "2026-09-21",
+      "value": 2.5958,
+      "buy": 185.9,
+      "change5": 1.0,
+      "state": "温和增加",
+      "tone": "opportunity",
+      "interpretation": "融资余额持续温和上升有利于行情扩散；若短期陡增而指数不涨，反而要警惕拥挤和承接转弱。"
+    },
+    "etfFlow": {
+      "date": "2026-09-21",
+      "all": -415.2,
+      "stock": -649.0,
+      "unit": "亿元",
+      "state": "股票ETF显著净流出",
+      "tone": "risk",
+      "inflows": [
+        "科创半导体ETF华夏 +11.45亿元",
+        "科创50ETF华夏 +4.88亿元",
+        "半导体设备ETF国泰 +3.75亿元"
+      ],
+      "outflows": [
+        "中证500ETF南方 -9.10亿元",
+        "上证50ETF华夏 -8.10亿元",
+        "创业板ETF易方达 -7.84亿元"
+      ],
+      "interpretation": "总量净流出说明增量资金偏谨慎，但半导体方向仍获局部申购；这是结构性资金偏好，不等于全市场转强。",
+      "source": "东方财富Choice估算",
+      "sourceUrl": "https://finance.eastmoney.com/a/202609223880602526.html"
+    }
   }
 }

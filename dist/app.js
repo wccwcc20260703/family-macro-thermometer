@@ -2,6 +2,7 @@ const $ = (selector) => document.querySelector(selector);
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const fmt = (value, digits = 1) => Number(value).toFixed(digits);
+let chartSerial = 0;
 
 function temperatureColor(score) {
   if (score < 35) return '#60a5fa';
@@ -37,6 +38,7 @@ function drawLineChart(target, rawValues, options = {}) {
   const timeSpanDays = (new Date(values.at(-1).date) - new Date(values[0].date)) / 86400000;
   const dateLabel = (day) => timeSpanDays > 370 ? day.slice(0, 7) : day.slice(5);
   const color = options.color || '#5eead4';
+  const gradientId = `areaGradient-${++chartSerial}`;
   const eventColors = { risk: '#fb7185', opportunity: '#4ade80', info: '#60a5fa' };
   const eventMarkers = (options.events || []).map((event, eventIndex) => {
     if (event.date < values[0].date || event.date > values.at(-1).date) return '';
@@ -52,9 +54,9 @@ function drawLineChart(target, rawValues, options = {}) {
   }).join('');
   target.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.label || '历史曲线'}">
-      <defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
       ${ticks.map((t) => `<line class="grid-line" x1="${pad.left}" x2="${width-pad.right}" y1="${t.y}" y2="${t.y}"/><text class="axis-label" x="${pad.left-7}" y="${t.y+4}" text-anchor="end">${fmt(t.value, options.digits ?? 1)}</text>`).join('')}
-      <path class="area-path" d="${area}" style="fill:url(#areaGradient)"/>
+      <path class="area-path" d="${area}" style="fill:url(#${gradientId})"/>
       <path class="line-path" d="${path}" style="stroke:${color}"/>
       ${thresholds.map((t) => `<line class="threshold-line" x1="${pad.left}" x2="${width-pad.right}" y1="${y(Number(t.value))}" y2="${y(Number(t.value))}" style="stroke:${t.color}"/><text class="threshold-label" x="${width-pad.right-4}" y="${y(Number(t.value))-5}" text-anchor="end" style="fill:${t.color}">${t.label}</text>`).join('')}
       ${eventMarkers}
@@ -309,6 +311,99 @@ function renderLiquidity(liquidity, series) {
   });
 }
 
+function renderMarketPulse(pulse, series) {
+  if (!pulse) return;
+  $('#market-pulse-summary').textContent = pulse.summary;
+  const margin = pulse.margin || {};
+  const marginValues = series.marginBalance?.values || [];
+  $('#margin-card').innerHTML = `
+    <div class="capital-card-head">
+      <div><span class="capital-status ${margin.tone || 'observe'}">${margin.state || '等待数据'}</span><h3>沪深融资余额</h3></div>
+      <div class="capital-number"><strong>${fmt(margin.value || 0, 3)}</strong><span>万亿元</span></div>
+    </div>
+    <div class="capital-facts">
+      <span>融资买入额 <b>${fmt(margin.buy || 0, 1)}亿元</b></span>
+      <span>近5期 <b class="${Number(margin.change5) > 0 ? 'up' : 'down'}">${Number(margin.change5) >= 0 ? '+' : ''}${fmt(margin.change5 || 0, 1)}%</b></span>
+      <span>数据日 <b>${margin.date || '—'}</b></span>
+    </div>
+    <div class="capital-chart" id="margin-chart"></div>
+    <p>${margin.interpretation || ''}</p>
+    <div class="source-links"><a href="${series.marginBalance?.sourceUrl || '#'}" target="_blank" rel="noopener">上交所</a><a href="${series.marginBalance?.secondarySourceUrl || '#'}" target="_blank" rel="noopener">深交所</a></div>`;
+  drawLineChart($('#margin-chart'), marginValues, { height: 155, label: '沪深融资余额', color: '#5eead4', digits: 3 });
+
+  const etf = pulse.etfFlow || {};
+  $('#etf-flow-card').innerHTML = `
+    <div class="capital-card-head">
+      <div><span class="capital-status ${etf.tone || 'observe'}">${etf.state || '等待数据'}</span><h3>ETF资金净申购</h3></div>
+      <div class="capital-number negative"><strong>${Number(etf.stock) >= 0 ? '+' : ''}${fmt(etf.stock || 0, 1)}</strong><span>${etf.unit || '亿元'} · 股票ETF</span></div>
+    </div>
+    <div class="capital-facts">
+      <span>全市场ETF <b>${Number(etf.all) >= 0 ? '+' : ''}${fmt(etf.all || 0, 1)}${etf.unit || '亿元'}</b></span>
+      <span>数据日 <b>${etf.date || '—'}</b></span>
+      <span>口径 <b>${etf.source || '公开估算'}</b></span>
+    </div>
+    <div class="flow-columns">
+      <div><span>净流入靠前</span>${(etf.inflows || []).map((item) => `<p class="inflow">${item}</p>`).join('')}</div>
+      <div><span>净流出靠前</span>${(etf.outflows || []).map((item) => `<p class="outflow">${item}</p>`).join('')}</div>
+    </div>
+    <p>${etf.interpretation || ''}</p>
+    <div class="source-links"><a href="${etf.sourceUrl || '#'}" target="_blank" rel="noopener">查看资金统计来源</a></div>`;
+}
+
+function renderCourseSectors(sectors) {
+  const target = $('#course-sector-grid');
+  if (!sectors?.length) {
+    target.innerHTML = '<p class="chart-note">行业代理数据暂不可用。</p>';
+    return;
+  }
+  const draw = (filter = 'all') => {
+    const visible = filter === 'all' ? sectors : sectors.filter((item) => item.tone === filter);
+    target.innerHTML = visible.length ? visible.map((item) => `
+      <article class="sector-card ${item.tone}">
+        <div class="sector-head">
+          <div><span class="sector-role">${item.role}</span><h3>${item.name}</h3></div>
+          <span class="sector-state">${item.state}</span>
+        </div>
+        <p class="sector-thesis">${item.thesis}</p>
+        <div class="sector-market">
+          <span>${item.proxy}</span><strong>${fmt(item.value, 3)}</strong>
+          <span>5日 <b class="${Number(item.change5) >= 0 ? 'up' : 'down'}">${Number(item.change5) >= 0 ? '+' : ''}${fmt(item.change5, 1)}%</b></span>
+          <span>20日 <b class="${Number(item.change20) >= 0 ? 'up' : 'down'}">${Number(item.change20) >= 0 ? '+' : ''}${fmt(item.change20, 1)}%</b></span>
+        </div>
+        <p class="sector-reading">${item.reading}</p>
+        <details><summary>查看验证条件</summary><p>${item.validation}</p><small>${item.source} · ${item.date}</small></details>
+      </article>`).join('') : '<p class="chart-note">当前没有落入这个状态的课程重点行业。</p>';
+  };
+  draw();
+  document.querySelectorAll('#sector-filters button').forEach((button) => {
+    button.addEventListener('click', () => {
+      button.parentElement.querySelectorAll('button').forEach((candidate) => candidate.classList.toggle('active', candidate === button));
+      draw(button.dataset.filter);
+    });
+  });
+}
+
+function renderCredit(credit) {
+  if (!credit) return;
+  $('#credit-period').textContent = `${credit.period || '—'} · ${credit.source || '中国人民银行'}`;
+  const cards = [
+    ['社融存量', `${fmt(credit.socialFinanceStock, 1)}万亿元`, `同比 ${credit.socialFinanceYoy >= 0 ? '+' : ''}${fmt(credit.socialFinanceYoy, 1)}%`, '总量流动性'],
+    ['M2 / M1', `${fmt(credit.m2Yoy, 1)}% / ${fmt(credit.m1Yoy, 1)}%`, `剪刀差 ${fmt(credit.m2Yoy - credit.m1Yoy, 1)}个百分点`, '钱活不活'],
+    ['人民币贷款', `${fmt(credit.rmbLoansYtd, 2)}万亿元`, '年初至今新增', '信用扩张'],
+    ['居民贷款', `${credit.householdLoansYtd >= 0 ? '+' : ''}${fmt(credit.householdLoansYtd, 2)}万亿元`, '年初至今', '居民需求'],
+    ['企业贷款', `${credit.corporateLoansYtd >= 0 ? '+' : ''}${fmt(credit.corporateLoansYtd, 2)}万亿元`, '年初至今', '企业融资'],
+    ['银行间利率', `${fmt(credit.interbankRate, 2)}%`, `质押回购 ${fmt(credit.repoRate, 2)}%`, '短端资金'],
+  ];
+  $('#credit-grid').innerHTML = cards.map(([label, value, context, tag]) => `
+    <article class="credit-card"><span>${label}</span><strong>${value}</strong><small>${context}</small><b>${tag}</b></article>`).join('');
+  const gap = Number(credit.m2Yoy) - Number(credit.m1Yoy);
+  const householdWeak = Number(credit.householdLoansYtd) < 0;
+  $('#credit-reading').innerHTML = `
+    <strong>${householdWeak ? '总量不差，居民信用仍弱。' : '信用正在改善，但还要看结构。'}</strong>
+    <p>社融存量同比 ${fmt(credit.socialFinanceYoy, 1)}%，说明金融总量没有失速；M2比M1高 ${fmt(gap, 1)} 个百分点，${gap > 2 ? '资金活化程度仍不够' : '资金活化有所改善'}。${householdWeak ? `居民贷款年内减少 ${fmt(Math.abs(credit.householdLoansYtd), 2)} 万亿元，而企业贷款增加 ${fmt(credit.corporateLoansYtd, 2)} 万亿元，当前更像“企业和政府部门托底、居民需求偏弱”。` : '居民与企业信贷都在增加，需继续观察是否转化为消费、投资与盈利。'}</p>
+    <a href="${credit.sourceUrl || '#'}" target="_blank" rel="noopener">查看人民银行原始报告</a>`;
+}
+
 function renderMiniCharts(series) {
   const configs = [
     ['turnover', 80, '#5eead4'],
@@ -395,7 +490,10 @@ async function start() {
     renderTemperatureChart(data.temperature, data.timelineEvents || []);
     renderComponents(data.temperature.components);
     renderLiquidity(data.liquidity, data.series);
+    renderMarketPulse(data.marketPulse, data.series);
+    renderCourseSectors(data.courseSectors);
     renderMiniCharts(data.series);
+    renderCredit(data.credit);
     renderChina(data.china, data.chinaReport);
   } catch (error) {
     $('#freshness').textContent = '数据读取失败，请稍后刷新';

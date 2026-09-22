@@ -3,6 +3,8 @@
 
 Sources:
 - 国家统计局 release pages for monthly China macro data.
+- 中国人民银行 financial-statistics releases for domestic credit conditions.
+- 上海、深圳证券交易所 daily margin-financing disclosures.
 - 东方财富 public market quote endpoints for daily market curves.
 
 Failures are non-destructive: the last successful value is preserved and the
@@ -25,6 +27,8 @@ import subprocess
 import time
 import urllib.parse
 import urllib.request
+import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -53,6 +57,24 @@ def fetch_text(url: str, timeout: int = 25, headers: dict | None = None) -> str:
         return subprocess.check_output(command, text=True, timeout=timeout + 5)
     except Exception:
         raise last_error
+
+
+def fetch_bytes(url: str, timeout: int = 25, headers: dict | None = None) -> bytes:
+    request_headers = {"User-Agent": UA, "Accept": "*/*", "Connection": "close"}
+    request_headers.update(headers or {})
+    try:
+        req = urllib.request.Request(url, headers=request_headers)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.read()
+    except Exception as first_error:
+        command = ["curl", "--http1.1", "-L", "-sS", "--max-time", str(timeout), "-A", UA]
+        for key, value in (headers or {}).items():
+            command.extend(["-H", f"{key}: {value}"])
+        command.append(url)
+        try:
+            return subprocess.check_output(command, timeout=timeout + 5)
+        except Exception:
+            raise first_error
 
 
 def clamp(value: float, low: float = 0, high: float = 100) -> float:
@@ -192,6 +214,51 @@ def update_nbs(data: dict) -> None:
     history = [item for item in data.get("chinaHistory", []) if item.get("period", "") < entry["period"]]
     history.append(entry)
     data["chinaHistory"] = sorted(history, key=lambda item: item["period"])[-36:]
+
+
+def update_pbc(data: dict) -> None:
+    listing_url = "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/index.html"
+    listing = fetch_text(listing_url)
+    links = re.findall(r'href="([^"]+)"[^>]+title="([^"]*金融统计数据报告)"', listing)
+    latest_link = next(((href, title) for href, title in links if re.search(r"20\d{2}年\d+月金融统计数据报告", title)), None)
+    if not latest_link:
+        raise RuntimeError("未找到人民银行最新月度金融统计报告")
+    href, title = latest_link
+    source_url = urllib.parse.urljoin(listing_url, href)
+    text = strip_html(fetch_text(source_url))
+    period_match = re.search(r"(20\d{2})年(\d+)月金融统计数据报告", title)
+    period = f"{int(period_match.group(1)):04d}-{int(period_match.group(2)):02d}" if period_match else ""
+
+    def number(pattern: str, default: float = 0.0) -> float:
+        match = re.search(pattern, text)
+        return float(match.group(1)) if match else default
+
+    def signed(pattern: str, default: float = 0.0) -> float:
+        match = re.search(pattern, text)
+        if not match:
+            return default
+        direction, value = match.groups()
+        return -float(value) if direction in {"下降", "减少"} else float(value)
+
+    credit = data.get("credit") or {}
+    credit.update({
+        "period": period,
+        "sourceUrl": source_url,
+        "source": "中国人民银行",
+        "socialFinanceStock": number(r"社会融资规模存量为([\d.]+)万亿元", credit.get("socialFinanceStock", 0)),
+        "socialFinanceYoy": signed(r"社会融资规模存量为[\d.]+万亿元，同比(增长|下降)([\d.]+)%", credit.get("socialFinanceYoy", 0)),
+        "socialFinanceYtd": number(r"前[一二三四五六七八九十]+个月社会融资规模增量累计为([\d.]+)万亿元", credit.get("socialFinanceYtd", 0)),
+        "m2": number(r"广义货币（M2）余额([\d.]+)万亿元", credit.get("m2", 0)),
+        "m2Yoy": signed(r"广义货币（M2）余额[\d.]+万亿元，同比(增长|下降)([\d.]+)%", credit.get("m2Yoy", 0)),
+        "m1": number(r"狭义货币（M1）余额([\d.]+)万亿元", credit.get("m1", 0)),
+        "m1Yoy": signed(r"狭义货币（M1）余额[\d.]+万亿元，同比(增长|下降)([\d.]+)%", credit.get("m1Yoy", 0)),
+        "rmbLoansYtd": number(r"前[一二三四五六七八九十]+个月人民币贷款增加([\d.]+)万亿元", credit.get("rmbLoansYtd", 0)),
+        "householdLoansYtd": signed(r"住户贷款(增加|减少)([\d.]+)万亿元", credit.get("householdLoansYtd", 0)),
+        "corporateLoansYtd": signed(r"企（事）业单位贷款(增加|减少)([\d.]+)万亿元", credit.get("corporateLoansYtd", 0)),
+        "interbankRate": number(r"同业拆借加权平均利率为([\d.]+)%", credit.get("interbankRate", 0)),
+        "repoRate": number(r"质押式回购加权平均利率为([\d.]+)%", credit.get("repoRate", 0)),
+    })
+    data["credit"] = credit
 
 
 def eastmoney_kline(secid: str, limit: int = 260) -> list[dict]:
@@ -370,6 +437,11 @@ def update_market(data: dict) -> list[str]:
         sz_amount = {row["date"]: row["amount"] for row in sz}
         dates = sorted(set(sh_amount) & set(sz_amount))
         values = [{"date": day, "value": round((sh_amount[day] + sz_amount[day]) / 1e12, 3)} for day in dates]
+        china_now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8)))
+        if china_now.time() < dt.time(15, 10):
+            # Daily k-lines expose the still-growing current-session amount intraday.
+            # Exclude it so the temperature never compares a partial day with full days.
+            values = [item for item in values if item["date"] < china_now.date().isoformat()]
     except Exception as primary_exc:
         try:
             sh_day, sh_amount = tencent_current_amount("sh000001")
@@ -395,6 +467,216 @@ def update_market(data: dict) -> list[str]:
         "values": values,
     }
     return warnings
+
+
+def xlsx_rows(raw: bytes) -> list[list[str]]:
+    """Read the simple worksheet returned by SZSE without third-party packages."""
+    ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        names = set(archive.namelist())
+        shared = []
+        if "xl/sharedStrings.xml" in names:
+            root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+            shared = ["".join(node.text or "" for node in item.iter(f"{ns}t")) for item in root.findall(f"{ns}si")]
+        sheet_name = next((name for name in sorted(names) if name.startswith("xl/worksheets/sheet") and name.endswith(".xml")), None)
+        if not sheet_name:
+            raise RuntimeError("深交所工作表缺失")
+        root = ET.fromstring(archive.read(sheet_name))
+        result = []
+        for row in root.iter(f"{ns}row"):
+            cells = {}
+            for cell in row.findall(f"{ns}c"):
+                ref = cell.attrib.get("r", "")
+                column = re.match(r"[A-Z]+", ref)
+                if not column:
+                    continue
+                cell_type = cell.attrib.get("t")
+                inline = cell.find(f"{ns}is")
+                value_node = cell.find(f"{ns}v")
+                if inline is not None:
+                    value = "".join(node.text or "" for node in inline.iter(f"{ns}t"))
+                elif value_node is None:
+                    value = ""
+                elif cell_type == "s":
+                    value = shared[int(value_node.text)]
+                else:
+                    value = value_node.text or ""
+                cells[column.group(0)] = value
+            if cells:
+                result.append([cells.get(chr(code), "") for code in range(ord("A"), ord("I"))])
+        return result
+
+
+def number_value(value) -> float:
+    text = str(value or "").strip().replace(",", "")
+    return float(text) if text not in {"", "-", "--"} else 0.0
+
+
+def sse_margin(day: str) -> tuple[float, float]:
+    compact = day.replace("-", "")
+    balance = 0.0
+    buy = 0.0
+    total = None
+    seen = 0
+    for page_no in (1, 2, 3):
+        params = urllib.parse.urlencode({
+            "isPagination": "true", "tabType": "mxtype", "detailsDate": compact,
+            "pageHelp.pageSize": 2000, "pageHelp.pageNo": page_no,
+            "pageHelp.beginPage": page_no, "pageHelp.endPage": page_no,
+        })
+        payload = json.loads(fetch_text(
+            f"https://query.sse.com.cn/marketdata/tradedata/queryMargin.do?{params}",
+            headers={"Referer": "https://www.sse.com.cn/"},
+        ))
+        page = payload.get("pageHelp") or {}
+        rows = page.get("data") or payload.get("result") or []
+        if total is None:
+            total = int(page.get("total") or len(rows))
+        balance += sum(number_value(item.get("rzye")) for item in rows)
+        buy += sum(number_value(item.get("rzmre")) for item in rows)
+        seen += len(rows)
+        if seen >= total or not rows:
+            break
+    if not seen:
+        raise RuntimeError(f"上交所{day}无融资数据")
+    return balance, buy
+
+
+def szse_margin(day: str) -> tuple[float, float]:
+    params = urllib.parse.urlencode({
+        "SHOWTYPE": "xlsx", "CATALOGID": "1837_xxpl", "TABKEY": "tab2",
+        "txtDate": day, "random": "0.1",
+    })
+    raw = fetch_bytes(
+        f"https://www.szse.cn/api/report/ShowReport?{params}",
+        headers={"Referer": "https://www.szse.cn/"},
+    )
+    rows = xlsx_rows(raw)
+    data_rows = [row for row in rows if row and re.fullmatch(r"\d{6}", str(row[0] or ""))]
+    if not data_rows:
+        raise RuntimeError(f"深交所{day}无融资数据")
+    buy = sum(number_value(row[2]) for row in data_rows)
+    balance = sum(number_value(row[3]) for row in data_rows)
+    return balance, buy
+
+
+def update_margin(data: dict) -> list[str]:
+    """Refresh recent official SSE/SZSE financing data and preserve older points."""
+    series = data.setdefault("series", {})
+    existing = {item["date"]: item for item in (series.get("marginBalance") or {}).get("values", []) if item.get("date")}
+    warnings = []
+    today = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date()
+    successful = 0
+    for offset in range(1, 19):
+        day = today - dt.timedelta(days=offset)
+        if day.weekday() >= 5:
+            continue
+        iso = day.isoformat()
+        if iso in existing and successful >= 2:
+            successful += 1
+            if successful >= 8:
+                break
+            continue
+        try:
+            sh_balance, sh_buy = sse_margin(iso)
+            sz_balance, sz_buy = szse_margin(iso)
+            existing[iso] = {
+                "date": iso,
+                "value": round((sh_balance + sz_balance) / 1e12, 4),
+                "buy": round((sh_buy + sz_buy) / 1e9, 2),
+            }
+            successful += 1
+        except Exception:
+            continue
+        if successful >= 8:
+            break
+        time.sleep(0.2)
+    values = sorted(existing.values(), key=lambda item: item["date"])[-120:]
+    if not values:
+        warnings.append("沪深交易所两融数据暂不可用")
+        return warnings
+    series["marginBalance"] = {
+        "label": "沪深融资余额",
+        "unit": "万亿元",
+        "meaning": "杠杆资金存量；连续上升代表风险偏好增强，也要警惕过快堆积",
+        "source": "上海证券交易所、深圳证券交易所",
+        "sourceUrl": "https://www.sse.com.cn/market/othersdata/margin/detail/",
+        "secondarySourceUrl": "https://www.szse.cn/disclosure/margin/object/index.html",
+        "values": values,
+    }
+    return warnings
+
+
+def update_course_sectors(data: dict) -> list[str]:
+    """Use liquid ETF prices only as market proxies for the course's focus areas."""
+    specs = [
+        ("aiHardware", "AI硬件", "1.588170", "科创半导体ETF代理", "主攻", "设备材料、存储/HBM、PCB/CCL、先进封装；光模块不追高", "看订单、利润、估值和资金是否同时确认"),
+        ("innovativeDrug", "创新药", "0.159992", "创新药ETF代理", "主攻", "从估值修复进入产业验证，关注BD、出海与商业化", "看授权交易、临床进度和现金流"),
+        ("aiApplication", "AI应用", "1.513330", "恒生互联网ETF代理", "主攻", "关注AI赋能传统业务、原生AI与Agent", "平台股价格只能近似反映应用风险偏好"),
+        ("nonferrous", "有色金属", "1.512400", "有色金属ETF代理", "周期", "供需与价格驱动的进攻方向", "看铜铝等价格、库存与企业利润"),
+        ("gold", "黄金", "1.518880", "黄金ETF代理", "底仓", "宏观对冲与防守资产", "看实际利率、美元和央行需求"),
+        ("robot", "人形机器人", "1.562500", "机器人ETF代理", "卫星", "长期方向较好，但确定性低于成熟硬件链", "小仓位观察订单与量产，不让卫星仓变主仓"),
+        ("space", "商业航天", "1.512660", "军工ETF宽口径代理", "卫星", "产业方向值得跟踪，但ETF映射并不纯", "重点验证发射、订单和产业资本开支"),
+    ]
+    previous = {item.get("key"): item for item in data.get("courseSectors", [])}
+    result = []
+    warnings = []
+    for key, name, secid, proxy, role, thesis, validation in specs:
+        try:
+            rows = eastmoney_kline(secid, 90)
+            change5 = pct_change(rows, 5)
+            change20 = pct_change(rows, 20)
+            if change20 >= 12 or change5 >= 10 or change5 <= -7:
+                state, tone, reading = "风险", "risk", "涨幅拥挤或短线明显转弱，先等估值和基本面消化。"
+            elif change5 > 1 and 0 <= change20 < 8:
+                state, tone, reading = "机会", "opportunity", "短期修复但尚未明显过热，可进入验证清单。"
+            else:
+                state, tone, reading = "观察", "observe", "价格信号未形成清晰共振，继续等订单、利润或资金确认。"
+            result.append({
+                "key": key, "name": name, "proxy": proxy, "role": role,
+                "value": rows[-1]["value"], "date": rows[-1]["date"],
+                "change5": round1(change5), "change20": round1(change20),
+                "state": state, "tone": tone, "reading": reading,
+                "thesis": thesis, "validation": validation,
+                "source": "东方财富公开行情（市场代理）",
+            })
+        except Exception:
+            if key in previous:
+                result.append(previous[key])
+            else:
+                warnings.append(f"{name}市场代理暂不可用")
+        time.sleep(0.25)
+    data["courseSectors"] = result
+    return warnings
+
+
+def build_market_pulse(data: dict) -> None:
+    margin_values = (data.get("series", {}).get("marginBalance") or {}).get("values") or []
+    current = margin_values[-1] if margin_values else {"date": "—", "value": 0, "buy": 0}
+    margin_change5 = pct_change(margin_values, min(5, max(1, len(margin_values) - 1))) if len(margin_values) > 1 else 0
+    if margin_change5 >= 2.5:
+        margin_state, margin_tone = "升温较快", "risk"
+    elif margin_change5 > 0:
+        margin_state, margin_tone = "温和增加", "opportunity"
+    else:
+        margin_state, margin_tone = "杠杆降温", "observe"
+    data["marketPulse"] = {
+        "summary": "成交额看参与度，两融看杠杆意愿，ETF申赎看资金正在投票的方向；三者需要一起看。",
+        "margin": {
+            "date": current.get("date"), "value": current.get("value"), "buy": current.get("buy"),
+            "change5": round1(margin_change5), "state": margin_state, "tone": margin_tone,
+            "interpretation": "融资余额持续温和上升有利于行情扩散；若短期陡增而指数不涨，反而要警惕拥挤和承接转弱。",
+        },
+        "etfFlow": {
+            "date": "2026-09-21", "all": -415.2, "stock": -649.0, "unit": "亿元",
+            "state": "股票ETF显著净流出", "tone": "risk",
+            "inflows": ["科创半导体ETF华夏 +11.45亿元", "科创50ETF华夏 +4.88亿元", "半导体设备ETF国泰 +3.75亿元"],
+            "outflows": ["中证500ETF南方 -9.10亿元", "上证50ETF华夏 -8.10亿元", "创业板ETF易方达 -7.84亿元"],
+            "interpretation": "总量净流出说明增量资金偏谨慎，但半导体方向仍获局部申购；这是结构性资金偏好，不等于全市场转强。",
+            "source": "东方财富Choice估算",
+            "sourceUrl": "https://finance.eastmoney.com/a/202609223880602526.html",
+        },
+    }
 
 
 def latest(series: dict, key: str, default: float) -> float:
@@ -610,7 +892,7 @@ def build_temperature(data: dict) -> None:
         liquidity["broadDollar"] * 0.10 + liquidity["nfci"] * 0.10 +
         growth * 0.25 + market * 0.25 + inflation * 0.10
     )
-
+    score = round1(score)
     label, action, explanation = temperature_label(score)
     def decision_position(value: float, cautious_line: float, bold_line: float, higher_is_better: bool) -> float:
         """Map raw values to one shared action scale: cautious 0–35, observe 35–65, bold 65–100."""
@@ -1118,6 +1400,10 @@ def main() -> None:
     except Exception as exc:
         errors.append(f"国家统计局更新失败：{exc}")
     try:
+        update_pbc(data)
+    except Exception as exc:
+        errors.append(f"人民银行信用数据更新失败：{exc}")
+    try:
         warnings.extend(update_fred_liquidity(data))
     except Exception as exc:
         errors.append(f"FRED流动性更新失败：{exc}")
@@ -1125,12 +1411,21 @@ def main() -> None:
         warnings.extend(update_market(data))
     except Exception as exc:
         errors.append(f"行情更新失败：{exc}")
+    try:
+        warnings.extend(update_margin(data))
+    except Exception as exc:
+        warnings.append(f"沪深两融更新失败：{exc}")
+    try:
+        warnings.extend(update_course_sectors(data))
+    except Exception as exc:
+        warnings.append(f"课程重点行业代理更新失败：{exc}")
 
     if data.get("series"):
         build_liquidity(data)
         build_temperature(data)
         build_timeline_events(data)
         build_china_report(data)
+        build_market_pulse(data)
         build_daily_report(data)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
