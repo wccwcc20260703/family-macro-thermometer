@@ -115,6 +115,147 @@ function renderGauge(t) {
   $('#action-ladder').innerHTML = t.bands.map((band) => `<div class="ladder-step ${score >= band.from && score < band.to ? 'active' : ''}">${band.label}</div>`).join('');
 }
 
+function sectorSnapshot(item, offset = 0) {
+  const rows = item.history || [];
+  if (rows.length < 21) {
+    return {
+      date: item.date, value: item.value, change5: Number(item.change5 || 0), change20: Number(item.change20 || 0),
+      score: Number(item.signalScore ?? 50), shift: Number(item.momentumShift || 0), strength: Number(item.strength || 40),
+      state: item.state || '观察', tone: item.tone || 'observe',
+    };
+  }
+  const index = clamp(rows.length - 1 + Number(offset), 20, rows.length - 1);
+  const value = Number(rows[index].value);
+  const pct = (sessions) => {
+    const base = Number(rows[index - sessions].value);
+    return base ? (value / base - 1) * 100 : 0;
+  };
+  const change5 = pct(5);
+  const change20 = pct(20);
+  const shift = change5 - change20 / 4;
+  const crowdingPenalty = Math.max(0, change5 - 8) * 5 + Math.max(0, change20 - 12) * 3;
+  const score = clamp(Number(item.frameworkScore ?? 50) + clamp(change5, -8, 8) * 1.6 + clamp(change20, -12, 12) * .6 - crowdingPenalty, 0, 100);
+  const strength = clamp(30 + Math.abs(score - 50) * 1.4 + Math.abs(shift) * 2, 25, 100);
+  const tone = score <= 37 ? 'risk' : score >= 63 ? 'opportunity' : 'observe';
+  const state = tone === 'risk' ? '风险' : tone === 'opportunity' ? '机会' : '观察';
+  return { date: rows[index].date, value, change5, change20, score, shift, strength, state, tone };
+}
+
+function openSectorDialog(item, snapshot) {
+  const dialog = $('#sector-dialog');
+  const state = $('#sector-dialog-state');
+  state.className = `event-dialog-type ${snapshot.tone}`;
+  state.textContent = `${snapshot.state} · 信号强度 ${fmt(snapshot.strength, 0)}`;
+  $('#sector-dialog-title').textContent = item.name;
+  $('#sector-dialog-meta').textContent = `${snapshot.date} · ${item.role} · ${item.proxy}`;
+  $('#sector-dialog-thesis').textContent = item.thesis;
+  $('#sector-dialog-metrics').innerHTML = [
+    ['代理价格', fmt(snapshot.value, 3)],
+    ['5日变化', `${snapshot.change5 >= 0 ? '+' : ''}${fmt(snapshot.change5, 1)}%`],
+    ['20日变化', `${snapshot.change20 >= 0 ? '+' : ''}${fmt(snapshot.change20, 1)}%`],
+    ['机会位置', `${fmt(snapshot.score, 0)} / 100`],
+  ].map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('');
+  $('#sector-dialog-validation').textContent = item.validation;
+  $('#sector-dialog-risk').textContent = item.risk || '等待基本面与资金进一步验证';
+  $('#sector-dialog-reading').textContent = snapshot.tone === 'opportunity'
+    ? '位置和趋势相对有利，但仍需满足机会确认条件，不能只看价格。'
+    : snapshot.tone === 'risk'
+      ? '当前风险信号较强，优先等待拥挤度、估值或基本面风险释放。'
+      : '方向尚未形成共振，维持观察比提前下注更重要。';
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', '');
+}
+
+function renderSectorMap(sectors) {
+  const target = $('#sector-scatter');
+  const slider = $('#sector-map-time');
+  const dateLabel = $('#sector-map-date');
+  const playButton = $('#sector-map-play');
+  if (!target || !sectors?.length) return;
+  let offset = Number(slider.value || 0);
+  let timer = null;
+  const shortNames = { optical: '光通信', innovativeDrug: '创新药', aiApplication: 'AI应用', aiHardware: 'AI硬件', chemical: '化工', copper: '铜有色', broad: '沪深300', robot: '机器人', space: '航天' };
+
+  const draw = () => {
+    const width = Math.max(300, Math.round(target.clientWidth || 640));
+    const height = clamp(Math.round(width * .56), 290, 380);
+    const pad = { left: 42, right: 20, top: 20, bottom: 38 };
+    const plotWidth = width - pad.left - pad.right;
+    const plotHeight = height - pad.top - pad.bottom;
+    const x = (value) => pad.left + clamp(value, 0, 100) / 100 * plotWidth;
+    const y = (value) => pad.top + (12 - clamp(value, -12, 12)) / 24 * plotHeight;
+    const radius = (value) => 8 + (clamp(value, 25, 100) - 25) / 75 * (width < 430 ? 9 : 13);
+    const snapshots = sectors.map((item, index) => ({ item, index, now: sectorSnapshot(item, offset), before: sectorSnapshot(item, offset - 5) }));
+    const compact = width < 430;
+    const compactLabels = new Set([
+      ...snapshots.filter(({ now }) => now.tone === 'risk').map(({ item }) => item.key),
+      ...snapshots.filter(({ now }) => now.tone !== 'risk').sort((a, b) => b.now.strength - a.now.strength).slice(0, 4).map(({ item }) => item.key),
+    ]);
+    dateLabel.textContent = snapshots[0]?.now.date ? `${snapshots[0].now.date} · ${offset === 0 ? '最新' : `${Math.abs(offset)}个交易日前`}` : '最新';
+    const trails = snapshots.map(({ now, before }) => `
+      <line class="scatter-trail ${now.tone}" x1="${x(before.score)}" y1="${y(before.shift)}" x2="${x(now.score)}" y2="${y(now.shift)}"/>
+      <circle class="scatter-prior ${now.tone}" cx="${x(before.score)}" cy="${y(before.shift)}" r="3"/>`).join('');
+    const bubbles = snapshots.slice().sort((a, b) => b.now.strength - a.now.strength).map(({ item, index, now }, rank) => {
+      const r = radius(now.strength);
+      const labelY = (compact ? rank : index) % 2 === 0 ? -r - 5 : r + 13;
+      const labelX = compact ? ((rank % 3) - 1) * 7 : 0;
+      const name = shortNames[item.key] || item.name;
+      return `<g class="sector-bubble ${now.tone}" data-sector-key="${item.key}" role="button" tabindex="0" aria-label="${item.name}，${now.state}，信号强度${fmt(now.strength, 0)}">
+        <title>${item.name} · ${now.state} · 5日 ${now.change5 >= 0 ? '+' : ''}${fmt(now.change5, 1)}% · 20日 ${now.change20 >= 0 ? '+' : ''}${fmt(now.change20, 1)}%</title>
+        <circle cx="${x(now.score)}" cy="${y(now.shift)}" r="${r}" opacity=".84"/>
+        ${!compact || compactLabels.has(item.key) ? `<text x="${x(now.score) + labelX}" y="${y(now.shift) + labelY}" text-anchor="middle">${name}</text>` : ''}
+      </g>`;
+    }).join('');
+    target.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="板块机会、风险与趋势散点图">
+      <rect class="scatter-frame" x="${pad.left}" y="${pad.top}" width="${plotWidth}" height="${plotHeight}" rx="10"/>
+      <rect class="scatter-band risk" x="${x(0)}" y="${pad.top}" width="${x(37)-x(0)}" height="${plotHeight}"/>
+      <rect class="scatter-band observe" x="${x(37)}" y="${pad.top}" width="${x(63)-x(37)}" height="${plotHeight}"/>
+      <rect class="scatter-band opportunity" x="${x(63)}" y="${pad.top}" width="${x(100)-x(63)}" height="${plotHeight}"/>
+      <line class="scatter-boundary" x1="${x(37)}" x2="${x(37)}" y1="${pad.top}" y2="${height-pad.bottom}"/>
+      <line class="scatter-boundary" x1="${x(63)}" x2="${x(63)}" y1="${pad.top}" y2="${height-pad.bottom}"/>
+      <line class="scatter-grid" x1="${pad.left}" x2="${width-pad.right}" y1="${y(0)}" y2="${y(0)}"/>
+      <text class="scatter-axis-title" x="${x(18.5)}" y="${height-13}" text-anchor="middle">风险</text>
+      <text class="scatter-axis-title" x="${x(50)}" y="${height-13}" text-anchor="middle">观察</text>
+      <text class="scatter-axis-title" x="${x(81.5)}" y="${height-13}" text-anchor="middle">机会</text>
+      <text class="scatter-axis-label" x="${pad.left-7}" y="${pad.top+8}" text-anchor="end">改善</text>
+      <text class="scatter-axis-label" x="${pad.left-7}" y="${height-pad.bottom}" text-anchor="end">转弱</text>
+      ${trails}${bubbles}
+    </svg>`;
+    target.querySelectorAll('.sector-bubble').forEach((bubble) => {
+      const item = sectors.find((candidate) => candidate.key === bubble.dataset.sectorKey);
+      const open = () => openSectorDialog(item, sectorSnapshot(item, offset));
+      bubble.addEventListener('click', open);
+      bubble.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') open(); });
+    });
+  };
+  const stop = () => {
+    if (timer) clearInterval(timer);
+    timer = null;
+    playButton.textContent = '播放20日轨迹';
+  };
+  slider.addEventListener('input', () => { offset = Number(slider.value); stop(); draw(); });
+  playButton.addEventListener('click', () => {
+    if (timer) { stop(); return; }
+    if (offset >= 0) offset = -20;
+    slider.value = offset;
+    draw();
+    playButton.textContent = '暂停';
+    timer = setInterval(() => {
+      offset += 1;
+      slider.value = offset;
+      draw();
+      if (offset >= 0) stop();
+    }, 420);
+  });
+  draw();
+  if ('ResizeObserver' in window) {
+    let priorWidth = target.clientWidth;
+    new ResizeObserver(() => {
+      if (Math.abs(target.clientWidth - priorWidth) > 4) { priorWidth = target.clientWidth; draw(); }
+    }).observe(target);
+  }
+}
+
 function openEventDialog(item) {
   if (!item) return;
   const dialog = $('#event-dialog');
@@ -486,6 +627,7 @@ async function start() {
     if (data.meta.status !== 'ok' || warnings.length) $('#freshness').textContent += ' · 部分行情沿用前值';
     $('#freshness').title = [...(data.meta.errors || []), ...warnings].join('\n');
     renderGauge(data.temperature);
+    renderSectorMap(data.courseSectors);
     renderDailyReport(data.dailyReport);
     renderTemperatureChart(data.temperature, data.timelineEvents || []);
     renderComponents(data.temperature.components);
@@ -505,6 +647,10 @@ async function start() {
 $('#event-dialog-close').addEventListener('click', () => $('#event-dialog').close());
 $('#event-dialog').addEventListener('click', (event) => {
   if (event.target === $('#event-dialog')) $('#event-dialog').close();
+});
+$('#sector-dialog-close').addEventListener('click', () => $('#sector-dialog').close());
+$('#sector-dialog').addEventListener('click', (event) => {
+  if (event.target === $('#sector-dialog')) $('#sector-dialog').close();
 });
 
 start();

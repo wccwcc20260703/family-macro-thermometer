@@ -610,35 +610,48 @@ def update_margin(data: dict) -> list[str]:
 def update_course_sectors(data: dict) -> list[str]:
     """Use liquid ETF prices only as market proxies for the course's focus areas."""
     specs = [
-        ("aiHardware", "AI硬件", "1.588170", "科创半导体ETF代理", "主攻", "设备材料、存储/HBM、PCB/CCL、先进封装；光模块不追高", "看订单、利润、估值和资金是否同时确认"),
-        ("innovativeDrug", "创新药", "0.159992", "创新药ETF代理", "主攻", "从估值修复进入产业验证，关注BD、出海与商业化", "看授权交易、临床进度和现金流"),
-        ("aiApplication", "AI应用", "1.513330", "恒生互联网ETF代理", "主攻", "关注AI赋能传统业务、原生AI与Agent", "平台股价格只能近似反映应用风险偏好"),
-        ("nonferrous", "有色金属", "1.512400", "有色金属ETF代理", "周期", "供需与价格驱动的进攻方向", "看铜铝等价格、库存与企业利润"),
-        ("gold", "黄金", "1.518880", "黄金ETF代理", "底仓", "宏观对冲与防守资产", "看实际利率、美元和央行需求"),
-        ("robot", "人形机器人", "1.562500", "机器人ETF代理", "卫星", "长期方向较好，但确定性低于成熟硬件链", "小仓位观察订单与量产，不让卫星仓变主仓"),
-        ("space", "商业航天", "1.512660", "军工ETF宽口径代理", "卫星", "产业方向值得跟踪，但ETF映射并不纯", "重点验证发射、订单和产业资本开支"),
+        ("aiHardware", "AI硬件", "1.588170", "科创半导体ETF代理", "主攻", 50, "设备材料、存储/HBM、PCB/CCL、先进封装；产业趋势强，但不追高", "订单、出货、毛利率与盈利上修同时确认", "估值分位偏高、资本开支回报与客户集中"),
+        ("optical", "光通信/CPO", "1.515880", "通信ETF代理", "主攻", 50, "强趋势、高预期，重点看CPO与国产高端器件放量", "出货、CPO订单与盈利预测继续上修", "盈利预测下修但价格仍强，均线乖离过大"),
+        ("mlcc", "MLCC", "1.515260", "电子ETF宽口径代理", "主攻", 65, "产业右侧，交易位置与公司基本面分化", "稼动率、交期、涨价、订单和盈利预测改善", "扩产过快、估值偏高与高端国产份额不足"),
+        ("aiApplication", "AI应用", "1.513330", "恒生互联网ETF代理", "主攻", 65, "从投入叙事转向收入、利润与现金流验证", "云、广告、订阅、企业服务收入和现金流改善", "资本开支压制现金流，利润率高位且资金未共振"),
+        ("innovativeDrug", "创新药/CXO", "0.159992", "创新药ETF代理", "主攻", 65, "从估值修复进入产业验证，关注BD、出海与商业化", "BD首付款、临床进度、商业收入与CXO订单指引", "单管线风险、利润折现与海外融资约束"),
+        ("copper", "铜与有色", "1.512400", "有色金属ETF代理", "周期", 65, "供给约束叠加AI和电网需求，趋势上涨但不宜盲目追价", "库存去化、矿端缺口、加工费与需求兑现", "供需预测分歧，过热后利润保护与价格回撤"),
+        ("gold", "黄金", "1.518880", "黄金ETF代理", "底仓", 50, "组合稳定器与宏观对冲资产", "实际利率和美元回落、央行购金延续", "实际利率重新上行与快速上涨后的追价风险"),
+        ("chemical", "煤化工/化工", "1.516020", "化工ETF代理", "周期", 65, "高油价环境下关注煤化工与炼化价差的结构机会", "油煤价差、产品价差与利润兑现", "地缘溢价消退、原料追涨和终端需求转弱"),
+        ("broker", "券商", "1.512000", "证券ETF代理", "周期", 50, "低估值、高盈利弹性的大盘再平衡工具", "成交持续超过2万亿元、两融增长与板块扩散", "成交下滑、自营波动与盈利减速"),
+        ("pig", "猪周期", "0.159865", "养殖ETF代理", "周期", 50, "左侧后半段，预期交易早于利润兑现", "能繁母猪去化、仔猪价格走弱后猪价回升", "低点反弹已较多、去化慢和政策扰动"),
+        ("robot", "人形机器人", "1.562500", "机器人ETF代理", "卫星", 25, "长期方向较好，但仍处题材向订单验证阶段", "真实订单、规模出货、成本下降和复用频率", "估值锚不稳、技术路线与利润池尚未确定"),
+        ("space", "商业航天", "1.512660", "军工ETF宽口径代理", "卫星", 25, "产业方向值得跟踪，但ETF映射不纯、确定性仍低", "发射节奏、真实订单和产业资本开支", "题材拥挤、订单可见度与商业模式不清"),
+        ("broad", "沪深300", "1.510300", "沪深300ETF代理", "底仓", 50, "偏左侧的大盘再平衡工具，观察盈利与量价右侧确认", "盈利维持、ETF资金转正与量价右侧改善", "宏观需求偏弱、趋势确认不足"),
     ]
     previous = {item.get("key"): item for item in data.get("courseSectors", [])}
     result = []
     warnings = []
-    for key, name, secid, proxy, role, thesis, validation in specs:
+    for key, name, secid, proxy, role, framework_score, thesis, validation, risk_text in specs:
         try:
             rows = eastmoney_kline(secid, 90)
             change5 = pct_change(rows, 5)
             change20 = pct_change(rows, 20)
-            if change20 >= 12 or change5 >= 10 or change5 <= -7:
-                state, tone, reading = "风险", "risk", "涨幅拥挤或短线明显转弱，先等估值和基本面消化。"
-            elif change5 > 1 and 0 <= change20 < 8:
-                state, tone, reading = "机会", "opportunity", "短期修复但尚未明显过热，可进入验证清单。"
+            momentum_shift = change5 - change20 / 4
+            crowding_penalty = max(0.0, change5 - 8) * 5 + max(0.0, change20 - 12) * 3
+            signal_score = clamp(framework_score + clamp(change5, -8, 8) * 1.6 + clamp(change20, -12, 12) * 0.6 - crowding_penalty)
+            strength = clamp(30 + abs(signal_score - 50) * 1.4 + abs(momentum_shift) * 2, 25, 100)
+            if signal_score <= 37:
+                state, tone, reading = "风险", "risk", "课程阶段与市场信号仍偏左，先等订单、利润或估值消化。"
+            elif signal_score >= 63:
+                state, tone, reading = "机会", "opportunity", "位置与趋势具备一定优势，进入基本面验证清单。"
             else:
                 state, tone, reading = "观察", "observe", "价格信号未形成清晰共振，继续等订单、利润或资金确认。"
             result.append({
                 "key": key, "name": name, "proxy": proxy, "role": role,
                 "value": rows[-1]["value"], "date": rows[-1]["date"],
                 "change5": round1(change5), "change20": round1(change20),
+                "frameworkScore": framework_score, "signalScore": round1(signal_score),
+                "momentumShift": round1(momentum_shift), "strength": round1(strength),
                 "state": state, "tone": tone, "reading": reading,
-                "thesis": thesis, "validation": validation,
+                "thesis": thesis, "validation": validation, "risk": risk_text,
                 "source": "东方财富公开行情（市场代理）",
+                "history": [{"date": row["date"], "value": row["value"]} for row in rows[-65:]],
             })
         except Exception:
             if key in previous:

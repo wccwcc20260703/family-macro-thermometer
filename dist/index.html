@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b1220">
   <title>家庭宏观温度计</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b1220'/%3E%3Cpath d='M8 23a8 8 0 1 1 16 0' fill='none' stroke='%235eead4' stroke-width='3'/%3E%3Cpath d='M16 23l5-7' stroke='%23f8fafc' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='23' r='2.4' fill='%23f8fafc'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260922-pulse1">
+  <link rel="stylesheet" href="styles.css?v=20260922-map2">
 </head>
 <body>
   <header class="topbar">
@@ -43,6 +43,18 @@
         </div>
         <p class="plain-answer" id="plain-answer">—</p>
         <div class="reference-row" id="reference-row"></div>
+        <div class="sector-map" aria-labelledby="sector-map-title">
+          <div class="sector-map-head">
+            <div><span class="kicker">机会与风险地图</span><h3 id="sector-map-title">板块位置、趋势与信号强度</h3></div>
+            <button class="sector-play" id="sector-map-play" type="button">播放20日轨迹</button>
+          </div>
+          <div class="sector-map-time">
+            <input id="sector-map-time" type="range" min="-20" max="0" value="0" step="1" aria-label="回看最近20个交易日">
+            <span id="sector-map-date">最新</span>
+          </div>
+          <div class="sector-scatter" id="sector-scatter" aria-label="机会与风险板块散点图"></div>
+          <div class="sector-map-legend"><span class="risk">风险</span><span class="observe">观察</span><span class="opportunity">机会</span><small>圆越大＝信号越强；短线过热也会向风险区移动</small></div>
+        </div>
       </article>
 
       <article class="decision-card">
@@ -125,23 +137,22 @@
       <p class="chart-note">两融来自沪深交易所逐券汇总；ETF净申购为公开估算口径。不同口径不混算，数据日期会单独标注。</p>
     </section>
 
-    <section class="panel sector-panel">
-      <div class="section-head">
-        <div>
-          <span class="kicker">课程重点行业</span>
-          <h2>观点、验证条件与市场代理</h2>
-        </div>
-        <div class="sector-filters" id="sector-filters" aria-label="行业状态筛选">
+    <details class="panel sector-panel sector-details">
+      <summary><span><span class="kicker">课程重点行业明细</span><strong>展开查看全部板块、验证条件与市场代理</strong></span><b>展开</b></summary>
+      <div class="sector-detail-content">
+        <div class="section-head">
+          <div class="sector-filters" id="sector-filters" aria-label="行业状态筛选">
           <button class="active" type="button" data-filter="all">全部</button>
           <button type="button" data-filter="opportunity">机会</button>
           <button type="button" data-filter="observe">观察</button>
           <button type="button" data-filter="risk">风险</button>
+          </div>
         </div>
-      </div>
       <p class="panel-summary">课程框架用“订单、利润、估值、资金”做验证；下面的ETF涨跌只是可每日更新的市场代理，不替代行业基本面结论。</p>
       <div class="sector-grid" id="course-sector-grid"></div>
       <p class="chart-note">仓位框架：宽基/红利/现金/债券/黄金作为底仓；AI与创新药属于主攻；机器人、商业航天属于卫星仓，不能反客为主。</p>
-    </section>
+      </div>
+    </details>
 
     <section class="panel">
       <div class="section-head">
@@ -187,11 +198,23 @@
       <div class="event-dialog-impact"><span>意味着什么</span><strong id="event-dialog-impact">—</strong></div>
       <a id="event-dialog-source" target="_blank" rel="noopener">查看原始数据</a>
     </dialog>
+
+    <dialog class="event-dialog sector-dialog" id="sector-dialog" aria-labelledby="sector-dialog-title">
+      <button class="dialog-close" id="sector-dialog-close" type="button" aria-label="关闭">×</button>
+      <span class="event-dialog-type" id="sector-dialog-state">板块信号</span>
+      <h2 id="sector-dialog-title">—</h2>
+      <p class="event-dialog-date" id="sector-dialog-meta">—</p>
+      <p id="sector-dialog-thesis">—</p>
+      <div class="sector-dialog-metrics" id="sector-dialog-metrics"></div>
+      <div class="sector-detail-block opportunity"><span>机会确认</span><strong id="sector-dialog-validation">—</strong></div>
+      <div class="sector-detail-block risk"><span>主要风险</span><strong id="sector-dialog-risk">—</strong></div>
+      <p class="sector-dialog-reading" id="sector-dialog-reading">—</p>
+    </dialog>
   </main>
 
   <footer>
     <p>每天08:30自动更新；尚未公布的月度数据会保留上一期并明确标注。仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
   </footer>
-  <script src="app.js?v=20260922-pulse1" defer></script>
+  <script src="app.js?v=20260922-map2" defer></script>
 </body>
 </html>
