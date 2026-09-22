@@ -2,6 +2,7 @@ const $ = (selector) => document.querySelector(selector);
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const fmt = (value, digits = 1) => Number(value).toFixed(digits);
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 let chartSerial = 0;
 
 function temperatureColor(score) {
@@ -274,6 +275,7 @@ function openEventDialog(item) {
 
 function renderEventTimeline(events) {
   const target = $('#event-timeline');
+  if (!target) return;
   if (!events?.length) {
     target.innerHTML = '<p class="chart-note">当前窗口没有需要特别标记的事件。</p>';
     return;
@@ -287,9 +289,122 @@ function renderEventTimeline(events) {
   });
 }
 
+function openMarketEventDialog(group) {
+  if (!group?.items?.length) return;
+  const dialog = $('#market-event-dialog');
+  const importanceLabels = { high: '高影响', medium: '中影响', low: '低影响' };
+  const statusLabels = { past: '已发生', today: '今天', future: '未来日程' };
+  const importance = group.importance || 'medium';
+  const type = $('#market-event-dialog-type');
+  type.className = `event-dialog-type importance-${importance}`;
+  type.textContent = `${importanceLabels[importance]} · ${statusLabels[group.status] || '事件'}`;
+  $('#market-event-dialog-title').textContent = group.items.length > 1 ? `${group.date} · ${group.items.length}项事件` : group.items[0].title;
+  $('#market-event-dialog-date').textContent = `${group.date} · ${group.items.map((item) => item.category).filter(Boolean).join(' / ')}`;
+  $('#market-event-dialog-items').innerHTML = group.items.map((item) => {
+    const safeUrl = /^https:\/\//.test(item.sourceUrl || '') ? item.sourceUrl : '';
+    return `<article class="market-event-dialog-item">
+      <div><span>${esc(item.category || '市场事件')}</span><small>${esc(item.time || '')}</small></div>
+      <h3>${esc(item.title)}</h3>
+      <p>${esc(item.detail || '')}</p>
+      <div class="event-dialog-impact"><span>对市场意味着什么</span><strong>${esc(item.impact || '')}</strong></div>
+      ${safeUrl ? `<a href="${esc(safeUrl)}" target="_blank" rel="noopener">查看官方/原始日程</a>` : ''}
+    </article>`;
+  }).join('');
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', '');
+}
+
+function renderGlobalEventAxis(events, asOf) {
+  const target = $('#market-event-axis');
+  if (!target) return;
+  const today = new Date(`${(asOf || new Date().toISOString()).slice(0, 10)}T00:00:00Z`);
+  const dayMs = 86400000;
+  const spanDays = 90;
+  const ranking = { low: 1, medium: 2, high: 3 };
+  const groupsByDate = new Map();
+  (events || []).forEach((item) => {
+    const eventDate = new Date(`${item.date}T00:00:00Z`);
+    if (Number.isNaN(eventDate.getTime())) return;
+    const delta = Math.round((eventDate - today) / dayMs);
+    if (delta < -spanDays || delta > spanDays) return;
+    if (!groupsByDate.has(item.date)) groupsByDate.set(item.date, []);
+    groupsByDate.get(item.date).push(item);
+  });
+  const groups = [...groupsByDate.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([date, items]) => {
+    const importance = items.reduce((best, item) => ranking[item.importance] > ranking[best] ? item.importance : best, 'low');
+    const eventDate = new Date(`${date}T00:00:00Z`);
+    const delta = Math.round((eventDate - today) / dayMs);
+    return { date, items, importance, delta, status: delta < 0 ? 'past' : delta > 0 ? 'future' : 'today' };
+  });
+  if (!groups.length) {
+    target.innerHTML = '<p class="chart-note">当前前后90天没有已确认的重要事件。</p>';
+    return;
+  }
+
+  const width = 1040;
+  const height = 250;
+  const axisY = 126;
+  const centerX = width / 2;
+  const sideWidth = centerX - 46;
+  const positionX = (delta) => delta < 0
+    ? centerX - Math.min(Math.abs(delta), spanDays) / spanDays * sideWidth
+    : centerX + Math.min(delta, spanDays) / spanDays * sideWidth;
+  const colors = { high: '#fb7185', medium: '#fbbf24', low: '#60a5fa' };
+  const radii = { high: 9, medium: 7, low: 5.5 };
+  const laneUsage = { top: [-999, -999, -999], bottom: [-999, -999, -999] };
+  const assignLane = (x, side) => {
+    const lanes = laneUsage[side];
+    let lane = lanes.findIndex((last) => x - last >= 92);
+    if (lane < 0) lane = lanes.indexOf(Math.min(...lanes));
+    lanes[lane] = x;
+    return lane;
+  };
+  const pointMarkup = groups.map((group, index) => {
+    const x = positionX(group.delta);
+    const side = index % 2 === 0 ? 'top' : 'bottom';
+    const lane = assignLane(x, side);
+    const labelY = side === 'top' ? 32 + lane * 25 : 181 + lane * 24;
+    const stemEnd = side === 'top' ? labelY + 10 : labelY - 19;
+    const title = group.items.length > 1 ? `${group.items.length}项事件` : group.items[0].title;
+    const shortTitle = title.length > 10 ? `${title.slice(0, 10)}…` : title;
+    const color = colors[group.importance];
+    const radius = radii[group.importance] + Math.min(2, group.items.length - 1);
+    return `<g class="market-event-point importance-${group.importance}" data-event-index="${index}" role="button" tabindex="0" aria-label="${esc(group.date)} ${esc(title)}">
+      <line x1="${x}" x2="${x}" y1="${axisY}" y2="${stemEnd}" style="stroke:${color}"/>
+      <circle cx="${x}" cy="${axisY}" r="${radius + 4}" class="event-hit"/>
+      <circle cx="${x}" cy="${axisY}" r="${radius}" style="fill:${color}"/>
+      <circle cx="${x}" cy="${axisY}" r="${Math.max(2, radius - 4)}" class="event-core"/>
+      <text x="${x}" y="${labelY}" text-anchor="middle" class="market-event-label">${esc(shortTitle)}</text>
+      <text x="${x}" y="${labelY + 13}" text-anchor="middle" class="market-event-date">${esc(group.date.slice(5))}${group.items.length > 1 ? ` · ×${group.items.length}` : ''}</text>
+    </g>`;
+  }).join('');
+  target.innerHTML = `<div class="market-axis-scroll"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="过去90天到未来90天全球市场事件轴">
+    <rect x="36" y="103" width="${centerX - 36}" height="46" rx="18" class="axis-past-zone"/>
+    <rect x="${centerX}" y="103" width="${centerX - 36}" height="46" rx="18" class="axis-future-zone"/>
+    <line x1="36" x2="${width - 36}" y1="${axisY}" y2="${axisY}" class="market-axis-line"/>
+    <line x1="${centerX}" x2="${centerX}" y1="18" y2="232" class="market-today-line"/>
+    <text x="42" y="96" class="market-axis-side" text-anchor="start">过去90天 · 已发生</text>
+    <text x="${width - 42}" y="96" class="market-axis-side" text-anchor="end">未来90天 · 已确认日程</text>
+    <rect x="${centerX - 30}" y="109" width="60" height="34" rx="17" class="market-today-pill"/>
+    <text x="${centerX}" y="131" text-anchor="middle" class="market-today-text">今天</text>
+    ${pointMarkup}
+  </svg></div>`;
+  target.querySelectorAll('.market-event-point').forEach((point) => {
+    const open = () => openMarketEventDialog(groups[Number(point.dataset.eventIndex)]);
+    point.addEventListener('click', open);
+    point.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); }
+    });
+  });
+  const scroll = target.querySelector('.market-axis-scroll');
+  requestAnimationFrame(() => { scroll.scrollLeft = Math.max(0, scroll.scrollWidth / 2 - scroll.clientWidth / 2); });
+}
+
 function renderTemperatureChart(t, events = []) {
   const target = $('#temperature-chart');
   const history = t.history || [];
+  const riskLine = 45;
+  const opportunityLine = 60;
   let range = Math.min(60, history.length);
   let end = history.length;
   const redraw = () => {
@@ -299,13 +414,18 @@ function renderTemperatureChart(t, events = []) {
       label: '综合宏观温度历史曲线',
       color: temperatureColor(t.score),
       digits: 0,
-      events,
-      onEventClick: openEventDialog,
+      thresholds: [
+        { value: riskLine, label: '风险线 45', color: '#fb7185' },
+        { value: opportunityLine, label: '机会线 60', color: '#4ade80' },
+      ],
     });
     if (visible.length) $('#timeline-window').textContent = `${visible[0].date} 至 ${visible.at(-1).date} · 按住曲线左右拖动`;
   };
   redraw();
-  renderEventTimeline(events);
+  const score = Number(t.score);
+  const zone = score < riskLine ? '风险·防守' : score >= opportunityLine ? '机会·确认' : '均衡·观察';
+  const zoneTarget = $('#temperature-zone-current');
+  if (zoneTarget) zoneTarget.textContent = `当前 ${fmt(score, 0)}分 · ${zone}`;
   document.querySelectorAll('[data-chart="temperature-chart"] button').forEach((button) => {
     button.addEventListener('click', () => {
       button.parentElement.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
@@ -325,7 +445,6 @@ function renderTemperatureChart(t, events = []) {
   let startX = 0;
   let startEnd = end;
   target.addEventListener('pointerdown', (event) => {
-    if (event.target.closest('.event-marker')) return;
     dragging = true;
     startX = event.clientX;
     startEnd = end;
@@ -615,9 +734,14 @@ function renderChina(china, report) {
 
 async function start() {
   try {
-    const response = await fetch(`data.json?v=${Date.now()}`, { cache: 'no-store' });
+    const cacheKey = Date.now();
+    const [response, eventResponse] = await Promise.all([
+      fetch(`data.json?v=${cacheKey}`, { cache: 'no-store' }),
+      fetch(`events.json?v=${cacheKey}`, { cache: 'no-store' }).catch(() => null),
+    ]);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
+    const eventData = eventResponse?.ok ? await eventResponse.json() : null;
     const updated = new Date(data.meta.updatedAt);
     const updatedLabel = updated.toLocaleString('zh-CN', {
       month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
@@ -630,6 +754,7 @@ async function start() {
     renderSectorMap(data.courseSectors);
     renderDailyReport(data.dailyReport);
     renderTemperatureChart(data.temperature, data.timelineEvents || []);
+    renderGlobalEventAxis(eventData?.events || data.globalEvents || [], eventData?.updatedAt || data.meta.updatedAt);
     renderComponents(data.temperature.components);
     renderLiquidity(data.liquidity, data.series);
     renderMarketPulse(data.marketPulse, data.series);
@@ -651,6 +776,10 @@ $('#event-dialog').addEventListener('click', (event) => {
 $('#sector-dialog-close').addEventListener('click', () => $('#sector-dialog').close());
 $('#sector-dialog').addEventListener('click', (event) => {
   if (event.target === $('#sector-dialog')) $('#sector-dialog').close();
+});
+$('#market-event-dialog-close').addEventListener('click', () => $('#market-event-dialog').close());
+$('#market-event-dialog').addEventListener('click', (event) => {
+  if (event.target === $('#market-event-dialog')) $('#market-event-dialog').close();
 });
 
 start();

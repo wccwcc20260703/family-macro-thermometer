@@ -34,6 +34,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "dist" / "data.json"
+EVENTS_PATH = ROOT / "dist" / "events.json"
 SEED_PATH = ROOT / "scripts" / "seed_data.json.gz.b64"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 
@@ -1136,31 +1137,6 @@ def build_timeline_events(data: dict) -> None:
             "sourceUrl": source_url,
         })
 
-    band_specs = [
-        (35, "偏冷区", "防守优先"),
-        (50, "均衡区", "风险预算可由防守转向精选"),
-        (65, "偏热区", "风险偏好增强但不宜追高"),
-        (80, "过热区", "拥挤与追高风险上升"),
-    ]
-    for previous, current in zip(history, history[1:]):
-        before = float(previous["value"])
-        after = float(current["value"])
-        for threshold, zone, meaning in band_specs:
-            if before < threshold <= after:
-                event_type = "risk" if threshold == 80 else "opportunity"
-                add_event(
-                    current["date"], event_type, "宏观温度", f"温度向上进入{zone}",
-                    f"综合温度由 {before:.1f} 升至 {after:.1f}，越过 {threshold} 分界线。",
-                    meaning,
-                )
-            elif before >= threshold > after:
-                event_type = "opportunity" if threshold == 80 else "risk"
-                add_event(
-                    current["date"], event_type, "宏观温度", f"温度向下离开{zone}",
-                    f"综合温度由 {before:.1f} 降至 {after:.1f}，跌破 {threshold} 分界线。",
-                    "离开过热区、拥挤度缓解" if threshold == 80 else "环境降温，仓位与节奏需要更谨慎",
-                )
-
     threshold_specs = [
         ("effr", "EFFR", 4.5, 2.5, "短端美元资金成本"),
         ("real10y", "10年实际利率", 2.0, 1.2, "长期真实资金成本"),
@@ -1202,6 +1178,111 @@ def build_timeline_events(data: dict) -> None:
 
     events = sorted(events, key=lambda item: (item["date"], item["id"]))[-24:]
     data["timelineEvents"] = events
+
+
+def parse_money_amount(value: str | int | float | None) -> float:
+    """Turn Nasdaq strings such as "$805,000,000" into a numeric amount."""
+    if value is None:
+        return 0.0
+    if isinstance(value, (int, float)):
+        return float(value)
+    cleaned = re.sub(r"[^0-9.-]", "", str(value))
+    try:
+        return float(cleaned)
+    except ValueError:
+        return 0.0
+
+
+def fetch_large_ipo_events(today: dt.date) -> list[dict]:
+    """Read confirmed Nasdaq calendar dates; never infer or manufacture an IPO date."""
+    events = []
+    seen = set()
+    month_cursor = today.replace(day=1)
+    for offset in range(4):
+        year = month_cursor.year + (month_cursor.month - 1 + offset) // 12
+        month = (month_cursor.month - 1 + offset) % 12 + 1
+        month_key = f"{year:04d}-{month:02d}"
+        url = f"https://api.nasdaq.com/api/ipo/calendar?date={month_key}"
+        payload = json.loads(fetch_text(url, headers={"Accept": "application/json, text/plain, */*"}))
+        ipo_data = payload.get("data") or {}
+        for table_name, date_field in (("upcoming", "expectedPriceDate"), ("priced", "pricedDate")):
+            rows = ((ipo_data.get(table_name) or {}).get(f"{table_name}Table") or {}).get("rows") or []
+            for row in rows:
+                amount = parse_money_amount(row.get("dollarValueOfSharesOffered"))
+                if amount < 500_000_000:
+                    continue
+                raw_day = row.get(date_field)
+                if not raw_day:
+                    continue
+                try:
+                    event_day = dt.datetime.strptime(raw_day.strip(), "%m/%d/%Y").date()
+                except (ValueError, AttributeError):
+                    continue
+                ticker = (row.get("proposedTickerSymbol") or "").strip()
+                company = (row.get("companyName") or "大型IPO").strip()
+                key = (event_day.isoformat(), ticker or company)
+                if key in seen:
+                    continue
+                seen.add(key)
+                amount_text = f"{amount / 100_000_000:.2f}亿美元"
+                events.append({
+                    "id": f"ipo-{event_day.isoformat()}-{ticker or len(events)}",
+                    "date": event_day.isoformat(),
+                    "title": f"{company}{f'（{ticker}）' if ticker else ''} IPO",
+                    "category": "大型IPO",
+                    "importance": "high" if amount >= 1_000_000_000 else "medium",
+                    "time": "美股交易时段",
+                    "detail": f"Nasdaq日历显示拟发行规模约 {amount_text}；日期为交易所当前确认/预计的定价日，仍可能调整。",
+                    "impact": "大型IPO会阶段性吸收市场资金，并检验新股风险偏好。重点观察定价折让、认购倍数和上市后首周表现，而不是把上市本身机械理解为利空。",
+                    "sourceUrl": "https://www.nasdaq.com/market-activity/ipos",
+                })
+    return events
+
+
+def build_global_market_events(data: dict, warnings: list[str] | None = None) -> None:
+    """Build a verified past/today/future market calendar around the current date."""
+    today = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date()
+    fed_source = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    bls_source = "https://www.bls.gov/schedule/2026/"
+    election_source = "https://www.fec.gov/introduction-campaign-finance/election-results-and-voting-information/"
+    events = [
+        {"date": "2026-07-14", "title": "美国6月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布6月消费者价格指数。", "impact": "CPI改变市场对降息路径和实际利率的定价；核心通胀、住房与服务项比单一总数更重要。", "sourceUrl": bls_source},
+        {"date": "2026-07-29", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "7月28日至29日FOMC会议结束并发布政策声明。", "impact": "利率路径和措辞会直接影响美元、实际利率与全球风险资产估值。", "sourceUrl": fed_source},
+        {"date": "2026-08-07", "title": "美国7月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布7月非农就业、失业率和工资数据。", "impact": "就业过热会推迟宽松，就业快速转弱则抬升衰退担忧；工资增速是通胀持续性的关键。", "sourceUrl": bls_source},
+        {"date": "2026-08-12", "title": "美国7月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布7月消费者价格指数。", "impact": "数据通过降息预期、实际利率和美元影响全球权益与黄金。", "sourceUrl": bls_source},
+        {"date": "2026-08-19", "title": "美联储7月会议纪要", "category": "货币政策", "importance": "medium", "time": "14:00 ET", "detail": "美联储公布7月28日至29日会议纪要。", "impact": "纪要揭示委员分歧和政策反应函数，若比声明更鹰派，长端利率可能重新上行。", "sourceUrl": fed_source},
+        {"date": "2026-09-04", "title": "美国8月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布8月就业数据。", "impact": "就业和工资共同决定经济软着陆概率与美联储宽松空间。", "sourceUrl": bls_source},
+        {"date": "2026-09-11", "title": "美国8月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布8月消费者价格指数。", "impact": "通胀意外会通过利率预期快速传导至美元、成长股和黄金。", "sourceUrl": bls_source},
+        {"date": "2026-09-16", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "9月15日至16日FOMC会议结束，并同时公布经济预测。", "impact": "点阵图与政策声明共同决定未来几个季度的利率路径，是短期最重要的全球流动性定价节点。", "sourceUrl": fed_source},
+        {"date": "2026-10-02", "title": "美国9月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布9月非农就业、失业率和工资数据。", "impact": "若就业与工资同时偏强，降息预期可能后移；若就业骤弱，市场会在宽松利好与衰退风险间重新定价。", "sourceUrl": bls_source},
+        {"date": "2026-10-07", "title": "美联储9月会议纪要", "category": "货币政策", "importance": "medium", "time": "14:00 ET", "detail": "美联储公布9月15日至16日会议纪要。", "impact": "重点看委员如何权衡通胀、就业与金融条件，以及未来降息门槛。", "sourceUrl": fed_source},
+        {"date": "2026-10-14", "title": "美国9月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布9月消费者价格指数和实际工资。", "impact": "核心服务和住房通胀决定实际利率能否回落；高于预期通常压制高估值资产。", "sourceUrl": bls_source},
+        {"date": "2026-10-28", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "10月27日至28日FOMC会议结束并发布政策声明。", "impact": "观察美联储是否确认宽松节奏，以及金融条件是否允许继续降息。", "sourceUrl": fed_source},
+        {"date": "2026-11-03", "title": "美国中期选举", "category": "政治", "importance": "high", "time": "全天", "detail": "美国下一次常规联邦大选日，众议院全部席位和部分参议院席位将改选。", "impact": "国会控制权会影响财政、税收、监管与贸易政策预期；结果不确定时，波动率通常先于方向上升。", "sourceUrl": election_source},
+        {"date": "2026-11-06", "title": "美国10月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布10月就业报告。", "impact": "就业强弱将决定市场更关注通胀约束，还是经济下行风险。", "sourceUrl": bls_source},
+        {"date": "2026-11-10", "title": "美国10月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布10月消费者价格指数。", "impact": "选举后首份关键通胀数据，将影响新政策预期与美联储路径的组合定价。", "sourceUrl": bls_source},
+        {"date": "2026-11-18", "title": "美联储10月会议纪要", "category": "货币政策", "importance": "medium", "time": "14:00 ET", "detail": "美联储公布10月27日至28日会议纪要。", "impact": "用于判断决策层对增长与通胀的容忍区间是否改变。", "sourceUrl": fed_source},
+        {"date": "2026-12-04", "title": "美国11月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布11月就业报告。", "impact": "这是12月议息前的重要就业输入，工资与失业率会影响政策措辞。", "sourceUrl": bls_source},
+        {"date": "2026-12-09", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "12月8日至9日FOMC会议结束，并公布经济预测。", "impact": "年末利率决议与点阵图将重设下一年度的美元流动性基准。", "sourceUrl": fed_source},
+        {"date": "2026-12-10", "title": "美国11月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布11月消费者价格指数。", "impact": "决议次日的通胀数据可能迅速修正市场对下一步政策的理解。", "sourceUrl": bls_source},
+    ]
+    try:
+        events.extend(fetch_large_ipo_events(today))
+    except Exception as exc:
+        if warnings is not None:
+            warnings.append(f"大型IPO日历更新失败：{exc}")
+
+    prepared = []
+    for index, event in enumerate(events):
+        try:
+            event_day = dt.date.fromisoformat(event["date"])
+        except (KeyError, ValueError):
+            continue
+        item = dict(event)
+        item.setdefault("id", f"global-{item['date']}-{index}")
+        item["status"] = "past" if event_day < today else "future" if event_day > today else "today"
+        prepared.append(item)
+    data["globalEvents"] = sorted(prepared, key=lambda item: (item["date"], item["id"]))
 
 
 def build_china_report(data: dict) -> None:
@@ -1440,6 +1521,7 @@ def main() -> None:
         build_china_report(data)
         build_market_pulse(data)
         build_daily_report(data)
+    build_global_market_events(data, warnings)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).replace(microsecond=0)
     data["meta"] = {
         "updatedAt": now.isoformat(),
@@ -1450,6 +1532,7 @@ def main() -> None:
     }
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     DATA_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    EVENTS_PATH.write_text(json.dumps({"updatedAt": data["meta"]["updatedAt"], "events": data.get("globalEvents", [])}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"updatedAt": data["meta"]["updatedAt"], "status": data["meta"]["status"], "errors": errors, "warnings": warnings}, ensure_ascii=False))
 
 

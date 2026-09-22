@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b1220">
   <title>家庭宏观温度计</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b1220'/%3E%3Cpath d='M8 23a8 8 0 1 1 16 0' fill='none' stroke='%235eead4' stroke-width='3'/%3E%3Cpath d='M16 23l5-7' stroke='%23f8fafc' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='23' r='2.4' fill='%23f8fafc'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260922-map2">
+  <link rel="stylesheet" href="styles.css?v=20260922-events1">
 </head>
 <body>
   <header class="topbar">
@@ -78,7 +78,7 @@
       <div class="section-head">
         <div>
           <span class="kicker">参照物</span>
-          <h2>温度正在升高还是降低？</h2>
+          <h2>当前温度处在哪个区间？</h2>
         </div>
         <div class="range-buttons" data-chart="temperature-chart">
           <button class="active" type="button" data-range="60">3个月</button>
@@ -87,12 +87,30 @@
         </div>
       </div>
       <div class="chart" id="temperature-chart" aria-label="宏观温度历史曲线"></div>
+      <div class="temperature-zone-guide" aria-label="宏观温度区间说明">
+        <span class="risk">低于45 · 风险防守</span>
+        <span class="balanced">45–60 · 均衡观察</span>
+        <span class="opportunity">60以上 · 机会确认</span>
+        <strong id="temperature-zone-current">当前区间</strong>
+      </div>
+      <div class="market-event-section">
+        <div class="market-event-head">
+          <div>
+            <span class="kicker">全球市场事件轴</span>
+            <h3>过去发生了什么，未来要防什么？</h3>
+          </div>
+          <div class="market-event-legend" aria-label="事件重要性图例">
+            <span class="high"><i></i>高影响</span><span class="medium"><i></i>中影响</span><span class="low"><i></i>低影响</span>
+          </div>
+        </div>
+        <div class="market-event-axis" id="market-event-axis" aria-label="过去与未来全球市场事件轴"></div>
+        <p class="market-event-help">今天固定在中线；左边是已发生事件，右边是已确认日期的未来事件。同一天发生的事件合并为一个点，点击可查看传导路径。</p>
+      </div>
       <div class="timeline-controls">
         <span id="timeline-window">按住曲线左右拖动查看历史</span>
         <div><button id="timeline-earlier" type="button">← 较早</button><button id="timeline-later" type="button">较新 →</button></div>
       </div>
-      <div class="event-timeline" id="event-timeline" aria-label="重要事件时间线"></div>
-      <p class="chart-note">向右代表环境升温，向左代表环境降温；但进入80分以上后，继续向右表示过热和拥挤，不应理解为继续追涨。</p>
+      <p class="chart-note">曲线只保留当前点，不再用红绿圆点标记温度升降；风险线和机会线用于定位当前风险预算，不是机械买卖信号。</p>
     </section>
 
     <section class="panel">
@@ -210,11 +228,19 @@
       <div class="sector-detail-block risk"><span>主要风险</span><strong id="sector-dialog-risk">—</strong></div>
       <p class="sector-dialog-reading" id="sector-dialog-reading">—</p>
     </dialog>
+
+    <dialog class="event-dialog market-event-dialog" id="market-event-dialog" aria-labelledby="market-event-dialog-title">
+      <button class="dialog-close" id="market-event-dialog-close" type="button" aria-label="关闭">×</button>
+      <span class="event-dialog-type" id="market-event-dialog-type">全球市场事件</span>
+      <h2 id="market-event-dialog-title">—</h2>
+      <p class="event-dialog-date" id="market-event-dialog-date">—</p>
+      <div class="market-event-dialog-items" id="market-event-dialog-items"></div>
+    </dialog>
   </main>
 
   <footer>
     <p>每天08:30自动更新；尚未公布的月度数据会保留上一期并明确标注。仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
   </footer>
-  <script src="app.js?v=20260922-map2" defer></script>
+  <script src="app.js?v=20260922-events1" defer></script>
 </body>
 </html>
