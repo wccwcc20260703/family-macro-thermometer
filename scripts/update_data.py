@@ -1245,6 +1245,8 @@ def build_global_market_events(data: dict, warnings: list[str] | None = None) ->
     fed_source = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
     bls_source = "https://www.bls.gov/schedule/2026/"
     election_source = "https://www.fec.gov/introduction-campaign-finance/election-results-and-voting-information/"
+    ecb_source = "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"
+    boj_source = "https://www.boj.or.jp/en/mopo/mpmsche_minu/"
     events = [
         {"date": "2026-07-14", "title": "美国6月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布6月消费者价格指数。", "impact": "CPI改变市场对降息路径和实际利率的定价；核心通胀、住房与服务项比单一总数更重要。", "sourceUrl": bls_source},
         {"date": "2026-07-29", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "7月28日至29日FOMC会议结束并发布政策声明。", "impact": "利率路径和措辞会直接影响美元、实际利率与全球风险资产估值。", "sourceUrl": fed_source},
@@ -1258,6 +1260,8 @@ def build_global_market_events(data: dict, warnings: list[str] | None = None) ->
         {"date": "2026-10-07", "title": "美联储9月会议纪要", "category": "货币政策", "importance": "medium", "time": "14:00 ET", "detail": "美联储公布9月15日至16日会议纪要。", "impact": "重点看委员如何权衡通胀、就业与金融条件，以及未来降息门槛。", "sourceUrl": fed_source},
         {"date": "2026-10-14", "title": "美国9月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布9月消费者价格指数和实际工资。", "impact": "核心服务和住房通胀决定实际利率能否回落；高于预期通常压制高估值资产。", "sourceUrl": bls_source},
         {"date": "2026-10-28", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "10月27日至28日FOMC会议结束并发布政策声明。", "impact": "观察美联储是否确认宽松节奏，以及金融条件是否允许继续降息。", "sourceUrl": fed_source},
+        {"date": "2026-10-29", "title": "欧洲央行利率决议", "category": "货币政策", "importance": "medium", "time": "14:15 CET", "detail": "欧洲央行10月货币政策会议结束，随后举行新闻发布会。", "impact": "欧元利率路径会影响欧元、美元指数与全球债券收益率；重点看增长放缓与通胀黏性之间的取舍。", "sourceUrl": ecb_source},
+        {"date": "2026-10-30", "title": "日本央行利率决议", "category": "货币政策", "importance": "medium", "time": "会后公布", "detail": "日本央行10月29日至30日货币政策会议结束，并发布经济与物价展望。", "impact": "日元和日本国债变化可能影响全球套息交易；意外收紧通常会放大高杠杆资产波动。", "sourceUrl": boj_source},
         {"date": "2026-11-03", "title": "美国中期选举", "category": "政治", "importance": "high", "time": "全天", "detail": "美国下一次常规联邦大选日，众议院全部席位和部分参议院席位将改选。", "impact": "国会控制权会影响财政、税收、监管与贸易政策预期；结果不确定时，波动率通常先于方向上升。", "sourceUrl": election_source},
         {"date": "2026-11-06", "title": "美国10月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布10月就业报告。", "impact": "就业强弱将决定市场更关注通胀约束，还是经济下行风险。", "sourceUrl": bls_source},
         {"date": "2026-11-10", "title": "美国10月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布10月消费者价格指数。", "impact": "选举后首份关键通胀数据，将影响新政策预期与美联储路径的组合定价。", "sourceUrl": bls_source},
@@ -1265,6 +1269,8 @@ def build_global_market_events(data: dict, warnings: list[str] | None = None) ->
         {"date": "2026-12-04", "title": "美国11月就业报告", "category": "就业", "importance": "medium", "time": "08:30 ET", "detail": "美国劳工统计局公布11月就业报告。", "impact": "这是12月议息前的重要就业输入，工资与失业率会影响政策措辞。", "sourceUrl": bls_source},
         {"date": "2026-12-09", "title": "美联储FOMC利率决议", "category": "货币政策", "importance": "high", "time": "14:00 ET", "detail": "12月8日至9日FOMC会议结束，并公布经济预测。", "impact": "年末利率决议与点阵图将重设下一年度的美元流动性基准。", "sourceUrl": fed_source},
         {"date": "2026-12-10", "title": "美国11月CPI公布", "category": "通胀", "importance": "high", "time": "08:30 ET", "detail": "美国劳工统计局公布11月消费者价格指数。", "impact": "决议次日的通胀数据可能迅速修正市场对下一步政策的理解。", "sourceUrl": bls_source},
+        {"date": "2026-12-17", "title": "欧洲央行利率决议", "category": "货币政策", "importance": "medium", "time": "14:15 CET", "detail": "欧洲央行12月货币政策会议结束，随后举行新闻发布会。", "impact": "年末政策指引会改变欧元区增长与利率预期，并通过汇率和债券市场传导至全球风险资产。", "sourceUrl": ecb_source},
+        {"date": "2026-12-18", "title": "日本央行利率决议", "category": "货币政策", "importance": "medium", "time": "会后公布", "detail": "日本央行12月17日至18日货币政策会议结束。", "impact": "若政策或购债指引超预期变化，日元套息交易与全球长端利率可能出现快速重定价。", "sourceUrl": boj_source},
     ]
     try:
         events.extend(fetch_large_ipo_events(today))

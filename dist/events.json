@@ -158,6 +158,30 @@
       "status": "future"
     },
     {
+      "date": "2026-10-29",
+      "title": "欧洲央行利率决议",
+      "category": "货币政策",
+      "importance": "medium",
+      "time": "14:15 CET",
+      "detail": "欧洲央行10月货币政策会议结束，随后举行新闻发布会。",
+      "impact": "欧元利率路径会影响欧元、美元指数与全球债券收益率；重点看增长放缓与通胀黏性之间的取舍。",
+      "sourceUrl": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
+      "id": "global-2026-10-29-12",
+      "status": "future"
+    },
+    {
+      "date": "2026-10-30",
+      "title": "日本央行利率决议",
+      "category": "货币政策",
+      "importance": "medium",
+      "time": "会后公布",
+      "detail": "日本央行10月29日至30日货币政策会议结束，并发布经济与物价展望。",
+      "impact": "日元和日本国债变化可能影响全球套息交易；意外收紧通常会放大高杠杆资产波动。",
+      "sourceUrl": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
+      "id": "global-2026-10-30-13",
+      "status": "future"
+    },
+    {
       "date": "2026-11-03",
       "title": "美国中期选举",
       "category": "政治",
@@ -166,7 +190,7 @@
       "detail": "美国下一次常规联邦大选日，众议院全部席位和部分参议院席位将改选。",
       "impact": "国会控制权会影响财政、税收、监管与贸易政策预期；结果不确定时，波动率通常先于方向上升。",
       "sourceUrl": "https://www.fec.gov/introduction-campaign-finance/election-results-and-voting-information/",
-      "id": "global-2026-11-03-12",
+      "id": "global-2026-11-03-14",
       "status": "future"
     },
     {
@@ -178,7 +202,7 @@
       "detail": "美国劳工统计局公布10月就业报告。",
       "impact": "就业强弱将决定市场更关注通胀约束，还是经济下行风险。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
-      "id": "global-2026-11-06-13",
+      "id": "global-2026-11-06-15",
       "status": "future"
     },
     {
@@ -190,7 +214,7 @@
       "detail": "美国劳工统计局公布10月消费者价格指数。",
       "impact": "选举后首份关键通胀数据，将影响新政策预期与美联储路径的组合定价。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
-      "id": "global-2026-11-10-14",
+      "id": "global-2026-11-10-16",
       "status": "future"
     },
     {
@@ -202,7 +226,7 @@
       "detail": "美联储公布10月27日至28日会议纪要。",
       "impact": "用于判断决策层对增长与通胀的容忍区间是否改变。",
       "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "id": "global-2026-11-18-15",
+      "id": "global-2026-11-18-17",
       "status": "future"
     },
     {
@@ -214,7 +238,7 @@
       "detail": "美国劳工统计局公布11月就业报告。",
       "impact": "这是12月议息前的重要就业输入，工资与失业率会影响政策措辞。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
-      "id": "global-2026-12-04-16",
+      "id": "global-2026-12-04-18",
       "status": "future"
     },
     {
@@ -226,7 +250,7 @@
       "detail": "12月8日至9日FOMC会议结束，并公布经济预测。",
       "impact": "年末利率决议与点阵图将重设下一年度的美元流动性基准。",
       "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "id": "global-2026-12-09-17",
+      "id": "global-2026-12-09-19",
       "status": "future"
     },
     {
@@ -238,7 +262,31 @@
       "detail": "美国劳工统计局公布11月消费者价格指数。",
       "impact": "决议次日的通胀数据可能迅速修正市场对下一步政策的理解。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
-      "id": "global-2026-12-10-18",
+      "id": "global-2026-12-10-20",
+      "status": "future"
+    },
+    {
+      "date": "2026-12-17",
+      "title": "欧洲央行利率决议",
+      "category": "货币政策",
+      "importance": "medium",
+      "time": "14:15 CET",
+      "detail": "欧洲央行12月货币政策会议结束，随后举行新闻发布会。",
+      "impact": "年末政策指引会改变欧元区增长与利率预期，并通过汇率和债券市场传导至全球风险资产。",
+      "sourceUrl": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
+      "id": "global-2026-12-17-21",
+      "status": "future"
+    },
+    {
+      "date": "2026-12-18",
+      "title": "日本央行利率决议",
+      "category": "货币政策",
+      "importance": "medium",
+      "time": "会后公布",
+      "detail": "日本央行12月17日至18日货币政策会议结束。",
+      "impact": "若政策或购债指引超预期变化，日元套息交易与全球长端利率可能出现快速重定价。",
+      "sourceUrl": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
+      "id": "global-2026-12-18-22",
       "status": "future"
     }
   ]
