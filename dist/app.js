@@ -6,11 +6,19 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':
 let chartSerial = 0;
 
 function temperatureColor(score) {
-  if (score < 35) return '#60a5fa';
-  if (score < 50) return '#a78bfa';
-  if (score < 65) return '#5eead4';
-  if (score < 80) return '#fbbf24';
+  if (score < 45) return '#60a5fa';
+  if (score < 55) return '#a78bfa';
+  if (score <= 65) return '#5eead4';
+  if (score < 75) return '#fbbf24';
   return '#fb7185';
+}
+
+function temperatureDecision(score) {
+  if (score < 45) return { label: '过冷', action: '防守等待', explanation: '增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。' };
+  if (score < 55) return { label: '修复', action: '小步观察', explanation: '已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。' };
+  if (score <= 65) return { label: '机会窗口', action: '结构加仓', explanation: '温度适中且尚未拥挤，优先选择盈利、资金和趋势共同改善的方向。' };
+  if (score < 75) return { label: '偏热', action: '谨慎持有', explanation: '环境仍有支撑，但追高的回报风险比正在下降，应检查估值和拥挤度。' };
+  return { label: '过热', action: '降温兑现', explanation: '温度过高意味着拥挤，以及通胀或利率反噬风险；降低追涨并分批锁定收益。' };
 }
 
 function drawLineChart(target, rawValues, options = {}) {
@@ -24,7 +32,8 @@ function drawLineChart(target, rawValues, options = {}) {
   const pad = { left: 46, right: 16, top: 14, bottom: 28 };
   const ys = values.map((d) => Number(d.value));
   const thresholds = (options.thresholds || []).filter((d) => Number.isFinite(Number(d.value)));
-  const rangeValues = ys.concat(thresholds.map((d) => Number(d.value)));
+  const bands = (options.bands || []).filter((d) => Number.isFinite(Number(d.from)) && Number.isFinite(Number(d.to)));
+  const rangeValues = ys.concat(thresholds.map((d) => Number(d.value)), bands.flatMap((d) => [Number(d.from), Number(d.to)]));
   let min = Math.min(...rangeValues);
   let max = Math.max(...rangeValues);
   const span = max - min || Math.max(Math.abs(max) * .1, 1);
@@ -57,6 +66,12 @@ function drawLineChart(target, rawValues, options = {}) {
     <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.label || '历史曲线'}">
       <defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
       ${ticks.map((t) => `<line class="grid-line" x1="${pad.left}" x2="${width-pad.right}" y1="${t.y}" y2="${t.y}"/><text class="axis-label" x="${pad.left-7}" y="${t.y+4}" text-anchor="end">${fmt(t.value, options.digits ?? 1)}</text>`).join('')}
+      ${bands.map((band) => {
+        const top = Math.min(y(Number(band.from)), y(Number(band.to)));
+        const bandHeight = Math.abs(y(Number(band.from)) - y(Number(band.to)));
+        const middle = y((Number(band.from) + Number(band.to)) / 2);
+        return `<rect class="chart-highlight-band" x="${pad.left}" y="${top}" width="${width-pad.left-pad.right}" height="${bandHeight}" style="fill:${band.color || '#4ade80'}"/><text class="chart-band-label" x="${width-pad.right-4}" y="${middle+4}" text-anchor="end" style="fill:${band.labelColor || '#86efac'}">${band.label || ''}</text>`;
+      }).join('')}
       <path class="area-path" d="${area}" style="fill:url(#${gradientId})"/>
       <path class="line-path" d="${path}" style="stroke:${color}"/>
       ${thresholds.map((t) => `<line class="threshold-line" x1="${pad.left}" x2="${width-pad.right}" y1="${y(Number(t.value))}" y2="${y(Number(t.value))}" style="stroke:${t.color}"/><text class="threshold-label" x="${width-pad.right-4}" y="${y(Number(t.value))-5}" text-anchor="end" style="fill:${t.color}">${t.label}</text>`).join('')}
@@ -88,14 +103,15 @@ function change(values, sessions = 20) {
 function renderGauge(t) {
   const score = Number(t.score);
   const color = temperatureColor(score);
+  const decision = temperatureDecision(score);
   const trend = t.trend || { label: '方向未确认', tone: 'flat', message: t.explanation, shortDelta: 0, mediumDelta: 0, shortDirection: 'flat', mediumDirection: 'flat' };
   const arrows = { right: '→', left: '←', flat: '↔' };
   const deltaText = (value) => `${Number(value) >= 0 ? '+' : ''}${fmt(value, 1)}`;
   $('#temperature-score').textContent = fmt(score, 0);
-  $('#temperature-title').textContent = `${t.label} · ${fmt(score, 0)}分`;
+  $('#temperature-title').textContent = `${decision.label} · ${fmt(score, 0)}分`;
   $('#temperature-trend').className = `temperature-trend ${trend.tone}`;
   $('#temperature-trend').textContent = `${arrows[trend.shortDirection]} ${trend.label}`;
-  $('#temperature-action').textContent = t.action;
+  $('#temperature-action').textContent = decision.action;
   $('#temperature-action').style.color = color;
   $('#temperature-action').style.borderColor = `${color}66`;
   $('#temperature-action').style.background = `${color}16`;
@@ -109,11 +125,18 @@ function renderGauge(t) {
     ['20日趋势', `${arrows[trend.mediumDirection]} ${deltaText(trend.mediumDelta)}`, trend.mediumDirection],
     ['记录区间', `${fmt(t.rangeLow,0)}–${fmt(t.rangeHigh,0)}`, ''],
   ].map(([label, value, direction]) => `<div class="reference ${direction}"><span>${label}</span><strong>${value}</strong></div>`).join('');
-  $('#decision-title').textContent = `现在更适合：${t.action}`;
-  $('#decision-copy').textContent = t.explanation;
+  $('#decision-title').textContent = `现在更适合：${decision.action}`;
+  $('#decision-copy').textContent = decision.explanation;
   $('#strongest-driver').textContent = t.strongest;
   $('#weakest-driver').textContent = t.weakest;
-  $('#action-ladder').innerHTML = t.bands.map((band) => `<div class="ladder-step ${score >= band.from && score < band.to ? 'active' : ''}">${band.label}</div>`).join('');
+  const decisionBands = [
+    { from: 0, to: 45, label: '过冷·防守' },
+    { from: 45, to: 55, label: '修复·观察' },
+    { from: 55, to: 65.0001, label: '机会·加仓' },
+    { from: 65.0001, to: 75, label: '偏热·谨慎' },
+    { from: 75, to: 101, label: '过热·降温' },
+  ];
+  $('#action-ladder').innerHTML = decisionBands.map((band) => `<div class="ladder-step ${score >= band.from && score < band.to ? 'active' : ''}">${band.label}</div>`).join('');
 }
 
 function sectorSnapshot(item, offset = 0) {
@@ -403,8 +426,10 @@ function renderGlobalEventAxis(events, asOf) {
 function renderTemperatureChart(t, events = []) {
   const target = $('#temperature-chart');
   const history = t.history || [];
-  const riskLine = 45;
-  const opportunityLine = 60;
+  const coldRiskLine = 45;
+  const opportunityFrom = 55;
+  const opportunityTo = 65;
+  const hotRiskLine = 75;
   let range = Math.min(60, history.length);
   let end = history.length;
   const redraw = () => {
@@ -415,17 +440,20 @@ function renderTemperatureChart(t, events = []) {
       color: temperatureColor(t.score),
       digits: 0,
       thresholds: [
-        { value: riskLine, label: '风险线 45', color: '#fb7185' },
-        { value: opportunityLine, label: '机会线 60', color: '#4ade80' },
+        { value: coldRiskLine, label: '过冷风险 45', color: '#fb7185' },
+        { value: hotRiskLine, label: '过热风险 75', color: '#fb7185' },
+      ],
+      bands: [
+        { from: opportunityFrom, to: opportunityTo, label: '机会窗口 55–65', color: '#4ade80', labelColor: '#86efac' },
       ],
     });
     if (visible.length) $('#timeline-window').textContent = `${visible[0].date} 至 ${visible.at(-1).date} · 按住曲线左右拖动`;
   };
   redraw();
   const score = Number(t.score);
-  const zone = score < riskLine ? '风险·防守' : score >= opportunityLine ? '机会·确认' : '均衡·观察';
+  const zone = temperatureDecision(score);
   const zoneTarget = $('#temperature-zone-current');
-  if (zoneTarget) zoneTarget.textContent = `当前 ${fmt(score, 0)}分 · ${zone}`;
+  if (zoneTarget) zoneTarget.textContent = `当前 ${fmt(score, 0)}分 · ${zone.label}`;
   document.querySelectorAll('[data-chart="temperature-chart"] button').forEach((button) => {
     button.addEventListener('click', () => {
       button.parentElement.querySelectorAll('button').forEach((b) => b.classList.remove('active'));

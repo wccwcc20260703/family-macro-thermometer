@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b1220">
   <title>家庭宏观温度计</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b1220'/%3E%3Cpath d='M8 23a8 8 0 1 1 16 0' fill='none' stroke='%235eead4' stroke-width='3'/%3E%3Cpath d='M16 23l5-7' stroke='%23f8fafc' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='23' r='2.4' fill='%23f8fafc'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260922-events1">
+  <link rel="stylesheet" href="styles.css?v=20260922-twotail1">
 </head>
 <body>
   <header class="topbar">
@@ -39,7 +39,7 @@
             <text class="score" id="temperature-score" x="130" y="111" text-anchor="middle">—</text>
             <text class="score-unit" x="130" y="132" text-anchor="middle">/ 100</text>
           </svg>
-          <div class="gauge-scale"><span>冷</span><span>均衡</span><span>热</span></div>
+          <div class="gauge-scale"><span>过冷</span><span>机会窗</span><span>过热</span></div>
         </div>
         <p class="plain-answer" id="plain-answer">—</p>
         <div class="reference-row" id="reference-row"></div>
@@ -88,9 +88,11 @@
       </div>
       <div class="chart" id="temperature-chart" aria-label="宏观温度历史曲线"></div>
       <div class="temperature-zone-guide" aria-label="宏观温度区间说明">
-        <span class="risk">低于45 · 风险防守</span>
-        <span class="balanced">45–60 · 均衡观察</span>
-        <span class="opportunity">60以上 · 机会确认</span>
+        <span class="risk">低于45 · 过冷风险</span>
+        <span class="recovery">45–55 · 修复观察</span>
+        <span class="opportunity">55–65 · 机会窗口</span>
+        <span class="warming">65–75 · 偏热谨慎</span>
+        <span class="risk">75以上 · 过热风险</span>
         <strong id="temperature-zone-current">当前区间</strong>
       </div>
       <div class="market-event-section">
@@ -110,7 +112,7 @@
         <span id="timeline-window">按住曲线左右拖动查看历史</span>
         <div><button id="timeline-earlier" type="button">← 较早</button><button id="timeline-later" type="button">较新 →</button></div>
       </div>
-      <p class="chart-note">曲线只保留当前点，不再用红绿圆点标记温度升降；风险线和机会线用于定位当前风险预算，不是机械买卖信号。</p>
+      <p class="chart-note">曲线只保留当前点，不再用红绿圆点标记普通升降；两条红线分别提示过冷与过热风险，中间绿色区域才是机会窗口。区间仅用于调整风险预算，不是机械买卖信号。</p>
     </section>
 
     <section class="panel">
@@ -241,6 +243,6 @@
   <footer>
     <p>每天08:30自动更新；尚未公布的月度数据会保留上一期并明确标注。仅用于家庭学习与观察，不构成投资建议。公开宏观数据来自国家统计局、FRED（圣路易斯联储）及公开行情接口。</p>
   </footer>
-  <script src="app.js?v=20260922-events1" defer></script>
+  <script src="app.js?v=20260922-twotail1" defer></script>
 </body>
 </html>

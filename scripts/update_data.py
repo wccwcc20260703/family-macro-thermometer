@@ -734,15 +734,15 @@ def market_score(turnover: float) -> float:
 
 
 def temperature_label(score: float) -> tuple[str, str, str]:
-    if score < 35:
-        return "偏冷", "防守", "现金与低波资产优先，进攻仓只保留高确定性方向。"
-    if score < 50:
-        return "谨慎", "小步试仓", "可以观察和试仓，但每次加仓都要等数据或趋势确认。"
-    if score < 65:
-        return "均衡", "结构选择", "环境不差但不是全面进攻，重点选择盈利与资金同时改善的方向。"
-    if score < 80:
-        return "偏热", "积极但不追高", "风险偏好改善，可提高进攻仓，但要检查估值和拥挤度。"
-    return "过热", "锁定收益", "市场很热不代表更安全，应降低追涨并准备分批兑现。"
+    if score < 45:
+        return "过冷", "防守等待", "增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。"
+    if score < 55:
+        return "修复", "小步观察", "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。"
+    if score <= 65:
+        return "机会窗口", "结构加仓", "温度适中且尚未拥挤，优先选择盈利、资金和趋势共同改善的方向。"
+    if score < 75:
+        return "偏热", "谨慎持有", "环境仍有支撑，但追高的回报风险比正在下降，应检查估值和拥挤度。"
+    return "过热", "降温兑现", "温度过高意味着拥挤，以及通胀或利率反噬风险；降低追涨并分批锁定收益。"
 
 
 def series_until(series: dict, key: str, day=None) -> list[dict]:
@@ -1059,9 +1059,12 @@ def build_temperature(data: dict) -> None:
     else:
         trend_label, trend_tone = "方向未确认", "flat"
         trend_message = "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。"
-    if score >= 80 and short_direction == "right":
+    if score >= 75 and short_direction == "right":
         trend_label, trend_tone = "向右但已过热", "cooling"
         trend_message = "趋势仍向右，但已进入过热区；这时向右代表拥挤和追高风险，而不是新增机会。"
+    elif score >= 65 and short_direction == "right":
+        trend_label, trend_tone = "向右但已偏热", "mixed"
+        trend_message = "温度仍在向右，但已经高于机会窗口；上涨不再自动代表更好的机会，应检查估值和拥挤度。"
 
     strongest = max(components, key=lambda item: item["position"])
     weakest = min(components, key=lambda item: item["position"])
@@ -1088,11 +1091,11 @@ def build_temperature(data: dict) -> None:
         "components": components,
         "history": history,
         "bands": [
-            {"from": 0, "to": 35, "label": "偏冷·防守"},
-            {"from": 35, "to": 50, "label": "谨慎·试仓"},
-            {"from": 50, "to": 65, "label": "均衡·精选"},
-            {"from": 65, "to": 80, "label": "偏热·积极"},
-            {"from": 80, "to": 100, "label": "过热·降温"},
+            {"from": 0, "to": 45, "label": "过冷·防守"},
+            {"from": 45, "to": 55, "label": "修复·观察"},
+            {"from": 55, "to": 65, "label": "机会·加仓"},
+            {"from": 65, "to": 75, "label": "偏热·谨慎"},
+            {"from": 75, "to": 101, "label": "过热·降温"},
         ],
     }
 

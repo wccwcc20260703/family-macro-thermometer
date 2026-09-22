@@ -176,11 +176,12 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding-
 .line-path { fill: none; stroke: var(--mint); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .area-path { opacity: .26; }
 .last-dot { fill: var(--text); stroke: var(--mint); stroke-width: 3; }
-.temperature-zone-guide { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)) auto; gap: 6px; align-items: center; margin: 2px 0 10px; font-size: .72rem; }
+.temperature-zone-guide { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)) auto; gap: 6px; align-items: center; margin: 2px 0 10px; font-size: .68rem; }
 .temperature-zone-guide span, .temperature-zone-guide strong { padding: 7px 9px; border-radius: 9px; text-align: center; }
 .temperature-zone-guide .risk { color: #fecdd3; background: rgba(251,113,133,.10); }
-.temperature-zone-guide .balanced { color: #fde68a; background: rgba(251,191,36,.09); }
+.temperature-zone-guide .recovery { color: #ddd6fe; background: rgba(167,139,250,.10); }
 .temperature-zone-guide .opportunity { color: #bbf7d0; background: rgba(74,222,128,.10); }
+.temperature-zone-guide .warming { color: #fde68a; background: rgba(251,191,36,.09); }
 .temperature-zone-guide strong { border: 1px solid rgba(94,234,212,.28); color: var(--mint); background: rgba(94,234,212,.07); white-space: nowrap; }
 .market-event-section { margin: 19px 0 13px; padding: 16px; border: 1px solid var(--line); border-radius: 17px; background: linear-gradient(145deg, rgba(96,165,250,.045), rgba(94,234,212,.018)); }
 .market-event-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
@@ -299,6 +300,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding-
 .liquidity-chart .line-path { stroke-width: 2.3; }
 .threshold-line { stroke-width: 1.6; stroke-dasharray: 8 6; opacity: .92; }
 .threshold-label { font-size: 11px; font-weight: 760; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.chart-highlight-band { opacity: .12; }
+.chart-band-label { font-size: 11px; font-weight: 780; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
 .liquidity-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 2px; color: var(--muted); font-size: .72rem; }
 .liquidity-foot a { color: var(--blue); text-decoration: none; }
 .liquidity-foot a:hover { text-decoration: underline; }
