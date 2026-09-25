@@ -1,9 +1,13 @@
 {
   "meta": {
-    "updatedAt": "2026-09-24T08:41:42+08:00",
+    "updatedAt": "2026-09-25T08:41:43+08:00",
     "status": "partial",
     "errors": [],
     "warnings": [
+      "美国10年期国债收益率暂未取得新值，保留最近成功记录",
+      "美元指数暂未取得新值，保留最近成功记录",
+      "NYMEX原油暂未取得新值，保留最近成功记录",
+      "COMEX黄金暂未取得新值，保留最近成功记录",
       "COMEX铜暂未取得新值，保留最近成功记录"
     ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
@@ -5298,10 +5302,6 @@
       "source": "腾讯行情当日成交额；历史数据沿用最近成功记录",
       "values": [
         {
-          "date": "2025-08-29",
-          "value": 2.798
-        },
-        {
           "date": "2025-09-01",
           "value": 2.75
         },
@@ -6336,6 +6336,10 @@
         {
           "date": "2026-09-23",
           "value": 1.765
+        },
+        {
+          "date": "2026-09-24",
+          "value": 1.653
         }
       ]
     },
@@ -6347,10 +6351,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
-        {
-          "date": "2024-08-26",
-          "value": 5.33
-        },
         {
           "date": "2024-08-27",
           "value": 5.33
@@ -8426,6 +8426,10 @@
         {
           "date": "2026-09-22",
           "value": 3.88
+        },
+        {
+          "date": "2026-09-23",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9474,7 +9478,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-09-22",
+          "date": "2026-09-23",
           "value": 3.88
         }
       ]
@@ -9487,10 +9491,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-08-22",
-          "value": 1.76
-        },
         {
           "date": "2024-08-23",
           "value": 1.68
@@ -11566,6 +11566,10 @@
         {
           "date": "2026-09-22",
           "value": 2.63
+        },
+        {
+          "date": "2026-09-23",
+          "value": 2.76
         }
       ],
       "longValues": [
@@ -12614,8 +12618,8 @@
           "value": 2.68
         },
         {
-          "date": "2026-09-22",
-          "value": 2.63
+          "date": "2026-09-23",
+          "value": 2.76
         }
       ]
     },
@@ -20579,23 +20583,28 @@
           "date": "2026-09-22",
           "value": 2.5992,
           "buy": 209.15
+        },
+        {
+          "date": "2026-09-23",
+          "value": 2.5982,
+          "buy": 160.33
         }
       ]
     }
   },
   "temperature": {
-    "score": 48.6,
+    "score": 47.2,
     "label": "修复",
     "action": "小步观察",
     "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
-    "avg30": 53.4,
-    "avg90": 58.5,
+    "avg30": 53.0,
+    "avg90": 58.4,
     "trend": {
       "label": "方向未确认",
       "tone": "flat",
       "message": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。",
-      "shortDelta": 0.1,
-      "mediumDelta": -6.6,
+      "shortDelta": -0.8,
+      "mediumDelta": -10.5,
       "shortDirection": "flat",
       "mediumDirection": "left"
     },
@@ -20620,8 +20629,8 @@
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.63%",
-        "position": 11.4,
+        "reading": "10年实际利率 2.76%",
+        "position": 6.5,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
@@ -20672,13 +20681,13 @@
       {
         "name": "市场资金",
         "key": "turnover",
-        "reading": "A股成交 1.76万亿元",
-        "position": 50.3,
+        "reading": "A股成交 1.65万亿元",
+        "position": 48.1,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≤ 1.0万亿",
         "boldLabel": "大胆 ≥ 2.5万亿",
-        "percentile": "近260期原始值第8百分位 · 越高越友好",
+        "percentile": "近260期原始值第4百分位 · 越高越友好",
         "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
         "weight": 25
       },
@@ -20697,10 +20706,6 @@
       }
     ],
     "history": [
-      {
-        "date": "2025-12-29",
-        "value": 60.4
-      },
       {
         "date": "2025-12-30",
         "value": 60.8
@@ -21415,7 +21420,11 @@
       },
       {
         "date": "2026-09-23",
-        "value": 47.9
+        "value": 47.5
+      },
+      {
+        "date": "2026-09-24",
+        "value": 47.2
       }
     ],
     "bands": [
@@ -21447,7 +21456,7 @@
     ]
   },
   "liquidity": {
-    "score": 49.1,
+    "score": 48.0,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21456,7 +21465,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-09-22",
+        "date": "2026-09-23",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21472,15 +21481,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.63,
+        "value": 2.76,
         "unit": "%",
-        "date": "2026-09-22",
-        "score": 12.3,
+        "date": "2026-09-23",
+        "score": 8.0,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.25,
+        "change20": 0.44,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21529,7 +21538,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 48.6,
+      "score": 47.2,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21540,7 +21549,7 @@
     {
       "id": "2025-01-24-NFCI-12",
       "date": "2025-01-24",
-      "score": 48.6,
+      "score": 47.2,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21551,7 +21560,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 48.6,
+      "score": 47.2,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21562,7 +21571,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 48.6,
+      "score": 47.2,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21573,7 +21582,7 @@
     {
       "id": "2025-09-18-EFFR-17",
       "date": "2025-09-18",
-      "score": 48.6,
+      "score": 47.2,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21584,7 +21593,7 @@
     {
       "id": "2025-10-30-EFFR-18",
       "date": "2025-10-30",
-      "score": 48.6,
+      "score": 47.2,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21595,7 +21604,7 @@
     {
       "id": "2025-12-11-EFFR-19",
       "date": "2025-12-11",
-      "score": 48.6,
+      "score": 47.2,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21759,29 +21768,29 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-09-24",
+    "date": "2026-09-25",
     "publishTime": "每天 08:30（北京时间）",
     "title": "方向仍有分歧，等待数据形成共振",
-    "summary": "今天的综合温度是 48.6 分，处在过去记录的第 7 百分位。5日变化 +0.1 分，20日变化 -6.6 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 47.2 分，处在过去记录的第 3 百分位。5日变化 -0.8 分，20日变化 -10.5 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
     "bottomLine": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "金融松紧",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "48.6分",
-        "context": "过去记录第 7 百分位；5日 +0.1 / 20日 -6.6",
+        "value": "47.2分",
+        "context": "过去记录第 3 百分位；5日 -0.8 / 20日 -10.5",
         "tone": "neutral"
       },
       {
         "label": "A股成交额",
-        "value": "1.76万亿元",
-        "context": "过去260个交易日第 8 百分位，越高代表市场参与度越强",
+        "value": "1.65万亿元",
+        "context": "过去260个交易日第 4 百分位，越高代表市场参与度越强",
         "tone": "neutral"
       },
       {
         "label": "10年实际利率",
-        "value": "2.63%",
+        "value": "2.76%",
         "context": "过去520期第 100 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
@@ -21799,7 +21808,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "49.1分",
+        "value": "48.0分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
@@ -25599,10 +25608,10 @@
   "marketPulse": {
     "summary": "成交额看参与度，两融看杠杆意愿，ETF申赎看资金正在投票的方向；三者需要一起看。",
     "margin": {
-      "date": "2026-09-22",
-      "value": 2.5992,
-      "buy": 209.15,
-      "change5": 1.1,
+      "date": "2026-09-23",
+      "value": 2.5982,
+      "buy": 160.33,
+      "change5": 0.7,
       "state": "温和增加",
       "tone": "opportunity",
       "interpretation": "融资余额持续温和上升有利于行情扩散；若短期陡增而指数不涨，反而要警惕拥挤和承接转弱。"
