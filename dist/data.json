@@ -1,9 +1,12 @@
 {
   "meta": {
-    "updatedAt": "2026-10-01T08:47:15+08:00",
+    "updatedAt": "2026-10-02T08:44:52+08:00",
     "status": "partial",
     "errors": [],
     "warnings": [
+      "美国10年期国债收益率暂未取得新值，保留最近成功记录",
+      "美元指数暂未取得新值，保留最近成功记录",
+      "NYMEX原油暂未取得新值，保留最近成功记录",
       "COMEX黄金暂未取得新值，保留最近成功记录",
       "COMEX铜暂未取得新值，保留最近成功记录"
     ],
@@ -6349,10 +6352,6 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
         {
-          "date": "2024-09-03",
-          "value": 5.33
-        },
-        {
           "date": "2024-09-04",
           "value": 5.33
         },
@@ -8427,6 +8426,10 @@
         {
           "date": "2026-09-29",
           "value": 3.88
+        },
+        {
+          "date": "2026-09-30",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9475,7 +9478,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-09-29",
+          "date": "2026-09-30",
           "value": 3.88
         }
       ]
@@ -9488,10 +9491,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-08-29",
-          "value": 1.71
-        },
         {
           "date": "2024-08-30",
           "value": 1.76
@@ -11567,6 +11566,10 @@
         {
           "date": "2026-09-29",
           "value": 2.91
+        },
+        {
+          "date": "2026-09-30",
+          "value": 2.93
         }
       ],
       "longValues": [
@@ -12615,8 +12618,8 @@
           "value": 2.83
         },
         {
-          "date": "2026-09-29",
-          "value": 2.91
+          "date": "2026-09-30",
+          "value": 2.93
         }
       ]
     },
@@ -20605,7 +20608,7 @@
     }
   },
   "temperature": {
-    "score": 45.4,
+    "score": 45.3,
     "label": "修复",
     "action": "小步观察",
     "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
@@ -20615,8 +20618,8 @@
       "label": "向左共振",
       "tone": "cooling",
       "message": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。",
-      "shortDelta": -6.1,
-      "mediumDelta": -6.1,
+      "shortDelta": -6.2,
+      "mediumDelta": -6.2,
       "shortDirection": "left",
       "mediumDirection": "left"
     },
@@ -20634,15 +20637,15 @@
         "tone": "observe",
         "cautiousLabel": "谨慎 ≥ 4.5%",
         "boldLabel": "大胆 ≤ 2.5%",
-        "percentile": "近520期原始值第42百分位 · 越低越友好",
+        "percentile": "近520期原始值第43百分位 · 越低越友好",
         "interpretation": "短端资金越便宜，现金和融资成本压力越小。",
         "weight": 10
       },
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.91%",
-        "position": 0.9,
+        "reading": "10年实际利率 2.93%",
+        "position": 0.1,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
@@ -21436,7 +21439,7 @@
       },
       {
         "date": "2026-09-30",
-        "value": 45.2
+        "value": 45.1
       }
     ],
     "bands": [
@@ -21468,7 +21471,7 @@
     ]
   },
   "liquidity": {
-    "score": 43.3,
+    "score": 43.1,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21477,7 +21480,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-09-29",
+        "date": "2026-09-30",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21493,15 +21496,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.91,
+        "value": 2.93,
         "unit": "%",
-        "date": "2026-09-29",
-        "score": 3.0,
+        "date": "2026-09-30",
+        "score": 2.3,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.47,
+        "change20": 0.49,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21550,7 +21553,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 45.4,
+      "score": 45.3,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21561,7 +21564,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 45.4,
+      "score": 45.3,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21572,7 +21575,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 45.4,
+      "score": 45.3,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21583,7 +21586,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 45.4,
+      "score": 45.3,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21592,20 +21595,9 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/NFCI"
     },
     {
-      "id": "2025-09-18-EFFR-17",
-      "date": "2025-09-18",
-      "score": 45.4,
-      "type": "opportunity",
-      "indicator": "EFFR",
-      "title": "EFFR单次下降 25bp",
-      "detail": "有效联邦基金利率由 4.33% 变为 4.08%。",
-      "impact": "短端资金成本下降，流动性边际改善。",
-      "sourceUrl": "https://fred.stlouisfed.org/series/EFFR"
-    },
-    {
-      "id": "2025-10-30-EFFR-18",
+      "id": "2025-10-30-EFFR-17",
       "date": "2025-10-30",
-      "score": 45.4,
+      "score": 45.3,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21614,9 +21606,9 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR"
     },
     {
-      "id": "2025-12-11-EFFR-19",
+      "id": "2025-12-11-EFFR-18",
       "date": "2025-12-11",
-      "score": 45.4,
+      "score": 45.3,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21768,7 +21760,7 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/DTWEXBGS"
     },
     {
-      "id": "2026-09-17-EFFR-20",
+      "id": "2026-09-17-EFFR-19",
       "date": "2026-09-17",
       "score": 47.8,
       "type": "risk",
@@ -21780,18 +21772,18 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-10-01",
+    "date": "2026-10-02",
     "publishTime": "每天 08:30（北京时间）",
     "title": "环境持续降温，先保护本金和节奏",
-    "summary": "今天的综合温度是 45.4 分，处在过去记录的第 2 百分位。5日变化 -6.1 分，20日变化 -6.1 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 45.3 分，处在过去记录的第 2 百分位。5日变化 -6.2 分，20日变化 -6.2 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
     "bottomLine": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "45.4分",
-        "context": "过去记录第 2 百分位；5日 -6.1 / 20日 -6.1",
+        "value": "45.3分",
+        "context": "过去记录第 2 百分位；5日 -6.2 / 20日 -6.2",
         "tone": "neutral"
       },
       {
@@ -21802,7 +21794,7 @@
       },
       {
         "label": "10年实际利率",
-        "value": "2.91%",
+        "value": "2.93%",
         "context": "过去520期第 100 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
@@ -21820,7 +21812,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "43.3分",
+        "value": "43.1分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
@@ -25757,7 +25749,7 @@
       "impact": "若就业与工资同时偏强，降息预期可能后移；若就业骤弱，市场会在宽松利好与衰退风险间重新定价。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
       "id": "global-2026-10-02-8",
-      "status": "future"
+      "status": "today"
     },
     {
       "date": "2026-10-07",
