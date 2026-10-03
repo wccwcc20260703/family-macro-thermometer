@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-10-02T08:44:52+08:00",
+    "updatedAt": "2026-10-03T08:44:03+08:00",
     "status": "partial",
     "errors": [],
     "warnings": [
@@ -6352,10 +6352,6 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
         {
-          "date": "2024-09-04",
-          "value": 5.33
-        },
-        {
           "date": "2024-09-05",
           "value": 5.33
         },
@@ -8430,6 +8426,10 @@
         {
           "date": "2026-09-30",
           "value": 3.88
+        },
+        {
+          "date": "2026-10-01",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9478,7 +9478,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-09-30",
+          "date": "2026-10-01",
           "value": 3.88
         }
       ]
@@ -9491,10 +9491,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-08-30",
-          "value": 1.76
-        },
         {
           "date": "2024-09-03",
           "value": 1.73
@@ -11570,6 +11566,10 @@
         {
           "date": "2026-09-30",
           "value": 2.93
+        },
+        {
+          "date": "2026-10-01",
+          "value": 2.88
         }
       ],
       "longValues": [
@@ -12618,8 +12618,8 @@
           "value": 2.83
         },
         {
-          "date": "2026-09-30",
-          "value": 2.93
+          "date": "2026-10-01",
+          "value": 2.88
         }
       ]
     },
@@ -20608,7 +20608,7 @@
     }
   },
   "temperature": {
-    "score": 45.3,
+    "score": 45.5,
     "label": "修复",
     "action": "小步观察",
     "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
@@ -20618,8 +20618,8 @@
       "label": "向左共振",
       "tone": "cooling",
       "message": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。",
-      "shortDelta": -6.2,
-      "mediumDelta": -6.2,
+      "shortDelta": -6.0,
+      "mediumDelta": -6.0,
       "shortDirection": "left",
       "mediumDirection": "left"
     },
@@ -20644,13 +20644,13 @@
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.93%",
-        "position": 0.1,
+        "reading": "10年实际利率 2.88%",
+        "position": 2.0,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
         "boldLabel": "大胆 ≤ 1.2%",
-        "percentile": "近520期原始值第100百分位 · 越低越友好",
+        "percentile": "近520期原始值第99百分位 · 越低越友好",
         "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
         "weight": 10
       },
@@ -21471,7 +21471,7 @@
     ]
   },
   "liquidity": {
-    "score": 43.1,
+    "score": 43.5,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21480,7 +21480,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-09-30",
+        "date": "2026-10-01",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21496,15 +21496,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.93,
+        "value": 2.88,
         "unit": "%",
-        "date": "2026-09-30",
-        "score": 2.3,
+        "date": "2026-10-01",
+        "score": 4.0,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.49,
+        "change20": 0.43,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21553,7 +21553,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 45.3,
+      "score": 45.5,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21564,7 +21564,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 45.3,
+      "score": 45.5,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21575,7 +21575,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 45.3,
+      "score": 45.5,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21586,7 +21586,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 45.3,
+      "score": 45.5,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21597,7 +21597,7 @@
     {
       "id": "2025-10-30-EFFR-17",
       "date": "2025-10-30",
-      "score": 45.3,
+      "score": 45.5,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21608,7 +21608,7 @@
     {
       "id": "2025-12-11-EFFR-18",
       "date": "2025-12-11",
-      "score": 45.3,
+      "score": 45.5,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21772,18 +21772,18 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-10-02",
+    "date": "2026-10-03",
     "publishTime": "每天 08:30（北京时间）",
     "title": "环境持续降温，先保护本金和节奏",
-    "summary": "今天的综合温度是 45.3 分，处在过去记录的第 2 百分位。5日变化 -6.2 分，20日变化 -6.2 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 45.5 分，处在过去记录的第 2 百分位。5日变化 -6.0 分，20日变化 -6.0 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
     "bottomLine": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "45.3分",
-        "context": "过去记录第 2 百分位；5日 -6.2 / 20日 -6.2",
+        "value": "45.5分",
+        "context": "过去记录第 2 百分位；5日 -6.0 / 20日 -6.0",
         "tone": "neutral"
       },
       {
@@ -21794,8 +21794,8 @@
       },
       {
         "label": "10年实际利率",
-        "value": "2.93%",
-        "context": "过去520期第 100 百分位，越高越压制高估值资产",
+        "value": "2.88%",
+        "context": "过去520期第 99 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
       {
@@ -21812,7 +21812,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "43.1分",
+        "value": "43.5分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
@@ -25749,7 +25749,7 @@
       "impact": "若就业与工资同时偏强，降息预期可能后移；若就业骤弱，市场会在宽松利好与衰退风险间重新定价。",
       "sourceUrl": "https://www.bls.gov/schedule/2026/",
       "id": "global-2026-10-02-8",
-      "status": "today"
+      "status": "past"
     },
     {
       "date": "2026-10-07",
