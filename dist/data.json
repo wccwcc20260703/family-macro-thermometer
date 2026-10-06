@@ -1,9 +1,12 @@
 {
   "meta": {
-    "updatedAt": "2026-10-05T08:48:53+08:00",
+    "updatedAt": "2026-10-06T08:48:46+08:00",
     "status": "partial",
     "errors": [],
     "warnings": [
+      "美元指数暂未取得新值，保留最近成功记录",
+      "NYMEX原油暂未取得新值，保留最近成功记录",
+      "COMEX黄金暂未取得新值，保留最近成功记录",
       "COMEX铜暂未取得新值，保留最近成功记录"
     ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
@@ -57,10 +60,6 @@
       "meaning": "收益率越高，成长估值压力通常越大",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-10-03",
-          "value": 4.1172
-        },
         {
           "date": "2025-10-06",
           "value": 4.154
@@ -1095,7 +1094,11 @@
         },
         {
           "date": "2026-10-05",
-          "value": 5.2644
+          "value": 5.3089
+        },
+        {
+          "date": "2026-10-06",
+          "value": 5.3089
         }
       ]
     },
@@ -6348,10 +6351,6 @@
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
         {
-          "date": "2024-09-05",
-          "value": 5.33
-        },
-        {
           "date": "2024-09-06",
           "value": 5.33
         },
@@ -8426,6 +8425,10 @@
         {
           "date": "2026-10-01",
           "value": 3.88
+        },
+        {
+          "date": "2026-10-02",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9474,7 +9477,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-10-01",
+          "date": "2026-10-02",
           "value": 3.88
         }
       ]
@@ -9487,10 +9490,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-09-03",
-          "value": 1.73
-        },
         {
           "date": "2024-09-04",
           "value": 1.7
@@ -11566,6 +11565,10 @@
         {
           "date": "2026-10-01",
           "value": 2.88
+        },
+        {
+          "date": "2026-10-02",
+          "value": 2.92
         }
       ],
       "longValues": [
@@ -12614,8 +12617,8 @@
           "value": 2.83
         },
         {
-          "date": "2026-10-01",
-          "value": 2.88
+          "date": "2026-10-02",
+          "value": 2.92
         }
       ]
     },
@@ -12627,26 +12630,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DTWEXBGS",
       "values": [
-        {
-          "date": "2024-08-28",
-          "value": 121.8943
-        },
-        {
-          "date": "2024-08-29",
-          "value": 122.2333
-        },
-        {
-          "date": "2024-08-30",
-          "value": 122.3262
-        },
-        {
-          "date": "2024-09-03",
-          "value": 122.7811
-        },
-        {
-          "date": "2024-09-04",
-          "value": 122.5144
-        },
         {
           "date": "2024-09-05",
           "value": 122.4533
@@ -14706,13 +14689,29 @@
         {
           "date": "2026-09-25",
           "value": 120.33
+        },
+        {
+          "date": "2026-09-28",
+          "value": 120.6958
+        },
+        {
+          "date": "2026-09-29",
+          "value": 121.0296
+        },
+        {
+          "date": "2026-09-30",
+          "value": 120.9693
+        },
+        {
+          "date": "2026-10-01",
+          "value": 121.7882
+        },
+        {
+          "date": "2026-10-02",
+          "value": 121.3848
         }
       ],
       "longValues": [
-        {
-          "date": "2021-09-24",
-          "value": 113.7597
-        },
         {
           "date": "2021-10-01",
           "value": 114.3798
@@ -15756,6 +15755,10 @@
         {
           "date": "2026-09-25",
           "value": 120.33
+        },
+        {
+          "date": "2026-10-02",
+          "value": 121.3848
         }
       ]
     },
@@ -20604,22 +20607,22 @@
     }
   },
   "temperature": {
-    "score": 45.6,
-    "label": "修复",
-    "action": "小步观察",
-    "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
-    "avg30": 51.4,
+    "score": 43.7,
+    "label": "过冷",
+    "action": "防守等待",
+    "explanation": "增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。",
+    "avg30": 51.3,
     "avg90": 57.5,
     "trend": {
       "label": "向左共振",
       "tone": "cooling",
       "message": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。",
-      "shortDelta": -5.9,
-      "mediumDelta": -5.9,
+      "shortDelta": -7.8,
+      "mediumDelta": -7.8,
       "shortDirection": "left",
       "mediumDirection": "left"
     },
-    "rangeLow": 44.2,
+    "rangeLow": 44.1,
     "rangeHigh": 69.3,
     "strongest": "通胀压力",
     "weakest": "真实利率",
@@ -20640,26 +20643,26 @@
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.88%",
-        "position": 2.0,
+        "reading": "10年实际利率 2.92%",
+        "position": 0.5,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
         "boldLabel": "大胆 ≤ 1.2%",
-        "percentile": "近520期原始值第99百分位 · 越低越友好",
+        "percentile": "近520期原始值第100百分位 · 越低越友好",
         "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
         "weight": 10
       },
       {
         "name": "美元强弱",
         "key": "broadDollar",
-        "reading": "广义美元 120.33",
-        "position": 55.0,
+        "reading": "广义美元 121.38",
+        "position": 50.5,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≥ 125",
         "boldLabel": "大胆 ≤ 118",
-        "percentile": "近520期原始值第40百分位 · 越低越友好",
+        "percentile": "近520期原始值第63百分位 · 越低越友好",
         "interpretation": "美元越强，全球非美资产通常越容易承受资金压力。",
         "weight": 10
       },
@@ -21427,15 +21430,15 @@
       },
       {
         "date": "2026-09-28",
-        "value": 45.9
+        "value": 45.3
       },
       {
         "date": "2026-09-29",
-        "value": 45.2
+        "value": 44.1
       },
       {
         "date": "2026-09-30",
-        "value": 45.1
+        "value": 44.1
       }
     ],
     "bands": [
@@ -21467,7 +21470,7 @@
     ]
   },
   "liquidity": {
-    "score": 43.5,
+    "score": 38.6,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21476,7 +21479,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-10-01",
+        "date": "2026-10-02",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21492,15 +21495,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.88,
+        "value": 2.92,
         "unit": "%",
-        "date": "2026-10-01",
-        "score": 4.0,
+        "date": "2026-10-02",
+        "score": 2.7,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.43,
+        "change20": 0.5,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21510,15 +21513,15 @@
       {
         "key": "broadDollar",
         "name": "广义美元指数",
-        "value": 120.33,
+        "value": 121.3848,
         "unit": "",
-        "date": "2026-09-25",
-        "score": 37.3,
-        "status": "温和走强",
-        "tone": "amber",
+        "date": "2026-10-02",
+        "score": 19.2,
+        "status": "明显走强",
+        "tone": "red",
         "meaning": "美元相对全球货币的强弱 / 全球美元压力",
-        "interpretation": "美元有一定上行压力，但尚未形成失控抽水。",
-        "change20": 1.972,
+        "interpretation": "美元加速走强，可能收紧全球流动性。",
+        "change20": 3.258,
         "riskLine": 125.0,
         "opportunityLine": 118.0,
         "thresholdSignal": "处于观察区间",
@@ -21549,7 +21552,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 45.6,
+      "score": 43.7,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21560,7 +21563,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 45.6,
+      "score": 43.7,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21571,7 +21574,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 45.6,
+      "score": 43.7,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21582,7 +21585,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 45.6,
+      "score": 43.7,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21593,7 +21596,7 @@
     {
       "id": "2025-10-30-EFFR-17",
       "date": "2025-10-30",
-      "score": 45.6,
+      "score": 43.7,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21604,7 +21607,7 @@
     {
       "id": "2025-12-11-EFFR-18",
       "date": "2025-12-11",
-      "score": 45.6,
+      "score": 43.7,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21768,18 +21771,18 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-10-05",
+    "date": "2026-10-06",
     "publishTime": "每天 08:30（北京时间）",
     "title": "环境持续降温，先保护本金和节奏",
-    "summary": "今天的综合温度是 45.6 分，处在过去记录的第 2 百分位。5日变化 -5.9 分，20日变化 -5.9 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 43.7 分，处在过去记录的第 0 百分位。5日变化 -7.8 分，20日变化 -7.8 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
     "bottomLine": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "45.6分",
-        "context": "过去记录第 2 百分位；5日 -5.9 / 20日 -5.9",
+        "value": "43.7分",
+        "context": "过去记录第 0 百分位；5日 -7.8 / 20日 -7.8",
         "tone": "neutral"
       },
       {
@@ -21790,8 +21793,8 @@
       },
       {
         "label": "10年实际利率",
-        "value": "2.88%",
-        "context": "过去520期第 99 百分位，越高越压制高估值资产",
+        "value": "2.92%",
+        "context": "过去520期第 100 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
       {
@@ -21808,7 +21811,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "43.5分",
+        "value": "38.6分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
