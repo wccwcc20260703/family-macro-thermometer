@@ -1,11 +1,14 @@
 {
   "meta": {
-    "updatedAt": "2026-10-30T14:05:50+08:00",
+    "updatedAt": "2026-10-31T13:59:37+08:00",
     "status": "partial",
     "errors": [
       "国家统计局更新失败：未找到国家统计局月度经济运行页面"
     ],
-    "warnings": [],
+    "warnings": [
+      "NYMEX原油暂未取得新值，保留最近成功记录",
+      "COMEX铜暂未取得新值，保留最近成功记录"
+    ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
   },
   "china": {
@@ -1095,7 +1098,7 @@
         },
         {
           "date": "2026-10-30",
-          "value": 4.9184
+          "value": 4.931
         }
       ]
     },
@@ -2143,7 +2146,7 @@
         },
         {
           "date": "2026-10-30",
-          "value": 101.81
+          "value": 101.97
         }
       ]
     },
@@ -4239,7 +4242,7 @@
         },
         {
           "date": "2026-10-30",
-          "value": 4005.8
+          "value": 3884.9
         }
       ]
     },
@@ -5295,7 +5298,7 @@
       "label": "A股成交额",
       "unit": "万亿元",
       "meaning": "2万亿元是活跃分界，2.2–2.3万亿元以上更利于行情扩散",
-      "source": "上证指数与深证成指成交额合计（东方财富公开行情）",
+      "source": "腾讯行情当日成交额；历史数据沿用最近成功记录",
       "values": [
         {
           "date": "2025-09-29",
@@ -6332,6 +6335,10 @@
         {
           "date": "2026-10-29",
           "value": 1.557
+        },
+        {
+          "date": "2026-10-30",
+          "value": 1.674
         }
       ]
     },
@@ -6343,10 +6350,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
-        {
-          "date": "2024-10-01",
-          "value": 4.83
-        },
         {
           "date": "2024-10-02",
           "value": 4.83
@@ -8422,6 +8425,10 @@
         {
           "date": "2026-10-28",
           "value": 3.88
+        },
+        {
+          "date": "2026-10-29",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9470,7 +9477,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-10-28",
+          "date": "2026-10-29",
           "value": 3.88
         }
       ]
@@ -9483,10 +9490,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-09-27",
-          "value": 1.6
-        },
         {
           "date": "2024-09-30",
           "value": 1.63
@@ -11562,6 +11565,10 @@
         {
           "date": "2026-10-28",
           "value": 2.67
+        },
+        {
+          "date": "2026-10-29",
+          "value": 2.63
         }
       ],
       "longValues": [
@@ -12610,8 +12617,8 @@
           "value": 2.66
         },
         {
-          "date": "2026-10-28",
-          "value": 2.67
+          "date": "2026-10-29",
+          "value": 2.63
         }
       ]
     },
@@ -20689,20 +20696,20 @@
     }
   },
   "temperature": {
-    "score": 42.6,
+    "score": 43.8,
     "label": "过冷",
     "action": "防守等待",
     "explanation": "增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。",
-    "avg30": 45.8,
-    "avg90": 53.8,
+    "avg30": 45.7,
+    "avg90": 53.6,
     "trend": {
-      "label": "向左共振",
-      "tone": "cooling",
-      "message": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。",
-      "shortDelta": -1.5,
-      "mediumDelta": -3.5,
+      "label": "方向未确认",
+      "tone": "flat",
+      "message": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。",
+      "shortDelta": -2.7,
+      "mediumDelta": -0.2,
       "shortDirection": "left",
-      "mediumDirection": "left"
+      "mediumDirection": "flat"
     },
     "rangeLow": 42.0,
     "rangeHigh": 69.3,
@@ -20725,13 +20732,13 @@
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.67%",
-        "position": 9.9,
+        "reading": "10年实际利率 2.63%",
+        "position": 11.4,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
         "boldLabel": "大胆 ≤ 1.2%",
-        "percentile": "近520期原始值第96百分位 · 越低越友好",
+        "percentile": "近520期原始值第95百分位 · 越低越友好",
         "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
         "weight": 10
       },
@@ -20777,13 +20784,13 @@
       {
         "name": "市场资金",
         "key": "turnover",
-        "reading": "A股成交 1.56万亿元",
-        "position": 46.1,
+        "reading": "A股成交 1.67万亿元",
+        "position": 48.5,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≤ 1.0万亿",
         "boldLabel": "大胆 ≥ 2.5万亿",
-        "percentile": "近259期原始值第5百分位 · 越高越友好",
+        "percentile": "近260期原始值第11百分位 · 越高越友好",
         "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
         "weight": 25
       },
@@ -20802,10 +20809,6 @@
       }
     ],
     "history": [
-      {
-        "date": "2026-01-28",
-        "value": 64.8
-      },
       {
         "date": "2026-01-29",
         "value": 66.4
@@ -21520,7 +21523,11 @@
       },
       {
         "date": "2026-10-29",
-        "value": 43.1
+        "value": 43.3
+      },
+      {
+        "date": "2026-10-30",
+        "value": 43.8
       }
     ],
     "bands": [
@@ -21552,7 +21559,7 @@
     ]
   },
   "liquidity": {
-    "score": 41.1,
+    "score": 41.4,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21561,7 +21568,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-10-28",
+        "date": "2026-10-29",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21577,15 +21584,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.67,
+        "value": 2.63,
         "unit": "%",
-        "date": "2026-10-28",
-        "score": 11.0,
+        "date": "2026-10-29",
+        "score": 12.3,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": -0.24,
+        "change20": -0.3,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21634,7 +21641,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 42.6,
+      "score": 43.8,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21645,7 +21652,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 42.6,
+      "score": 43.8,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21656,7 +21663,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 42.6,
+      "score": 43.8,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21667,7 +21674,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 42.6,
+      "score": 43.8,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21678,7 +21685,7 @@
     {
       "id": "2025-10-30-EFFR-18",
       "date": "2025-10-30",
-      "score": 42.6,
+      "score": 43.8,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21689,7 +21696,7 @@
     {
       "id": "2025-12-11-EFFR-19",
       "date": "2025-12-11",
-      "score": 42.6,
+      "score": 43.8,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21700,7 +21707,7 @@
     {
       "id": "2026-01-27-广义美元-3",
       "date": "2026-01-27",
-      "score": 42.6,
+      "score": 43.8,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21864,30 +21871,30 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-10-30",
+    "date": "2026-10-31",
     "publishTime": "每天 08:30（北京时间）",
-    "title": "环境持续降温，先保护本金和节奏",
-    "summary": "今天的综合温度是 42.6 分，处在过去记录的第 2 百分位。5日变化 -1.5 分，20日变化 -3.5 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
-    "bottomLine": "短期和20日趋势同时向左，环境正在降温，应提高防守和等待确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
+    "title": "方向仍有分歧，等待数据形成共振",
+    "summary": "今天的综合温度是 43.8 分，处在过去记录的第 4 百分位。5日变化 -2.7 分，20日变化 -0.2 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
+    "bottomLine": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "金融松紧",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "42.6分",
-        "context": "过去记录第 2 百分位；5日 -1.5 / 20日 -3.5",
+        "value": "43.8分",
+        "context": "过去记录第 4 百分位；5日 -2.7 / 20日 -0.2",
         "tone": "neutral"
       },
       {
         "label": "A股成交额",
-        "value": "1.56万亿元",
-        "context": "过去260个交易日第 5 百分位，越高代表市场参与度越强",
+        "value": "1.67万亿元",
+        "context": "过去260个交易日第 11 百分位，越高代表市场参与度越强",
         "tone": "neutral"
       },
       {
         "label": "10年实际利率",
-        "value": "2.67%",
-        "context": "过去520期第 96 百分位，越高越压制高估值资产",
+        "value": "2.63%",
+        "context": "过去520期第 95 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
       {
@@ -21904,7 +21911,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "41.1分",
+        "value": "41.4分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
@@ -25901,7 +25908,7 @@
       "impact": "日元和日本国债变化可能影响全球套息交易；意外收紧通常会放大高杠杆资产波动。",
       "sourceUrl": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
       "id": "global-2026-10-30-13",
-      "status": "today"
+      "status": "past"
     },
     {
       "date": "2026-11-03",
