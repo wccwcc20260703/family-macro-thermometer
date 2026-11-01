@@ -1,12 +1,12 @@
 {
   "meta": {
-    "updatedAt": "2026-10-31T13:59:37+08:00",
+    "updatedAt": "2026-11-01T14:30:01+08:00",
     "status": "partial",
     "errors": [
       "国家统计局更新失败：未找到国家统计局月度经济运行页面"
     ],
     "warnings": [
-      "NYMEX原油暂未取得新值，保留最近成功记录",
+      "COMEX黄金暂未取得新值，保留最近成功记录",
       "COMEX铜暂未取得新值，保留最近成功记录"
     ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
@@ -3194,7 +3194,7 @@
         },
         {
           "date": "2026-10-30",
-          "value": 103.41
+          "value": 102.95
         }
       ]
     },
@@ -20696,7 +20696,7 @@
     }
   },
   "temperature": {
-    "score": 43.8,
+    "score": 43.9,
     "label": "过冷",
     "action": "防守等待",
     "explanation": "增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。",
@@ -20706,8 +20706,8 @@
       "label": "方向未确认",
       "tone": "flat",
       "message": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。",
-      "shortDelta": -2.7,
-      "mediumDelta": -0.2,
+      "shortDelta": -2.6,
+      "mediumDelta": -0.1,
       "shortDirection": "left",
       "mediumDirection": "flat"
     },
@@ -20797,13 +20797,13 @@
       {
         "name": "通胀压力",
         "key": "inflation",
-        "reading": "油价20日 +13.3%",
-        "position": 40.1,
+        "reading": "油价20日 +12.8%",
+        "position": 41.6,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≥ +15%",
         "boldLabel": "大胆 ≤ +5%",
-        "percentile": "近240期涨幅第78百分位 · 涨得越慢越友好",
+        "percentile": "近240期涨幅第76百分位 · 涨得越慢越友好",
         "interpretation": "油价短期急涨会抬高通胀预期，压缩降息和估值空间。",
         "weight": 10
       }
@@ -21527,7 +21527,7 @@
       },
       {
         "date": "2026-10-30",
-        "value": 43.8
+        "value": 43.9
       }
     ],
     "bands": [
@@ -21641,7 +21641,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 43.8,
+      "score": 43.9,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21652,7 +21652,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 43.8,
+      "score": 43.9,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21663,7 +21663,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 43.8,
+      "score": 43.9,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21674,7 +21674,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 43.8,
+      "score": 43.9,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21685,7 +21685,7 @@
     {
       "id": "2025-10-30-EFFR-18",
       "date": "2025-10-30",
-      "score": 43.8,
+      "score": 43.9,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21696,7 +21696,7 @@
     {
       "id": "2025-12-11-EFFR-19",
       "date": "2025-12-11",
-      "score": 43.8,
+      "score": 43.9,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21707,7 +21707,7 @@
     {
       "id": "2026-01-27-广义美元-3",
       "date": "2026-01-27",
-      "score": 43.8,
+      "score": 43.9,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21871,18 +21871,18 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "publishTime": "每天 08:30（北京时间）",
     "title": "方向仍有分歧，等待数据形成共振",
-    "summary": "今天的综合温度是 43.8 分，处在过去记录的第 4 百分位。5日变化 -2.7 分，20日变化 -0.2 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 43.9 分，处在过去记录的第 6 百分位。5日变化 -2.6 分，20日变化 -0.1 分。资金面主要由金融松紧支撑，真实利率仍是最明显的约束。",
     "bottomLine": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "金融松紧",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "43.8分",
-        "context": "过去记录第 4 百分位；5日 -2.7 / 20日 -0.2",
+        "value": "43.9分",
+        "context": "过去记录第 6 百分位；5日 -2.6 / 20日 -0.1",
         "tone": "neutral"
       },
       {
