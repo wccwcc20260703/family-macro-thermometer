@@ -1,11 +1,15 @@
 {
   "meta": {
-    "updatedAt": "2026-11-11T14:50:17+08:00",
+    "updatedAt": "2026-11-12T15:28:35+08:00",
     "status": "partial",
     "errors": [
       "国家统计局更新失败：未找到国家统计局月度经济运行页面"
     ],
-    "warnings": [],
+    "warnings": [
+      "NYMEX原油暂未取得新值，保留最近成功记录",
+      "COMEX黄金暂未取得新值，保留最近成功记录",
+      "COMEX铜暂未取得新值，保留最近成功记录"
+    ],
     "note": "自动更新公开数据；付费课程原文与附件未发布。"
   },
   "china": {
@@ -57,10 +61,6 @@
       "meaning": "收益率越高，成长估值压力通常越大",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-11",
-          "value": 4.0694
-        },
         {
           "date": "2025-11-12",
           "value": 4.0849
@@ -1095,7 +1095,11 @@
         },
         {
           "date": "2026-11-11",
-          "value": 5.0125
+          "value": 5.0041
+        },
+        {
+          "date": "2026-11-12",
+          "value": 5.0083
         }
       ]
     },
@@ -1105,10 +1109,6 @@
       "meaning": "美元走强通常意味着全球流动性偏紧",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-13",
-          "value": 99.17
-        },
         {
           "date": "2025-11-14",
           "value": 99.29
@@ -2143,7 +2143,11 @@
         },
         {
           "date": "2026-11-11",
-          "value": 102.35
+          "value": 102.91
+        },
+        {
+          "date": "2026-11-12",
+          "value": 103.05
         }
       ]
     },
@@ -5295,7 +5299,7 @@
       "label": "A股成交额",
       "unit": "万亿元",
       "meaning": "2万亿元是活跃分界，2.2–2.3万亿元以上更利于行情扩散",
-      "source": "上证指数与深证成指成交额合计（东方财富公开行情）",
+      "source": "腾讯行情当日成交额；历史数据沿用最近成功记录",
       "values": [
         {
           "date": "2025-10-17",
@@ -6332,6 +6336,10 @@
         {
           "date": "2026-11-10",
           "value": 1.505
+        },
+        {
+          "date": "2026-11-12",
+          "value": 1.932
         }
       ]
     },
@@ -20732,25 +20740,30 @@
           "date": "2026-11-10",
           "value": 2.2399,
           "buy": 131.36
+        },
+        {
+          "date": "2026-11-11",
+          "value": 2.2475,
+          "buy": 150.83
         }
       ]
     }
   },
   "temperature": {
-    "score": 45.6,
+    "score": 49.5,
     "label": "修复",
     "action": "小步观察",
     "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
-    "avg30": 45.1,
-    "avg90": 52.0,
+    "avg30": 45.0,
+    "avg90": 51.8,
     "trend": {
-      "label": "短期右转",
-      "tone": "mixed",
-      "message": "短期已经向右，但20日趋势仍向左：更像修复，机会出现但需要继续确认。",
-      "shortDelta": 1.4,
-      "mediumDelta": -1.5,
-      "shortDirection": "right",
-      "mediumDirection": "left"
+      "label": "方向未确认",
+      "tone": "flat",
+      "message": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。",
+      "shortDelta": -0.2,
+      "mediumDelta": 6.0,
+      "shortDirection": "flat",
+      "mediumDirection": "right"
     },
     "rangeLow": 41.3,
     "rangeHigh": 69.2,
@@ -20825,13 +20838,13 @@
       {
         "name": "市场资金",
         "key": "turnover",
-        "reading": "A股成交 1.50万亿元",
-        "position": 45.1,
+        "reading": "A股成交 1.93万亿元",
+        "position": 53.6,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≤ 1.0万亿",
         "boldLabel": "大胆 ≥ 2.5万亿",
-        "percentile": "近259期原始值第4百分位 · 越高越友好",
+        "percentile": "近260期原始值第29百分位 · 越高越友好",
         "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
         "weight": 25
       },
@@ -20850,10 +20863,6 @@
       }
     ],
     "history": [
-      {
-        "date": "2026-02-09",
-        "value": 60.1
-      },
       {
         "date": "2026-02-10",
         "value": 59.3
@@ -21569,6 +21578,10 @@
       {
         "date": "2026-11-10",
         "value": 45.6
+      },
+      {
+        "date": "2026-11-12",
+        "value": 49.5
       }
     ],
     "bands": [
@@ -21682,7 +21695,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 45.6,
+      "score": 49.5,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21693,7 +21706,7 @@
     {
       "id": "2025-01-24-NFCI-12",
       "date": "2025-01-24",
-      "score": 45.6,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21704,7 +21717,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 45.6,
+      "score": 49.5,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21715,7 +21728,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 45.6,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21726,7 +21739,7 @@
     {
       "id": "2025-10-30-EFFR-18",
       "date": "2025-10-30",
-      "score": 45.6,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21737,7 +21750,7 @@
     {
       "id": "2025-12-11-EFFR-19",
       "date": "2025-12-11",
-      "score": 45.6,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21748,7 +21761,7 @@
     {
       "id": "2026-01-27-广义美元-3",
       "date": "2026-01-27",
-      "score": 45.6,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21759,7 +21772,7 @@
     {
       "id": "2026-02-02-广义美元-4",
       "date": "2026-02-02",
-      "score": 45.6,
+      "score": 49.5,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21770,7 +21783,7 @@
     {
       "id": "2026-02-09-广义美元-5",
       "date": "2026-02-09",
-      "score": 60.1,
+      "score": 49.5,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21912,24 +21925,24 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-11-11",
+    "date": "2026-11-12",
     "publishTime": "每天 08:30（北京时间）",
-    "title": "短期修复已经启动，中期趋势还没完全转向",
-    "summary": "今天的综合温度是 45.6 分，处在过去记录的第 12 百分位。5日变化 +1.4 分，20日变化 -1.5 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
-    "bottomLine": "短期已经向右，但20日趋势仍向左：更像修复，机会出现但需要继续确认。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
+    "title": "方向仍有分歧，等待数据形成共振",
+    "summary": "今天的综合温度是 49.5 分，处在过去记录的第 24 百分位。5日变化 -0.2 分，20日变化 +6.0 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "bottomLine": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "45.6分",
-        "context": "过去记录第 12 百分位；5日 +1.4 / 20日 -1.5",
+        "value": "49.5分",
+        "context": "过去记录第 24 百分位；5日 -0.2 / 20日 +6.0",
         "tone": "neutral"
       },
       {
         "label": "A股成交额",
-        "value": "1.50万亿元",
-        "context": "过去260个交易日第 4 百分位，越高代表市场参与度越强",
+        "value": "1.93万亿元",
+        "context": "过去260个交易日第 29 百分位，越高代表市场参与度越强",
         "tone": "neutral"
       },
       {
@@ -25752,12 +25765,12 @@
   "marketPulse": {
     "summary": "成交额看参与度，两融看杠杆意愿，ETF申赎看资金正在投票的方向；三者需要一起看。",
     "margin": {
-      "date": "2026-11-10",
-      "value": 2.2399,
-      "buy": 131.36,
-      "change5": -0.2,
-      "state": "杠杆降温",
-      "tone": "observe",
+      "date": "2026-11-11",
+      "value": 2.2475,
+      "buy": 150.83,
+      "change5": 0.1,
+      "state": "温和增加",
+      "tone": "opportunity",
       "interpretation": "融资余额持续温和上升有利于行情扩散；若短期陡增而指数不涨，反而要警惕拥挤和承接转弱。"
     },
     "etfFlow": {
@@ -25997,6 +26010,18 @@
       "impact": "用于判断决策层对增长与通胀的容忍区间是否改变。",
       "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "id": "global-2026-11-18-17",
+      "status": "future"
+    },
+    {
+      "id": "ipo-2026-11-19-ANT",
+      "date": "2026-11-19",
+      "title": "ANTHROPIC, PBC（ANT） IPO",
+      "category": "大型IPO",
+      "importance": "high",
+      "time": "美股交易时段",
+      "detail": "Nasdaq日历显示拟发行规模约 740.02亿美元；日期为交易所当前确认/预计的定价日，仍可能调整。",
+      "impact": "大型IPO会阶段性吸收市场资金，并检验新股风险偏好。重点观察定价折让、认购倍数和上市后首周表现，而不是把上市本身机械理解为利空。",
+      "sourceUrl": "https://www.nasdaq.com/market-activity/ipos",
       "status": "future"
     },
     {
