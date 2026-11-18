@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-11-17T16:11:30+08:00",
+    "updatedAt": "2026-11-18T15:45:21+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [],
@@ -63,10 +63,6 @@
       "meaning": "收益率越高，成长估值压力通常越大",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-17",
-          "value": 4.1405
-        },
         {
           "date": "2025-11-18",
           "value": 4.1134
@@ -1101,7 +1097,11 @@
         },
         {
           "date": "2026-11-17",
-          "value": 5.1197
+          "value": 5.1093
+        },
+        {
+          "date": "2026-11-18",
+          "value": 5.103
         }
       ]
     },
@@ -1111,10 +1111,6 @@
       "meaning": "美元走强通常意味着全球流动性偏紧",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-19",
-          "value": 100.13
-        },
         {
           "date": "2025-11-20",
           "value": 100.22
@@ -2149,7 +2145,11 @@
         },
         {
           "date": "2026-11-17",
-          "value": 103.55
+          "value": 103.56
+        },
+        {
+          "date": "2026-11-18",
+          "value": 103.75
         }
       ]
     },
@@ -2159,10 +2159,6 @@
       "meaning": "油价快速上涨会增加通胀与利率压力",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-14",
-          "value": 59.95
-        },
         {
           "date": "2025-11-17",
           "value": 59.72
@@ -3197,7 +3193,11 @@
         },
         {
           "date": "2026-11-17",
-          "value": 85.12
+          "value": 85.61
+        },
+        {
+          "date": "2026-11-18",
+          "value": 84.13
         }
       ]
     },
@@ -3207,10 +3207,6 @@
       "meaning": "用于观察避险需求与实际利率预期",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-14",
-          "value": 4084.4
-        },
         {
           "date": "2025-11-17",
           "value": 4045.1
@@ -4245,7 +4241,11 @@
         },
         {
           "date": "2026-11-17",
-          "value": 3873.1
+          "value": 3851.9
+        },
+        {
+          "date": "2026-11-18",
+          "value": 3772.4
         }
       ]
     },
@@ -4255,10 +4255,6 @@
       "meaning": "用于观察全球制造业需求与周期热度",
       "source": "东方财富公开行情",
       "values": [
-        {
-          "date": "2025-11-14",
-          "value": 5.05
-        },
         {
           "date": "2025-11-17",
           "value": 4.9895
@@ -5293,7 +5289,11 @@
         },
         {
           "date": "2026-11-17",
-          "value": 5.9625
+          "value": 5.995
+        },
+        {
+          "date": "2026-11-18",
+          "value": 5.7865
         }
       ]
     },
@@ -5303,10 +5303,6 @@
       "meaning": "2万亿元是活跃分界，2.2–2.3万亿元以上更利于行情扩散",
       "source": "上证指数与深证成指成交额合计（东方财富公开行情）",
       "values": [
-        {
-          "date": "2025-10-23",
-          "value": 1.644
-        },
         {
           "date": "2025-10-24",
           "value": 1.974
@@ -6342,6 +6338,10 @@
         {
           "date": "2026-11-17",
           "value": 1.458
+        },
+        {
+          "date": "2026-11-18",
+          "value": 1.37
         }
       ]
     },
@@ -6353,10 +6353,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
-        {
-          "date": "2024-10-17",
-          "value": 4.83
-        },
         {
           "date": "2024-10-18",
           "value": 4.83
@@ -8432,6 +8428,10 @@
         {
           "date": "2026-11-13",
           "value": 3.88
+        },
+        {
+          "date": "2026-11-16",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9482,6 +9482,10 @@
         {
           "date": "2026-11-13",
           "value": 3.88
+        },
+        {
+          "date": "2026-11-16",
+          "value": 3.88
         }
       ]
     },
@@ -9493,10 +9497,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-10-15",
-          "value": 1.75
-        },
         {
           "date": "2024-10-16",
           "value": 1.75
@@ -11572,6 +11572,10 @@
         {
           "date": "2026-11-13",
           "value": 2.91
+        },
+        {
+          "date": "2026-11-16",
+          "value": 2.92
         }
       ],
       "longValues": [
@@ -12622,6 +12626,10 @@
         {
           "date": "2026-11-13",
           "value": 2.91
+        },
+        {
+          "date": "2026-11-16",
+          "value": 2.92
         }
       ]
     },
@@ -20758,24 +20766,29 @@
           "date": "2026-11-16",
           "value": 2.2103,
           "buy": 112.62
+        },
+        {
+          "date": "2026-11-17",
+          "value": 2.1918,
+          "buy": 111.99
         }
       ]
     }
   },
   "temperature": {
-    "score": 44.8,
+    "score": 44.1,
     "label": "过冷",
     "action": "防守等待",
     "explanation": "增长、流动性或市场承接不足，优先防守；低温本身不是抄底信号。",
     "avg30": 44.9,
-    "avg90": 50.7,
+    "avg90": 50.5,
     "trend": {
-      "label": "方向未确认",
-      "tone": "flat",
-      "message": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。",
-      "shortDelta": 0.0,
-      "mediumDelta": 2.7,
-      "shortDirection": "flat",
+      "label": "短期左转",
+      "tone": "mixed",
+      "message": "短期正在向左，但20日趋势仍向右：更像升温过程中的回撤，先观察是否企稳。",
+      "shortDelta": -2.3,
+      "mediumDelta": 1.8,
+      "shortDirection": "left",
       "mediumDirection": "right"
     },
     "rangeLow": 41.1,
@@ -20792,20 +20805,20 @@
         "tone": "observe",
         "cautiousLabel": "谨慎 ≥ 4.5%",
         "boldLabel": "大胆 ≤ 2.5%",
-        "percentile": "近520期原始值第48百分位 · 越低越友好",
+        "percentile": "近520期原始值第49百分位 · 越低越友好",
         "interpretation": "短端资金越便宜，现金和融资成本压力越小。",
         "weight": 10
       },
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.91%",
-        "position": 0.9,
+        "reading": "10年实际利率 2.92%",
+        "position": 0.5,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
         "boldLabel": "大胆 ≤ 1.2%",
-        "percentile": "近520期原始值第99百分位 · 越低越友好",
+        "percentile": "近520期原始值第100百分位 · 越低越友好",
         "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
         "weight": 10
       },
@@ -20851,20 +20864,20 @@
       {
         "name": "市场资金",
         "key": "turnover",
-        "reading": "A股成交 1.46万亿元",
-        "position": 44.2,
+        "reading": "A股成交 1.37万亿元",
+        "position": 42.4,
         "zone": "观察",
         "tone": "observe",
         "cautiousLabel": "谨慎 ≤ 1.0万亿",
         "boldLabel": "大胆 ≥ 2.5万亿",
-        "percentile": "近260期原始值第3百分位 · 越高越友好",
+        "percentile": "近260期原始值第0百分位 · 越高越友好",
         "interpretation": "成交越活跃，风险偏好和市场承接力通常越强。",
         "weight": 25
       },
       {
         "name": "通胀压力",
         "key": "inflation",
-        "reading": "油价20日 -13.3%",
+        "reading": "油价20日 -13.9%",
         "position": 100.0,
         "zone": "大胆",
         "tone": "bold",
@@ -20876,10 +20889,6 @@
       }
     ],
     "history": [
-      {
-        "date": "2026-02-24",
-        "value": 59.4
-      },
       {
         "date": "2026-02-25",
         "value": 62.6
@@ -21594,7 +21603,11 @@
       },
       {
         "date": "2026-11-17",
-        "value": 44.8
+        "value": 44.6
+      },
+      {
+        "date": "2026-11-18",
+        "value": 44.1
       }
     ],
     "bands": [
@@ -21626,7 +21639,7 @@
     ]
   },
   "liquidity": {
-    "score": 36.0,
+    "score": 35.9,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21635,7 +21648,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-11-13",
+        "date": "2026-11-16",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21651,15 +21664,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.91,
+        "value": 2.92,
         "unit": "%",
-        "date": "2026-11-13",
-        "score": 3.0,
+        "date": "2026-11-16",
+        "score": 2.7,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.13,
+        "change20": 0.18,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21708,7 +21721,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 44.8,
+      "score": 44.1,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21719,7 +21732,7 @@
     {
       "id": "2025-01-17-NFCI-12",
       "date": "2025-01-17",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21730,7 +21743,7 @@
     {
       "id": "2025-02-21-NFCI-13",
       "date": "2025-02-21",
-      "score": 44.8,
+      "score": 44.1,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21741,7 +21754,7 @@
     {
       "id": "2025-07-04-NFCI-14",
       "date": "2025-07-04",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21752,7 +21765,7 @@
     {
       "id": "2025-12-11-EFFR-18",
       "date": "2025-12-11",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21763,7 +21776,7 @@
     {
       "id": "2026-01-27-广义美元-3",
       "date": "2026-01-27",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21774,7 +21787,7 @@
     {
       "id": "2026-02-02-广义美元-4",
       "date": "2026-02-02",
-      "score": 44.8,
+      "score": 44.1,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21785,7 +21798,7 @@
     {
       "id": "2026-02-09-广义美元-5",
       "date": "2026-02-09",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21796,7 +21809,7 @@
     {
       "id": "2026-02-19-广义美元-6",
       "date": "2026-02-19",
-      "score": 44.8,
+      "score": 44.1,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21807,7 +21820,7 @@
     {
       "id": "2026-02-20-广义美元-7",
       "date": "2026-02-20",
-      "score": 44.8,
+      "score": 44.1,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21927,30 +21940,30 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-11-17",
+    "date": "2026-11-18",
     "publishTime": "每天 08:30（北京时间）",
     "title": "方向仍有分歧，等待数据形成共振",
-    "summary": "今天的综合温度是 44.8 分，处在过去记录的第 10 百分位。5日变化 +0.0 分，20日变化 +2.7 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
-    "bottomLine": "当前方向不够一致，暂时按震荡看待，等待短期与20日趋势形成共振。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
+    "summary": "今天的综合温度是 44.1 分，处在过去记录的第 9 百分位。5日变化 -2.3 分，20日变化 +1.8 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "bottomLine": "短期正在向左，但20日趋势仍向右：更像升温过程中的回撤，先观察是否企稳。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "44.8分",
-        "context": "过去记录第 10 百分位；5日 +0.0 / 20日 +2.7",
+        "value": "44.1分",
+        "context": "过去记录第 9 百分位；5日 -2.3 / 20日 +1.8",
         "tone": "neutral"
       },
       {
         "label": "A股成交额",
-        "value": "1.46万亿元",
-        "context": "过去260个交易日第 3 百分位，越高代表市场参与度越强",
+        "value": "1.37万亿元",
+        "context": "过去260个交易日第 0 百分位，越高代表市场参与度越强",
         "tone": "neutral"
       },
       {
         "label": "10年实际利率",
-        "value": "2.91%",
-        "context": "过去520期第 99 百分位，越高越压制高估值资产",
+        "value": "2.92%",
+        "context": "过去520期第 100 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
       {
@@ -21967,7 +21980,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "36.0分",
+        "value": "35.9分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
@@ -22089,14 +22102,14 @@
       "name": "AI硬件",
       "proxy": "科创半导体ETF代理",
       "role": "主攻",
-      "value": 0.686,
-      "date": "2026-11-17",
-      "change5": -2.7,
-      "change20": -11.8,
+      "value": 0.697,
+      "date": "2026-11-18",
+      "change5": -3.6,
+      "change20": -9.1,
       "frameworkScore": 50,
-      "signalScore": 38.6,
-      "momentumShift": 0.3,
-      "strength": 46.5,
+      "signalScore": 38.8,
+      "momentumShift": -1.3,
+      "strength": 48.4,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -22105,10 +22118,6 @@
       "risk": "估值分位偏高、资本开支回报与客户集中",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 1.018
-        },
         {
           "date": "2026-08-12",
           "value": 1.04
@@ -22364,6 +22373,10 @@
         {
           "date": "2026-11-17",
           "value": 0.686
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.697
         }
       ]
     },
@@ -22372,14 +22385,14 @@
       "name": "光通信/CPO",
       "proxy": "通信ETF代理",
       "role": "主攻",
-      "value": 0.377,
-      "date": "2026-11-17",
-      "change5": -11.3,
-      "change20": -28.7,
+      "value": 0.382,
+      "date": "2026-11-18",
+      "change5": -16.8,
+      "change20": -28.6,
       "frameworkScore": 50,
       "signalScore": 30.0,
-      "momentumShift": -4.1,
-      "strength": 66.2,
+      "momentumShift": -9.6,
+      "strength": 77.3,
       "state": "风险",
       "tone": "risk",
       "reading": "课程阶段与市场信号仍偏左，先等订单、利润或估值消化。",
@@ -22388,10 +22401,6 @@
       "risk": "盈利预测下修但价格仍强，均线乖离过大",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.646
-        },
         {
           "date": "2026-08-12",
           "value": 0.665
@@ -22647,6 +22656,10 @@
         {
           "date": "2026-11-17",
           "value": 0.377
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.382
         }
       ]
     },
@@ -22655,14 +22668,14 @@
       "name": "MLCC",
       "proxy": "电子ETF宽口径代理",
       "role": "主攻",
-      "value": 0.588,
-      "date": "2026-11-17",
-      "change5": -5.3,
-      "change20": -13.8,
+      "value": 0.604,
+      "date": "2026-11-18",
+      "change5": -5.8,
+      "change20": -12.0,
       "frameworkScore": 65,
-      "signalScore": 49.3,
-      "momentumShift": -1.9,
-      "strength": 34.7,
+      "signalScore": 48.6,
+      "momentumShift": -2.8,
+      "strength": 37.5,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -22671,10 +22684,6 @@
       "risk": "扩产过快、估值偏高与高端国产份额不足",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.87
-        },
         {
           "date": "2026-08-12",
           "value": 0.885
@@ -22930,6 +22939,10 @@
         {
           "date": "2026-11-17",
           "value": 0.588
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.604
         }
       ]
     },
@@ -22938,14 +22951,14 @@
       "name": "AI应用",
       "proxy": "恒生互联网ETF代理",
       "role": "主攻",
-      "value": 0.307,
-      "date": "2026-11-17",
-      "change5": -9.7,
-      "change20": -7.8,
+      "value": 0.302,
+      "date": "2026-11-18",
+      "change5": -9.9,
+      "change20": -7.9,
       "frameworkScore": 65,
-      "signalScore": 47.5,
-      "momentumShift": -7.8,
-      "strength": 49.0,
+      "signalScore": 47.4,
+      "momentumShift": -7.9,
+      "strength": 49.3,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -22954,10 +22967,6 @@
       "risk": "资本开支压制现金流，利润率高位且资金未共振",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.402
-        },
         {
           "date": "2026-08-12",
           "value": 0.396
@@ -23213,6 +23222,10 @@
         {
           "date": "2026-11-17",
           "value": 0.307
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.302
         }
       ]
     },
@@ -23221,14 +23234,14 @@
       "name": "创新药/CXO",
       "proxy": "创新药ETF代理",
       "role": "主攻",
-      "value": 0.786,
-      "date": "2026-11-17",
-      "change5": -5.4,
-      "change20": -3.6,
+      "value": 0.777,
+      "date": "2026-11-18",
+      "change5": -5.6,
+      "change20": -4.7,
       "frameworkScore": 65,
-      "signalScore": 54.2,
-      "momentumShift": -4.5,
-      "strength": 44.9,
+      "signalScore": 53.3,
+      "momentumShift": -4.4,
+      "strength": 43.4,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -23237,10 +23250,6 @@
       "risk": "单管线风险、利润折现与海外融资约束",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.922
-        },
         {
           "date": "2026-08-12",
           "value": 0.919
@@ -23496,6 +23505,10 @@
         {
           "date": "2026-11-17",
           "value": 0.786
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.777
         }
       ]
     },
@@ -23504,14 +23517,14 @@
       "name": "铜与有色",
       "proxy": "有色金属ETF代理",
       "role": "周期",
-      "value": 1.33,
-      "date": "2026-11-17",
-      "change5": -8.8,
-      "change20": -11.7,
+      "value": 1.294,
+      "date": "2026-11-18",
+      "change5": -11.1,
+      "change20": -13.7,
       "frameworkScore": 65,
-      "signalScore": 45.2,
-      "momentumShift": -5.9,
-      "strength": 48.5,
+      "signalScore": 45.0,
+      "momentumShift": -7.6,
+      "strength": 52.3,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -23520,10 +23533,6 @@
       "risk": "供需预测分歧，过热后利润保护与价格回撤",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 1.842
-        },
         {
           "date": "2026-08-12",
           "value": 1.86
@@ -23779,6 +23788,10 @@
         {
           "date": "2026-11-17",
           "value": 1.33
+        },
+        {
+          "date": "2026-11-18",
+          "value": 1.294
         }
       ]
     },
@@ -23787,14 +23800,14 @@
       "name": "黄金",
       "proxy": "黄金ETF代理",
       "role": "底仓",
-      "value": 7.897,
-      "date": "2026-11-17",
-      "change5": -6.0,
-      "change20": -6.6,
+      "value": 7.707,
+      "date": "2026-11-18",
+      "change5": -7.0,
+      "change20": -8.4,
       "frameworkScore": 50,
-      "signalScore": 36.5,
-      "momentumShift": -4.3,
-      "strength": 57.5,
+      "signalScore": 33.7,
+      "momentumShift": -4.9,
+      "strength": 62.6,
       "state": "风险",
       "tone": "risk",
       "reading": "课程阶段与市场信号仍偏左，先等订单、利润或估值消化。",
@@ -23803,10 +23816,6 @@
       "risk": "实际利率重新上行与快速上涨后的追价风险",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 9.009
-        },
         {
           "date": "2026-08-12",
           "value": 9.103
@@ -24062,6 +24071,10 @@
         {
           "date": "2026-11-17",
           "value": 7.897
+        },
+        {
+          "date": "2026-11-18",
+          "value": 7.707
         }
       ]
     },
@@ -24070,14 +24083,14 @@
       "name": "煤化工/化工",
       "proxy": "化工ETF代理",
       "role": "周期",
-      "value": 0.708,
-      "date": "2026-11-17",
-      "change5": -4.1,
-      "change20": -5.3,
+      "value": 0.7,
+      "date": "2026-11-18",
+      "change5": -4.8,
+      "change20": -5.5,
       "frameworkScore": 65,
-      "signalScore": 55.3,
-      "momentumShift": -2.7,
-      "strength": 42.9,
+      "signalScore": 54.1,
+      "momentumShift": -3.4,
+      "strength": 42.4,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -24086,10 +24099,6 @@
       "risk": "地缘溢价消退、原料追涨和终端需求转弱",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.874
-        },
         {
           "date": "2026-08-12",
           "value": 0.873
@@ -24345,6 +24354,10 @@
         {
           "date": "2026-11-17",
           "value": 0.708
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.7
         }
       ]
     },
@@ -24353,14 +24366,14 @@
       "name": "券商",
       "proxy": "证券ETF代理",
       "role": "周期",
-      "value": 0.472,
-      "date": "2026-11-17",
-      "change5": -1.7,
-      "change20": -2.9,
+      "value": 0.47,
+      "date": "2026-11-18",
+      "change5": -1.5,
+      "change20": -2.5,
       "frameworkScore": 50,
-      "signalScore": 45.6,
-      "momentumShift": -0.9,
-      "strength": 38.0,
+      "signalScore": 46.2,
+      "momentumShift": -0.8,
+      "strength": 37.1,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -24369,10 +24382,6 @@
       "risk": "成交下滑、自营波动与盈利减速",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.522
-        },
         {
           "date": "2026-08-12",
           "value": 0.524
@@ -24628,6 +24637,10 @@
         {
           "date": "2026-11-17",
           "value": 0.472
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.47
         }
       ]
     },
@@ -24636,14 +24649,14 @@
       "name": "猪周期",
       "proxy": "养殖ETF代理",
       "role": "周期",
-      "value": 0.545,
-      "date": "2026-11-17",
-      "change5": 0.6,
-      "change20": 4.8,
+      "value": 0.541,
+      "date": "2026-11-18",
+      "change5": 0.9,
+      "change20": 1.9,
       "frameworkScore": 50,
-      "signalScore": 53.8,
-      "momentumShift": -0.6,
-      "strength": 36.6,
+      "signalScore": 52.6,
+      "momentumShift": 0.5,
+      "strength": 34.6,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -24652,10 +24665,6 @@
       "risk": "低点反弹已较多、去化慢和政策扰动",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 0.542
-        },
         {
           "date": "2026-08-12",
           "value": 0.543
@@ -24911,6 +24920,10 @@
         {
           "date": "2026-11-17",
           "value": 0.545
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.541
         }
       ]
     },
@@ -24919,13 +24932,13 @@
       "name": "人形机器人",
       "proxy": "机器人ETF代理",
       "role": "卫星",
-      "value": 0.81,
-      "date": "2026-11-17",
-      "change5": -9.2,
-      "change20": -3.8,
+      "value": 0.8,
+      "date": "2026-11-18",
+      "change5": -11.7,
+      "change20": -4.4,
       "frameworkScore": 25,
-      "signalScore": 9.9,
-      "momentumShift": -8.2,
+      "signalScore": 9.5,
+      "momentumShift": -10.6,
       "strength": 100.0,
       "state": "风险",
       "tone": "risk",
@@ -24935,10 +24948,6 @@
       "risk": "估值锚不稳、技术路线与利润池尚未确定",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 1.021
-        },
         {
           "date": "2026-08-12",
           "value": 1.016
@@ -25194,6 +25203,10 @@
         {
           "date": "2026-11-17",
           "value": 0.81
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.8
         }
       ]
     },
@@ -25202,14 +25215,14 @@
       "name": "商业航天",
       "proxy": "军工ETF宽口径代理",
       "role": "卫星",
-      "value": 0.958,
-      "date": "2026-11-17",
-      "change5": -7.0,
-      "change20": -10.5,
+      "value": 0.943,
+      "date": "2026-11-18",
+      "change5": -8.4,
+      "change20": -11.3,
       "frameworkScore": 25,
-      "signalScore": 7.5,
-      "momentumShift": -4.4,
-      "strength": 98.2,
+      "signalScore": 5.4,
+      "momentumShift": -5.5,
+      "strength": 100.0,
       "state": "风险",
       "tone": "risk",
       "reading": "课程阶段与市场信号仍偏左，先等订单、利润或估值消化。",
@@ -25218,10 +25231,6 @@
       "risk": "题材拥挤、订单可见度与商业模式不清",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 1.148
-        },
         {
           "date": "2026-08-12",
           "value": 1.156
@@ -25477,6 +25486,10 @@
         {
           "date": "2026-11-17",
           "value": 0.958
+        },
+        {
+          "date": "2026-11-18",
+          "value": 0.943
         }
       ]
     },
@@ -25485,14 +25498,14 @@
       "name": "沪深300",
       "proxy": "沪深300ETF代理",
       "role": "底仓",
-      "value": 4.042,
-      "date": "2026-11-17",
+      "value": 4.058,
+      "date": "2026-11-18",
       "change5": -2.2,
-      "change20": -4.2,
+      "change20": -3.0,
       "frameworkScore": 50,
-      "signalScore": 43.9,
-      "momentumShift": -1.2,
-      "strength": 41.0,
+      "signalScore": 44.6,
+      "momentumShift": -1.5,
+      "strength": 40.4,
       "state": "观察",
       "tone": "observe",
       "reading": "价格信号未形成清晰共振，继续等订单、利润或资金确认。",
@@ -25501,10 +25514,6 @@
       "risk": "宏观需求偏弱、趋势确认不足",
       "source": "东方财富公开行情（市场代理）",
       "history": [
-        {
-          "date": "2026-08-11",
-          "value": 4.728
-        },
         {
           "date": "2026-08-12",
           "value": 4.748
@@ -25760,6 +25769,10 @@
         {
           "date": "2026-11-17",
           "value": 4.042
+        },
+        {
+          "date": "2026-11-18",
+          "value": 4.058
         }
       ]
     }
@@ -25767,10 +25780,10 @@
   "marketPulse": {
     "summary": "成交额看参与度，两融看杠杆意愿，ETF申赎看资金正在投票的方向；三者需要一起看。",
     "margin": {
-      "date": "2026-11-16",
-      "value": 2.2103,
-      "buy": 112.62,
-      "change5": -1.4,
+      "date": "2026-11-17",
+      "value": 2.1918,
+      "buy": 111.99,
+      "change5": -2.1,
       "state": "杠杆降温",
       "tone": "observe",
       "interpretation": "融资余额持续温和上升有利于行情扩散；若短期陡增而指数不涨，反而要警惕拥挤和承接转弱。"
@@ -26012,7 +26025,7 @@
       "impact": "用于判断决策层对增长与通胀的容忍区间是否改变。",
       "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "id": "global-2026-11-18-17",
-      "status": "future"
+      "status": "today"
     },
     {
       "id": "ipo-2026-11-19-ANT",
