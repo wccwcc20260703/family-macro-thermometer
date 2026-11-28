@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-11-27T16:51:07+08:00",
+    "updatedAt": "2026-11-28T16:10:12+08:00",
     "status": "ok",
     "errors": [],
     "warnings": [],
@@ -1101,7 +1101,7 @@
         },
         {
           "date": "2026-11-27",
-          "value": 4.9216
+          "value": 4.9335
         }
       ]
     },
@@ -2149,7 +2149,7 @@
         },
         {
           "date": "2026-11-27",
-          "value": 103.81
+          "value": 104.04
         }
       ]
     },
@@ -3197,7 +3197,7 @@
         },
         {
           "date": "2026-11-27",
-          "value": 85.85
+          "value": 83.33
         }
       ]
     },
@@ -4245,7 +4245,7 @@
         },
         {
           "date": "2026-11-27",
-          "value": 3698.7
+          "value": 3681.1
         }
       ]
     },
@@ -5293,7 +5293,7 @@
         },
         {
           "date": "2026-11-27",
-          "value": 5.69
+          "value": 5.612
         }
       ]
     },
@@ -6353,10 +6353,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/EFFR",
       "values": [
-        {
-          "date": "2024-10-28",
-          "value": 4.83
-        },
         {
           "date": "2024-10-29",
           "value": 4.83
@@ -8432,6 +8428,10 @@
         {
           "date": "2026-11-24",
           "value": 3.88
+        },
+        {
+          "date": "2026-11-25",
+          "value": 3.88
         }
       ],
       "longValues": [
@@ -9480,7 +9480,7 @@
           "value": 3.88
         },
         {
-          "date": "2026-11-24",
+          "date": "2026-11-25",
           "value": 3.88
         }
       ]
@@ -9493,10 +9493,6 @@
       "source": "FRED（圣路易斯联储）",
       "sourceUrl": "https://fred.stlouisfed.org/series/DFII10",
       "values": [
-        {
-          "date": "2024-10-24",
-          "value": 1.91
-        },
         {
           "date": "2024-10-25",
           "value": 1.96
@@ -11572,6 +11568,10 @@
         {
           "date": "2026-11-24",
           "value": 2.79
+        },
+        {
+          "date": "2026-11-25",
+          "value": 2.73
         }
       ],
       "longValues": [
@@ -12620,8 +12620,8 @@
           "value": 2.77
         },
         {
-          "date": "2026-11-24",
-          "value": 2.79
+          "date": "2026-11-25",
+          "value": 2.73
         }
       ]
     },
@@ -20803,7 +20803,7 @@
     }
   },
   "temperature": {
-    "score": 50.5,
+    "score": 51.2,
     "label": "修复",
     "action": "小步观察",
     "explanation": "已经离开过冷风险区，但还要等待短中期趋势和关键数据确认。",
@@ -20813,8 +20813,8 @@
       "label": "向右共振",
       "tone": "warming",
       "message": "短期和20日趋势同时向右，机会正在增加，但仍要结合所处温度区间。",
-      "shortDelta": 4.6,
-      "mediumDelta": 7.3,
+      "shortDelta": 5.3,
+      "mediumDelta": 8.0,
       "shortDirection": "right",
       "mediumDirection": "right"
     },
@@ -20839,13 +20839,13 @@
       {
         "name": "真实利率",
         "key": "real10y",
-        "reading": "10年实际利率 2.79%",
-        "position": 5.4,
+        "reading": "10年实际利率 2.73%",
+        "position": 7.6,
         "zone": "谨慎",
         "tone": "cautious",
         "cautiousLabel": "谨慎 ≥ 2.0%",
         "boldLabel": "大胆 ≤ 1.2%",
-        "percentile": "近520期原始值第96百分位 · 越低越友好",
+        "percentile": "近520期原始值第94百分位 · 越低越友好",
         "interpretation": "真实利率越高，成长股和长久期资产的估值压力越大。",
         "weight": 10
       },
@@ -20904,13 +20904,13 @@
       {
         "name": "通胀压力",
         "key": "inflation",
-        "reading": "油价20日 -16.6%",
+        "reading": "油价20日 -19.1%",
         "position": 100.0,
         "zone": "大胆",
         "tone": "bold",
         "cautiousLabel": "谨慎 ≥ +15%",
         "boldLabel": "大胆 ≤ +5%",
-        "percentile": "近240期涨幅第11百分位 · 涨得越慢越友好",
+        "percentile": "近240期涨幅第8百分位 · 涨得越慢越友好",
         "interpretation": "油价短期急涨会抬高通胀预期，压缩降息和估值空间。",
         "weight": 10
       }
@@ -21626,15 +21626,15 @@
       },
       {
         "date": "2026-11-25",
-        "value": 45.1
+        "value": 45.3
       },
       {
         "date": "2026-11-26",
-        "value": 44.6
+        "value": 44.8
       },
       {
         "date": "2026-11-27",
-        "value": 50.5
+        "value": 51.2
       }
     ],
     "bands": [
@@ -21666,7 +21666,7 @@
     ]
   },
   "liquidity": {
-    "score": 36.3,
+    "score": 36.8,
     "label": "紧中有松",
     "summary": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
     "indicators": [
@@ -21675,7 +21675,7 @@
         "name": "EFFR 有效联邦基金利率",
         "value": 3.88,
         "unit": "%",
-        "date": "2026-11-24",
+        "date": "2026-11-25",
         "score": 47.1,
         "status": "中性偏紧",
         "tone": "amber",
@@ -21691,15 +21691,15 @@
       {
         "key": "real10y",
         "name": "美国10年实际利率",
-        "value": 2.79,
+        "value": 2.73,
         "unit": "%",
-        "date": "2026-11-24",
-        "score": 7.0,
+        "date": "2026-11-25",
+        "score": 9.0,
         "status": "高位约束",
         "tone": "red",
         "meaning": "长期真实资金成本 / 成长股折现率",
         "interpretation": "长期真实利率偏高，高估值和长久期资产更敏感。",
-        "change20": 0.13,
+        "change20": 0.09,
         "riskLine": 2.0,
         "opportunityLine": 1.2,
         "thresholdSignal": "已触及风险线",
@@ -21748,7 +21748,7 @@
     {
       "id": "2022-02-11-NFCI-11",
       "date": "2022-02-11",
-      "score": 50.5,
+      "score": 51.2,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21759,7 +21759,7 @@
     {
       "id": "2025-01-24-NFCI-12",
       "date": "2025-01-24",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21770,7 +21770,7 @@
     {
       "id": "2025-02-14-NFCI-13",
       "date": "2025-02-14",
-      "score": 50.5,
+      "score": 51.2,
       "type": "info",
       "indicator": "NFCI",
       "title": "NFCI离开机会线",
@@ -21781,7 +21781,7 @@
     {
       "id": "2025-07-11-NFCI-14",
       "date": "2025-07-11",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "NFCI",
       "title": "NFCI触及机会线",
@@ -21792,7 +21792,7 @@
     {
       "id": "2025-12-11-EFFR-18",
       "date": "2025-12-11",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "EFFR",
       "title": "EFFR单次下降 25bp",
@@ -21803,7 +21803,7 @@
     {
       "id": "2026-01-27-广义美元-3",
       "date": "2026-01-27",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21814,7 +21814,7 @@
     {
       "id": "2026-02-02-广义美元-4",
       "date": "2026-02-02",
-      "score": 50.5,
+      "score": 51.2,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21825,7 +21825,7 @@
     {
       "id": "2026-02-09-广义美元-5",
       "date": "2026-02-09",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21836,7 +21836,7 @@
     {
       "id": "2026-02-19-广义美元-6",
       "date": "2026-02-19",
-      "score": 50.5,
+      "score": 51.2,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21847,7 +21847,7 @@
     {
       "id": "2026-02-20-广义美元-7",
       "date": "2026-02-20",
-      "score": 50.5,
+      "score": 51.2,
       "type": "opportunity",
       "indicator": "广义美元",
       "title": "广义美元触及机会线",
@@ -21858,7 +21858,7 @@
     {
       "id": "2026-03-02-广义美元-8",
       "date": "2026-03-02",
-      "score": 50.5,
+      "score": 51.2,
       "type": "info",
       "indicator": "广义美元",
       "title": "广义美元离开机会线",
@@ -21967,18 +21967,18 @@
     }
   ],
   "dailyReport": {
-    "date": "2026-11-27",
+    "date": "2026-11-28",
     "publishTime": "每天 08:30（北京时间）",
     "title": "短中期同时升温，机会正在扩散",
-    "summary": "今天的综合温度是 50.5 分，处在过去记录的第 36 百分位。5日变化 +4.6 分，20日变化 +7.3 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
+    "summary": "今天的综合温度是 51.2 分，处在过去记录的第 39 百分位。5日变化 +5.3 分，20日变化 +8.0 分。资金面主要由通胀压力支撑，真实利率仍是最明显的约束。",
     "bottomLine": "短期和20日趋势同时向右，机会正在增加，但仍要结合所处温度区间。 这不是涨跌预测，而是今天应该承担多少风险的依据。",
     "support": "通胀压力",
     "drag": "真实利率",
     "evidence": [
       {
         "label": "综合温度",
-        "value": "50.5分",
-        "context": "过去记录第 36 百分位；5日 +4.6 / 20日 +7.3",
+        "value": "51.2分",
+        "context": "过去记录第 39 百分位；5日 +5.3 / 20日 +8.0",
         "tone": "neutral"
       },
       {
@@ -21989,8 +21989,8 @@
       },
       {
         "label": "10年实际利率",
-        "value": "2.79%",
-        "context": "过去520期第 96 百分位，越高越压制高估值资产",
+        "value": "2.73%",
+        "context": "过去520期第 94 百分位，越高越压制高估值资产",
         "tone": "negative"
       },
       {
@@ -22007,7 +22007,7 @@
       },
       {
         "label": "美元流动性",
-        "value": "36.3分",
+        "value": "36.8分",
         "context": "短端与实际利率仍有压力，但美元和金融条件尚未出现系统性抽水。",
         "tone": "neutral"
       }
